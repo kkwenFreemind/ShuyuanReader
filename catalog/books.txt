@@ -1,0 +1,1799 @@
+{
+  "metadata": {
+    "title": "書苑閱讀器書目",
+    "description": "自動生成的書籍目錄",
+    "generated_at": "2025-11-05",
+    "total_books": 100
+  },
+  "books": [
+    {
+      "id": "一夢漫言",
+      "title": "一夢漫言",
+      "author": "千華寺繼任主持 見月老人自述",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/一夢漫言.epub",
+      "coverUrl": "covers/一夢漫言.png",
+      "metadata": {
+        "creator": "千華寺繼任主持 見月老人自述",
+        "language": "tw",
+        "title": "一夢漫言",
+        "identifier": "urn:uuid:731e3d50-212c-4873-bae5-a4b57d664064",
+        "cover_id": "x3333.png"
+      }
+    },
+    {
+      "id": "三世因果目蓮救母經",
+      "title": "三世因果目蓮救母經",
+      "author": "前賢",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/三世因果目蓮救母經.epub",
+      "coverUrl": "covers/三世因果目蓮救母經.png",
+      "metadata": {
+        "language": "tw",
+        "creator": "前賢",
+        "title": "三世因果目蓮救母經",
+        "identifier": "urn:uuid:486be78d-85aa-4827-8e41-1a0f380b81a6",
+        "cover_id": "x1212.png"
+      }
+    },
+    {
+      "id": "世風集錄",
+      "title": "世風集錄",
+      "author": "仙佛聖真",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/世風集錄.epub",
+      "coverUrl": "covers/世風集錄.png",
+      "metadata": {
+        "language": "tw",
+        "creator": "仙佛聖真",
+        "title": "世風集錄",
+        "identifier": "urn:uuid:55eb13b8-ce4b-4d5a-932d-24d94d5c788f",
+        "cover_id": "x11111.png"
+      }
+    },
+    {
+      "id": "中論",
+      "title": "中論",
+      "author": "姚秦三藏鳩摩羅什譯",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/中論.epub",
+      "coverUrl": "covers/中論.png",
+      "metadata": {
+        "creator": "姚秦三藏鳩摩羅什譯",
+        "language": "tw",
+        "title": "中論",
+        "identifier": "urn:uuid:18632993-80f2-428f-8cc4-6b098a87bf8d",
+        "cover_id": "x123.png"
+      }
+    },
+    {
+      "id": "佛說大乘無量壽莊嚴清淨平等覺經",
+      "title": "佛說大乘無量壽莊嚴清淨平等覺經",
+      "author": "後漢 支婁迦讖譯",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/佛說大乘無量壽莊嚴清淨平等覺經.epub",
+      "coverUrl": "",
+      "metadata": {
+        "creator": "後漢 支婁迦讖譯",
+        "language": "tw",
+        "title": "佛說大乘無量壽莊嚴清淨平等覺經",
+        "identifier": "urn:uuid:ca6f6a69-c8c6-4624-9942-87ce0fb98bf1"
+      }
+    },
+    {
+      "id": "佛說罪福報應經白話",
+      "title": "佛說罪福報應經白話",
+      "author": "劉宋于闐國三藏求那跋陀羅譯\n\n凡夫白話譯",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/佛說罪福報應經白話.epub",
+      "coverUrl": "covers/佛說罪福報應經白話.png",
+      "metadata": {
+        "language": "tw",
+        "title": "佛說罪福報應經白話",
+        "creator": "劉宋于闐國三藏求那跋陀羅譯\n\n凡夫白話譯",
+        "identifier": "urn:uuid:bd82fe38-5ecd-4d30-8819-e887f2edfa1a",
+        "cover_id": "x3333.png"
+      }
+    },
+    {
+      "id": "佛說鬼問目連經白話",
+      "title": "佛說鬼問目連經白話",
+      "author": "後漢安息國三藏安世高譯\n凡夫白話譯",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/佛說鬼問目連經白話.epub",
+      "coverUrl": "covers/佛說鬼問目連經白話.png",
+      "metadata": {
+        "language": "tw",
+        "creator": "後漢安息國三藏安世高譯\n凡夫白話譯",
+        "title": "佛說鬼問目連經白話",
+        "identifier": "urn:uuid:d2d3a398-942b-4a3e-a31c-f488f30091f6",
+        "cover_id": "x38.png"
+      }
+    },
+    {
+      "id": "六祖壇經講記",
+      "title": "六祖壇經講記",
+      "author": "淨空法師講述",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/六祖壇經講記.epub",
+      "coverUrl": "covers/六祖壇經講記.png",
+      "metadata": {
+        "language": "tw",
+        "title": "六祖壇經講記",
+        "creator": "淨空法師講述",
+        "identifier": "urn:uuid:074c7201-b98c-4040-b058-86d54aea0f44",
+        "cover_id": "cover.png"
+      }
+    },
+    {
+      "id": "出世必要",
+      "title": "出世必要",
+      "author": "前賢",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/出世必要.epub",
+      "coverUrl": "covers/出世必要.png",
+      "metadata": {
+        "language": "tw",
+        "creator": "前賢",
+        "title": "出世必要",
+        "identifier": "urn:uuid:1ef059f2-0e2f-4662-b1af-f605cfc782e2",
+        "cover_id": "chushibiyao.png"
+      }
+    },
+    {
+      "id": "初真戒",
+      "title": "初真戒",
+      "author": "崑陽子王常月著",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/初真戒.epub",
+      "coverUrl": "covers/初真戒.png",
+      "metadata": {
+        "language": "tw",
+        "creator": "崑陽子王常月著",
+        "title": "初真戒",
+        "identifier": "urn:uuid:2452c7ce-8327-497b-ba49-3e1a538b1c12",
+        "cover_id": "x12.png"
+      }
+    },
+    {
+      "id": "勸報親恩篇",
+      "title": "勸報親恩篇",
+      "author": "清·佚名",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/勸報親恩篇.epub",
+      "coverUrl": "covers/勸報親恩篇.png",
+      "metadata": {
+        "creator": "清·佚名",
+        "language": "tw",
+        "title": "勸報親恩篇",
+        "identifier": "urn:uuid:ee64a5b0-3d1d-4c82-9738-193a48afb786",
+        "cover_id": "x8888.png"
+      }
+    },
+    {
+      "id": "勸家庭行孝文",
+      "title": "勸家庭行孝文",
+      "author": "知性法師述",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/勸家庭行孝文.epub",
+      "coverUrl": "covers/勸家庭行孝文.png",
+      "metadata": {
+        "language": "tw",
+        "creator": "知性法師述",
+        "title": "勸家庭行孝文",
+        "identifier": "urn:uuid:7219af00-a278-4f38-ace4-b37fb78afb39",
+        "cover_id": "x123.png"
+      }
+    },
+    {
+      "id": "化性談",
+      "title": "化性談",
+      "author": "王鳳儀講話",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/化性談.epub",
+      "coverUrl": "covers/化性談.png",
+      "metadata": {
+        "language": "tw",
+        "creator": "王鳳儀講話",
+        "title": "化性談",
+        "identifier": "urn:uuid:1aaf055c-5d35-4ae5-aa7c-bb81239a3555",
+        "cover_id": "x8228.png"
+      }
+    },
+    {
+      "id": "可許則許",
+      "title": "可許則許",
+      "author": "陳海量居士著",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/可許則許.epub",
+      "coverUrl": "covers/可許則許.png",
+      "metadata": {
+        "creator": "陳海量居士著",
+        "language": "tw",
+        "title": "可許則許",
+        "identifier": "urn:uuid:3f0720cb-ec57-47c2-8a85-9fb1dadfe5dd",
+        "cover_id": "x3333.png"
+      }
+    },
+    {
+      "id": "合行同盤助",
+      "title": "合行同盤助",
+      "author": "明明上帝",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/合行同盤助.epub",
+      "coverUrl": "covers/合行同盤助.png",
+      "metadata": {
+        "language": "tw",
+        "creator": "明明上帝",
+        "title": "合行同盤助",
+        "identifier": "urn:uuid:2999f0d5-4af7-4ebe-a5e0-0ff2f27775ad",
+        "cover_id": "cover.png"
+      }
+    },
+    {
+      "id": "呂祖消災增福良方",
+      "title": "呂祖消災增福良方",
+      "author": "呂祖",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/呂祖消災增福良方.epub",
+      "coverUrl": "covers/呂祖消災增福良方.png",
+      "metadata": {
+        "language": "tw",
+        "title": "呂祖消災增福良方",
+        "creator": "呂祖",
+        "identifier": "urn:uuid:1c7888f3-f2c3-4b90-9bf4-a3f1006fe11b",
+        "cover_id": "x2233.png"
+      }
+    },
+    {
+      "id": "呂祖百字銘",
+      "title": "呂祖百字銘",
+      "author": "呂祖",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/呂祖百字銘.epub",
+      "coverUrl": "covers/呂祖百字銘.png",
+      "metadata": {
+        "language": "tw",
+        "creator": "呂祖",
+        "title": "呂祖百字銘",
+        "identifier": "urn:uuid:344a2eb1-ac84-4f15-9309-158755e30624",
+        "cover_id": "luezubaiziming.png"
+      }
+    },
+    {
+      "id": "和陽關遊記",
+      "title": "和陽關遊記",
+      "author": "仙佛聖真",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/和陽關遊記.epub",
+      "coverUrl": "covers/和陽關遊記.png",
+      "metadata": {
+        "language": "tw",
+        "creator": "仙佛聖真",
+        "title": "和陽關遊記",
+        "identifier": "urn:uuid:7fb725a9-fa6e-4710-a9b8-f7cb17008c36",
+        "cover_id": "x2222.png"
+      }
+    },
+    {
+      "id": "唱道真言",
+      "title": "唱道真言",
+      "author": "青華老人 傳   /     [清]鶴臞子 輯",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/唱道真言.epub",
+      "coverUrl": "covers/唱道真言.png",
+      "metadata": {
+        "language": "tw",
+        "title": "唱道真言",
+        "creator": "青華老人 傳   /     [清]鶴臞子 輯",
+        "identifier": "urn:uuid:446f0727-07c2-473b-9fd3-48e1c0eb9c51",
+        "cover_id": "x11111.png"
+      }
+    },
+    {
+      "id": "善魂求道記",
+      "title": "善魂求道記",
+      "author": "三天法會崇信壇",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/善魂求道記.epub",
+      "coverUrl": "covers/善魂求道記.png",
+      "metadata": {
+        "creator": "三天法會崇信壇",
+        "language": "tw",
+        "title": "善魂求道記",
+        "identifier": "urn:uuid:7f4da0ba-cbe8-49b5-aed1-c76fd6149f7f",
+        "cover_id": "shanhunqiudaoji.png"
+      }
+    },
+    {
+      "id": "因果報應錄",
+      "title": "[這裡填入主要標題]",
+      "author": "未知作者",
+      "language": "en",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/因果報應錄.epub",
+      "coverUrl": "",
+      "metadata": {
+        "identifier": "urn:uuid:f0a9c605-1f14-4db7-a49a-91a0bb4c38f3",
+        "language": "en",
+        "title": "[這裡填入主要標題]"
+      }
+    },
+    {
+      "id": "國易堂易經",
+      "title": "[Main title here]",
+      "author": "未知作者",
+      "language": "en",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/國易堂易經.epub",
+      "coverUrl": "",
+      "metadata": {
+        "language": "en",
+        "title": "[Main title here]",
+        "identifier": "urn:uuid:9035bb51-6cdb-4f83-9cfe-482146d24162"
+      }
+    },
+    {
+      "id": "圍爐夜話",
+      "title": "圍爐夜話",
+      "author": "王永彬",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/圍爐夜話.epub",
+      "coverUrl": "covers/圍爐夜話.png",
+      "metadata": {
+        "language": "tw",
+        "creator": "王永彬",
+        "title": "圍爐夜話",
+        "identifier": "urn:uuid:5c7a9678-6ea0-4ff6-8266-55e76550e4f8",
+        "cover_id": "x2288.png"
+      }
+    },
+    {
+      "id": "圓覺經略釋",
+      "title": "圓覺經略釋",
+      "author": "太虛大師講述",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/圓覺經略釋.epub",
+      "coverUrl": "covers/圓覺經略釋.png",
+      "metadata": {
+        "language": "tw",
+        "creator": "太虛大師講述",
+        "title": "圓覺經略釋",
+        "identifier": "urn:uuid:9c0827aa-80c3-4e21-9e00-3655d897fa34",
+        "cover_id": "cover.png"
+      }
+    },
+    {
+      "id": "地藏經略說",
+      "title": "地藏經略說",
+      "author": "聖一老和尚講述 弟子衍輪恭錄",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/地藏經略說.epub",
+      "coverUrl": "covers/地藏經略說.png",
+      "metadata": {
+        "creator": "聖一老和尚講述 弟子衍輪恭錄",
+        "language": "tw",
+        "title": "地藏經略說",
+        "identifier": "urn:uuid:bdd0f3f4-ecfb-4ee2-b664-a7a31c7faea0",
+        "cover_id": "x88.png"
+      }
+    },
+    {
+      "id": "壽康寶鑑",
+      "title": "壽康寶鑑",
+      "author": "印光大師增訂",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/壽康寶鑑.epub",
+      "coverUrl": "covers/壽康寶鑑.png",
+      "metadata": {
+        "language": "tw",
+        "title": "壽康寶鑑",
+        "creator": "印光大師增訂",
+        "identifier": "urn:uuid:dace6891-bb42-409e-904b-a536cad7d714",
+        "cover_id": "cover.png"
+      }
+    },
+    {
+      "id": "大乘起信論",
+      "title": "大乘起信論",
+      "author": "馬鳴菩薩造 梁真諦三藏譯",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/大乘起信論.epub",
+      "coverUrl": "covers/大乘起信論.png",
+      "metadata": {
+        "creator": "馬鳴菩薩造 梁真諦三藏譯",
+        "language": "tw",
+        "title": "大乘起信論",
+        "identifier": "urn:uuid:adc4253f-c0c4-4fc3-ad2e-d4af3b401d04",
+        "cover_id": "x1111.png"
+      }
+    },
+    {
+      "id": "大佛頂首楞嚴經妙玄要旨",
+      "title": "大佛頂首楞嚴經妙玄要旨",
+      "author": "湛山倓虛大師著",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/大佛頂首楞嚴經妙玄要旨.epub",
+      "coverUrl": "covers/大佛頂首楞嚴經妙玄要旨.png",
+      "metadata": {
+        "creator": "湛山倓虛大師著",
+        "language": "tw",
+        "title": "大佛頂首楞嚴經妙玄要旨",
+        "identifier": "urn:uuid:60546b52-81fe-488b-9b60-a60efa3df311",
+        "cover_id": "cover.png"
+      }
+    },
+    {
+      "id": "大方廣佛華嚴經普賢行願品",
+      "title": "大方廣佛華嚴經普賢行願品",
+      "author": "唐罽賓國三藏般若奉詔譯",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/大方廣佛華嚴經普賢行願品.epub",
+      "coverUrl": "covers/大方廣佛華嚴經普賢行願品.png",
+      "metadata": {
+        "creator": "唐罽賓國三藏般若奉詔譯",
+        "language": "tw",
+        "title": "大方廣佛華嚴經普賢行願品",
+        "identifier": "urn:uuid:3cfa9437-efaf-4b30-8e53-68e0f4ad8139",
+        "cover_id": "cover.png"
+      }
+    },
+    {
+      "id": "天界傳真",
+      "title": "天界傳真",
+      "author": "仙佛聖真",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/天界傳真.epub",
+      "coverUrl": "covers/天界傳真.png",
+      "metadata": {
+        "language": "tw",
+        "title": "天界傳真",
+        "creator": "仙佛聖真",
+        "identifier": "urn:uuid:ff9f91d0-00cd-422c-b008-b0eb13f39a5a",
+        "cover_id": "x8181.png"
+      }
+    },
+    {
+      "id": "天真古佛考證龍華寶經",
+      "title": "天真古佛考證龍華寶經",
+      "author": "仙佛聖真",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/天真古佛考證龍華寶經.epub",
+      "coverUrl": "covers/天真古佛考證龍華寶經.png",
+      "metadata": {
+        "creator": "仙佛聖真",
+        "language": "tw",
+        "title": "天真古佛考證龍華寶經",
+        "identifier": "urn:uuid:3f0b624d-8222-45d3-8679-059743e6733b",
+        "cover_id": "cover.png"
+      }
+    },
+    {
+      "id": "天道之殊勝",
+      "title": "天道之殊勝",
+      "author": "慈無依著",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/天道之殊勝.epub",
+      "coverUrl": "covers/天道之殊勝.png",
+      "metadata": {
+        "language": "tw",
+        "creator": "慈無依著",
+        "title": "天道之殊勝",
+        "identifier": "urn:uuid:f6a4bf36-78e7-418b-a9c9-eb2f74ac62dc",
+        "cover_id": "x3333.png"
+      }
+    },
+    {
+      "id": "女孝經",
+      "title": "女孝經",
+      "author": "唐代鄭氏",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/女孝經.epub",
+      "coverUrl": "covers/女孝經.png",
+      "metadata": {
+        "language": "tw",
+        "creator": "唐代鄭氏",
+        "title": "女孝經",
+        "identifier": "urn:uuid:2340dcb5-0018-4cf9-962d-cccf025907cc",
+        "cover_id": "nuexiaojing.png"
+      }
+    },
+    {
+      "id": "女誡",
+      "title": "女誡",
+      "author": "班昭",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/女誡.epub",
+      "coverUrl": "covers/女誡.png",
+      "metadata": {
+        "creator": "班昭",
+        "language": "tw",
+        "title": "女誡",
+        "identifier": "urn:uuid:56dd0592-9d1b-48fa-9389-64961fdc2821",
+        "cover_id": "x22.png"
+      }
+    },
+    {
+      "id": "孔子傳",
+      "title": "孔子傳",
+      "author": "曹堯德宋均平楊佐仁著",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/孔子傳.epub",
+      "coverUrl": "covers/孔子傳.png",
+      "metadata": {
+        "language": "tw",
+        "creator": "曹堯德宋均平楊佐仁著",
+        "title": "孔子傳",
+        "identifier": "urn:uuid:dacb00d9-b093-4527-b02e-469fdba09185",
+        "cover_id": "x88.png"
+      }
+    },
+    {
+      "id": "孔易闡真",
+      "title": "孔易闡真",
+      "author": "素朴散人悟元子劉一明體述",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/孔易闡真.epub",
+      "coverUrl": "covers/孔易闡真.png",
+      "metadata": {
+        "creator": "素朴散人悟元子劉一明體述",
+        "language": "tw",
+        "title": "孔易闡真",
+        "identifier": "urn:uuid:d5e89ecf-5a9d-44e9-991c-155e9583411a",
+        "cover_id": "x123.png"
+      }
+    },
+    {
+      "id": "孝與戒淫",
+      "title": "孝與戒淫",
+      "author": "鐘茂森博士",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/孝與戒淫.epub",
+      "coverUrl": "covers/孝與戒淫.png",
+      "metadata": {
+        "language": "tw",
+        "creator": "鐘茂森博士",
+        "title": "孝與戒淫",
+        "identifier": "urn:uuid:6ab56d5b-bdc0-4aad-9304-c5f7f9854939",
+        "cover_id": "x22.png"
+      }
+    },
+    {
+      "id": "孝順歌",
+      "title": "孝順歌",
+      "author": "前賢",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/孝順歌.epub",
+      "coverUrl": "covers/孝順歌.png",
+      "metadata": {
+        "language": "tw",
+        "title": "孝順歌",
+        "creator": "前賢",
+        "identifier": "urn:uuid:03a87d6b-9c36-4ee1-8ac7-bc9bc8e0b17f",
+        "cover_id": "xiaoshunge.png"
+      }
+    },
+    {
+      "id": "孫不二元君法語",
+      "title": "孫不二元君法語",
+      "author": "清淨散人著 妙光譯註",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/孫不二元君法語.epub",
+      "coverUrl": "covers/孫不二元君法語.png",
+      "metadata": {
+        "language": "tw",
+        "creator": "清淨散人著 妙光譯註",
+        "title": "孫不二元君法語",
+        "identifier": "urn:uuid:c19592a3-f892-4737-a17b-fb17bf100088",
+        "cover_id": "sunbueryuanjunfayu.png"
+      }
+    },
+    {
+      "id": "家家觀世音",
+      "title": "家家觀世音",
+      "author": "中華道德學會",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/家家觀世音.epub",
+      "coverUrl": "covers/家家觀世音.png",
+      "metadata": {
+        "language": "tw",
+        "creator": "中華道德學會",
+        "title": "家家觀世音",
+        "identifier": "urn:uuid:7b7456b1-ac22-41e9-9777-1c72be6053c4",
+        "cover_id": "jiajiaguanshiyin.png"
+      }
+    },
+    {
+      "id": "家庭寶筏",
+      "title": "家庭寶筏",
+      "author": "漢陽別樵居士編纂",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/家庭寶筏.epub",
+      "coverUrl": "covers/家庭寶筏.png",
+      "metadata": {
+        "language": "tw",
+        "title": "家庭寶筏",
+        "creator": "漢陽別樵居士編纂",
+        "identifier": "urn:uuid:789552b8-e4ab-42b9-b43f-fafdcbdce4ba",
+        "cover_id": "x66.png"
+      }
+    },
+    {
+      "id": "廣玄妙卷",
+      "title": "廣玄妙卷",
+      "author": "仙佛聖真",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/廣玄妙卷.epub",
+      "coverUrl": "covers/廣玄妙卷.png",
+      "metadata": {
+        "language": "tw",
+        "creator": "仙佛聖真",
+        "title": "廣玄妙卷",
+        "identifier": "urn:uuid:bc2d4e78-8f45-481e-b956-dbd2d8ebdcf0",
+        "cover_id": "x21.png"
+      }
+    },
+    {
+      "id": "彌勒收圓",
+      "title": "彌勒收圓",
+      "author": "慈無依著",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/彌勒收圓.epub",
+      "coverUrl": "covers/彌勒收圓.png",
+      "metadata": {
+        "language": "tw",
+        "title": "彌勒收圓",
+        "creator": "慈無依著",
+        "identifier": "urn:uuid:f5c03c8b-e45e-48e5-981a-2fb68a102194",
+        "cover_id": "mileishouyuan.png"
+      }
+    },
+    {
+      "id": "彌勒收圓1",
+      "title": "[Main title here]",
+      "author": "未知作者",
+      "language": "en",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/彌勒收圓1.epub",
+      "coverUrl": "",
+      "metadata": {
+        "identifier": "urn:uuid:fdfc227d-adc2-4346-9961-bf32e4b8c67a",
+        "language": "en",
+        "title": "[Main title here]"
+      }
+    },
+    {
+      "id": "拘拏生魂警世寶鑑",
+      "title": "拘拏生魂警世寶鑑",
+      "author": "仙佛聖真",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/拘拏生魂警世寶鑑.epub",
+      "coverUrl": "covers/拘拏生魂警世寶鑑.png",
+      "metadata": {
+        "language": "tw",
+        "creator": "仙佛聖真",
+        "title": "拘拏生魂警世寶鑑",
+        "identifier": "urn:uuid:eba7b76d-48bf-49f0-b662-d0971cb71bf2",
+        "cover_id": "cover.png"
+      }
+    },
+    {
+      "id": "收圓醒迷錄",
+      "title": "收圓醒迷錄",
+      "author": "仙佛聖真",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/收圓醒迷錄.epub",
+      "coverUrl": "covers/收圓醒迷錄.png",
+      "metadata": {
+        "language": "tw",
+        "creator": "仙佛聖真",
+        "title": "收圓醒迷錄",
+        "identifier": "urn:uuid:78385eb0-bf14-4b58-8054-bf6511fa4694",
+        "cover_id": "x888.png"
+      }
+    },
+    {
+      "id": "放生經",
+      "title": "放生經",
+      "author": "仙佛聖真",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/放生經.epub",
+      "coverUrl": "covers/放生經.png",
+      "metadata": {
+        "language": "tw",
+        "creator": "仙佛聖真",
+        "title": "放生經",
+        "identifier": "urn:uuid:93d1b025-157d-44c3-90da-be88f329a655",
+        "cover_id": "x111.png"
+      }
+    },
+    {
+      "id": "文殊師利般若經",
+      "title": "文殊師利般若經",
+      "author": "梁扶南國三藏曼陀羅仙譯",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/文殊師利般若經.epub",
+      "coverUrl": "covers/文殊師利般若經.png",
+      "metadata": {
+        "language": "tw",
+        "creator": "梁扶南國三藏曼陀羅仙譯",
+        "title": "文殊師利般若經",
+        "identifier": "urn:uuid:dbbcd6f9-4ad2-4877-9e3a-6d50cddc6035",
+        "cover_id": "cover.png"
+      }
+    },
+    {
+      "id": "普門品聞記",
+      "title": "普門品聞記",
+      "author": "聖一老法師講述 眾弟子聞記",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/普門品聞記.epub",
+      "coverUrl": "covers/普門品聞記.png",
+      "metadata": {
+        "language": "tw",
+        "creator": "聖一老法師講述 眾弟子聞記",
+        "title": "普門品聞記",
+        "identifier": "urn:uuid:61caadc9-0ba9-47e1-923e-c43ed1d4d313",
+        "cover_id": "x3333.png"
+      }
+    },
+    {
+      "id": "最上乘論",
+      "title": "最上乘論",
+      "author": "弘忍禪師著",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/最上乘論.epub",
+      "coverUrl": "covers/最上乘論.png",
+      "metadata": {
+        "creator": "弘忍禪師著",
+        "language": "tw",
+        "title": "最上乘論",
+        "identifier": "urn:uuid:f283090a-f2be-4cd2-bd7b-4db4ca0304e2",
+        "cover_id": "x16.png"
+      }
+    },
+    {
+      "id": "會心集",
+      "title": "會心集",
+      "author": "悟元子",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/會心集.epub",
+      "coverUrl": "covers/會心集.png",
+      "metadata": {
+        "language": "tw",
+        "creator": "悟元子",
+        "title": "會心集",
+        "identifier": "urn:uuid:afed072b-1c66-4106-bd8b-134923de9343",
+        "cover_id": "x2222.png"
+      }
+    },
+    {
+      "id": "格言聯璧",
+      "title": "格言聯璧",
+      "author": "山陰金先生",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/格言聯璧.epub",
+      "coverUrl": "covers/格言聯璧.png",
+      "metadata": {
+        "language": "tw",
+        "creator": "山陰金先生",
+        "title": "格言聯璧",
+        "identifier": "urn:uuid:f0231683-4136-46d4-8c3a-575e578193eb",
+        "cover_id": "cover.png"
+      }
+    },
+    {
+      "id": "梁皇寶卷",
+      "title": "梁皇寶卷",
+      "author": "羅浮山朝元洞藏板",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/梁皇寶卷.epub",
+      "coverUrl": "covers/梁皇寶卷.png",
+      "metadata": {
+        "creator": "羅浮山朝元洞藏板",
+        "language": "tw",
+        "title": "梁皇寶卷",
+        "identifier": "urn:uuid:c56e1950-0f08-47d1-8d54-c2c061168e4b",
+        "cover_id": "x1111.png"
+      }
+    },
+    {
+      "id": "楞嚴經五十陰魔淺釋",
+      "title": "楞嚴經五十陰魔淺釋",
+      "author": "宣化上人講述",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/楞嚴經五十陰魔淺釋.epub",
+      "coverUrl": "covers/楞嚴經五十陰魔淺釋.png",
+      "metadata": {
+        "language": "tw",
+        "creator": "宣化上人講述",
+        "title": "楞嚴經五十陰魔淺釋",
+        "identifier": "urn:uuid:5e9e72d7-27f1-4c1b-a46d-b5e45e446b9a",
+        "cover_id": "thanksAll.png"
+      }
+    },
+    {
+      "id": "極樂世界遊記",
+      "title": "極樂世界遊記",
+      "author": "仙佛聖真",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/極樂世界遊記.epub",
+      "coverUrl": "covers/極樂世界遊記.png",
+      "metadata": {
+        "language": "tw",
+        "creator": "仙佛聖真",
+        "title": "極樂世界遊記",
+        "identifier": "urn:uuid:bf9fe521-44d8-4fad-9414-2d8dead3d85d",
+        "cover_id": "x2222.png"
+      }
+    },
+    {
+      "id": "止",
+      "title": "[這裡填入主要標題]",
+      "author": "未知作者",
+      "language": "en",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/止.epub",
+      "coverUrl": "",
+      "metadata": {
+        "identifier": "urn:uuid:16866e04-c5f0-469a-91c8-fcc445e1234e",
+        "language": "en",
+        "title": "[這裡填入主要標題]"
+      }
+    },
+    {
+      "id": "止學",
+      "title": "止學",
+      "author": "文中子",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/止學.epub",
+      "coverUrl": "covers/止學.jpg",
+      "metadata": {
+        "creator": "文中子",
+        "language": "tw",
+        "title": "止學",
+        "identifier": "urn:uuid:16866e04-c5f0-469a-91c8-fcc445e1234e",
+        "cover_id": "cover.jpg"
+      }
+    },
+    {
+      "id": "歷年易理",
+      "title": "歷年易理",
+      "author": "仙佛聖真",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/歷年易理.epub",
+      "coverUrl": "covers/歷年易理.png",
+      "metadata": {
+        "language": "tw",
+        "title": "歷年易理",
+        "creator": "仙佛聖真",
+        "identifier": "urn:uuid:c72b5be5-a090-47c6-8a6f-044292ac0fb5",
+        "cover_id": "mileishouyuan.png"
+      }
+    },
+    {
+      "id": "歸原寶筏",
+      "title": "歸原寶筏",
+      "author": "儒童　素一老人　著",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/歸原寶筏.epub",
+      "coverUrl": "covers/歸原寶筏.png",
+      "metadata": {
+        "creator": "儒童　素一老人　著",
+        "language": "tw",
+        "title": "歸原寶筏",
+        "identifier": "urn:uuid:c14a8610-bb52-4c06-b2ba-e8652ed16549",
+        "cover_id": "xxxx.png"
+      }
+    },
+    {
+      "id": "歸真罡",
+      "title": "歸真罡",
+      "author": "仙佛聖真",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/歸真罡.epub",
+      "coverUrl": "covers/歸真罡.png",
+      "metadata": {
+        "language": "tw",
+        "creator": "仙佛聖真",
+        "title": "歸真罡",
+        "identifier": "urn:uuid:9a374efd-13b1-4e53-934f-d818511dbe09",
+        "cover_id": "x16.png"
+      }
+    },
+    {
+      "id": "涵三雜詠",
+      "title": "[Main title here]",
+      "author": "未知作者",
+      "language": "en",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/涵三雜詠.epub",
+      "coverUrl": "",
+      "metadata": {
+        "identifier": "urn:uuid:c6e16c04-c256-4f3d-8b6c-87675033898b",
+        "language": "en",
+        "title": "[Main title here]"
+      }
+    },
+    {
+      "id": "淨土十疑論",
+      "title": "淨土十疑論",
+      "author": "隋天臺智大師說",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/淨土十疑論.epub",
+      "coverUrl": "covers/淨土十疑論.png",
+      "metadata": {
+        "language": "tw",
+        "creator": "隋天臺智大師說",
+        "title": "淨土十疑論",
+        "identifier": "urn:uuid:97f2a689-cbae-496b-8318-82f39e2f11f3",
+        "cover_id": "x2222.png"
+      }
+    },
+    {
+      "id": "淨土玄門",
+      "title": "淨土玄門",
+      "author": "靈峰蕅益大師著",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/淨土玄門.epub",
+      "coverUrl": "covers/淨土玄門.png",
+      "metadata": {
+        "creator": "靈峰蕅益大師著",
+        "language": "tw",
+        "title": "淨土玄門",
+        "identifier": "urn:uuid:8a5307f9-c7d7-4367-9f59-3d90d7438cce",
+        "cover_id": "x2222.png"
+      }
+    },
+    {
+      "id": "淫報啟示錄",
+      "title": "淫報啟示錄",
+      "author": "覺有情居士著",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/淫報啟示錄.epub",
+      "coverUrl": "covers/淫報啟示錄.png",
+      "metadata": {
+        "creator": "覺有情居士著",
+        "language": "tw",
+        "title": "淫報啟示錄",
+        "identifier": "urn:uuid:01695c7c-5376-4927-8f03-04aa71650134",
+        "cover_id": "sss.png"
+      }
+    },
+    {
+      "id": "渾成集",
+      "title": "渾成集",
+      "author": "呂祖",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/渾成集.epub",
+      "coverUrl": "covers/渾成集.png",
+      "metadata": {
+        "language": "tw",
+        "creator": "呂祖",
+        "title": "渾成集",
+        "identifier": "urn:uuid:ae2c1b88-3840-40a6-a3d9-caa59bade23f",
+        "cover_id": "hunchengji.png"
+      }
+    },
+    {
+      "id": "濟公經",
+      "title": "濟公經",
+      "author": "仙佛聖真",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/濟公經.epub",
+      "coverUrl": "covers/濟公經.jpg",
+      "metadata": {
+        "language": "tw",
+        "title": "濟公經",
+        "creator": "仙佛聖真",
+        "identifier": "urn:uuid:31e05461-5f55-4cca-904d-e7e54e40ec42",
+        "cover_id": "x1.jpg"
+      }
+    },
+    {
+      "id": "濟顛道濟禪師語錄",
+      "title": "濟顛道濟禪師語錄",
+      "author": "宋 沈孟柈敘述",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/濟顛道濟禪師語錄.epub",
+      "coverUrl": "covers/濟顛道濟禪師語錄.png",
+      "metadata": {
+        "language": "tw",
+        "creator": "宋 沈孟柈敘述",
+        "title": "濟顛道濟禪師語錄",
+        "identifier": "urn:uuid:fe69316a-82f9-49e3-bdd1-57b797649659",
+        "cover_id": "x38.png"
+      }
+    },
+    {
+      "id": "無極太上皇母喚醒天經",
+      "title": "無極太上皇母喚醒天經",
+      "author": "仙佛聖真",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/無極太上皇母喚醒天經.epub",
+      "coverUrl": "covers/無極太上皇母喚醒天經.png",
+      "metadata": {
+        "language": "tw",
+        "title": "無極太上皇母喚醒天經",
+        "creator": "仙佛聖真",
+        "identifier": "urn:uuid:6fe1e9e4-4000-4709-9357-eab6b9204ec3",
+        "cover_id": "x1881.png"
+      }
+    },
+    {
+      "id": "王重陽內修真訣",
+      "title": "王重陽內修真訣",
+      "author": "王重陽",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/王重陽內修真訣.epub",
+      "coverUrl": "covers/王重陽內修真訣.png",
+      "metadata": {
+        "language": "tw",
+        "creator": "王重陽",
+        "title": "王重陽內修真訣",
+        "identifier": "urn:uuid:b272e657-0c50-40c9-9f12-5d0e40ab37fb",
+        "cover_id": "cover.png"
+      }
+    },
+    {
+      "id": "瑤池聖誌",
+      "title": "瑤池聖誌",
+      "author": "仙佛聖真",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/瑤池聖誌.epub",
+      "coverUrl": "covers/瑤池聖誌.png",
+      "metadata": {
+        "language": "tw",
+        "creator": "仙佛聖真",
+        "title": "瑤池聖誌",
+        "identifier": "urn:uuid:fd0580a3-d911-416f-8a24-eeb4c336ab4b",
+        "cover_id": "x15.png"
+      }
+    },
+    {
+      "id": "白陽修道子的心聲",
+      "title": "白陽修道子的心聲",
+      "author": "仙佛聖真",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/白陽修道子的心聲.epub",
+      "coverUrl": "covers/白陽修道子的心聲.png",
+      "metadata": {
+        "creator": "仙佛聖真",
+        "language": "tw",
+        "title": "白陽修道子的心聲",
+        "identifier": "urn:uuid:13fa5894-2aba-42ad-946b-96f764a6778b",
+        "cover_id": "x111.png"
+      }
+    },
+    {
+      "id": "百回詳注",
+      "title": "百回詳注",
+      "author": "悟元子",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/百回詳注.epub",
+      "coverUrl": "covers/百回詳注.png",
+      "metadata": {
+        "language": "tw",
+        "title": "百回詳注",
+        "creator": "悟元子",
+        "identifier": "urn:uuid:a16c4a7a-badb-451a-898a-3e0e4c4f161a",
+        "cover_id": "x1111.png"
+      }
+    },
+    {
+      "id": "科學時代的因果錄",
+      "title": "科學時代的因果錄",
+      "author": "前賢",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/科學時代的因果錄.epub",
+      "coverUrl": "covers/科學時代的因果錄.png",
+      "metadata": {
+        "language": "tw",
+        "title": "科學時代的因果錄",
+        "creator": "前賢",
+        "identifier": "urn:uuid:5dd8cc81-240b-4336-af09-fbf359dc1f7b",
+        "cover_id": "x2222.png"
+      }
+    },
+    {
+      "id": "素食的利益",
+      "title": "素食的利益",
+      "author": "廣化法師講述",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/素食的利益.epub",
+      "coverUrl": "covers/素食的利益.png",
+      "metadata": {
+        "creator": "廣化法師講述",
+        "language": "tw",
+        "title": "素食的利益",
+        "identifier": "urn:uuid:e6262c2b-f630-4a63-8a3a-bfb01210af0d",
+        "cover_id": "x4444.png"
+      }
+    },
+    {
+      "id": "紫陽關遊記",
+      "title": "紫陽關遊記",
+      "author": "仙佛聖真",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/紫陽關遊記.epub",
+      "coverUrl": "covers/紫陽關遊記.png",
+      "metadata": {
+        "language": "tw",
+        "creator": "仙佛聖真",
+        "title": "紫陽關遊記",
+        "identifier": "urn:uuid:dae0d174-2c40-4cd6-b652-256ceee08536",
+        "cover_id": "x11111111.png"
+      }
+    },
+    {
+      "id": "群言會粹",
+      "title": "群言會粹",
+      "author": "乾隆庚寅暮春降筆於湖城南關雲巢精舍",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/群言會粹.epub",
+      "coverUrl": "covers/群言會粹.png",
+      "metadata": {
+        "language": "tw",
+        "creator": "乾隆庚寅暮春降筆於湖城南關雲巢精舍",
+        "title": "群言會粹",
+        "identifier": "urn:uuid:88a1cf6e-2c78-4916-878a-81664add61f5",
+        "cover_id": "x3333.png"
+      }
+    },
+    {
+      "id": "聖諭真言道德篇",
+      "title": "聖諭真言道德篇",
+      "author": "仙佛聖真",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/聖諭真言道德篇.epub",
+      "coverUrl": "covers/聖諭真言道德篇.png",
+      "metadata": {
+        "language": "tw",
+        "creator": "仙佛聖真",
+        "title": "聖諭真言道德篇",
+        "identifier": "urn:uuid:1a32f7d8-3b66-450b-b179-a38c8b0de5a0",
+        "cover_id": "x4444.png"
+      }
+    },
+    {
+      "id": "肉食之害",
+      "title": "肉食之害",
+      "author": "楊梓茗居士譯",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/肉食之害.epub",
+      "coverUrl": "covers/肉食之害.png",
+      "metadata": {
+        "language": "tw",
+        "creator": "楊梓茗居士譯",
+        "title": "肉食之害",
+        "identifier": "urn:uuid:179d2187-43cd-4f81-95fc-bcf56f6dd358",
+        "cover_id": "x33.png"
+      }
+    },
+    {
+      "id": "般若心經指掌",
+      "title": "般若心經指掌",
+      "author": "清 永覺禪師著",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/般若心經指掌.epub",
+      "coverUrl": "covers/般若心經指掌.png",
+      "metadata": {
+        "creator": "清 永覺禪師著",
+        "language": "tw",
+        "title": "般若心經指掌",
+        "identifier": "urn:uuid:d9b4e6a4-c23d-4992-8622-e3987a426416",
+        "cover_id": "x2828.png"
+      }
+    },
+    {
+      "id": "華嚴三昧章",
+      "title": "華嚴三昧章",
+      "author": "唐魏國西寺沙門法藏述",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/華嚴三昧章.epub",
+      "coverUrl": "covers/華嚴三昧章.png",
+      "metadata": {
+        "language": "tw",
+        "title": "華嚴三昧章",
+        "creator": "唐魏國西寺沙門法藏述",
+        "identifier": "urn:uuid:07c884f3-5a5e-461f-a1cf-97e6a777e85d",
+        "cover_id": "x66.png"
+      }
+    },
+    {
+      "id": "華嚴經淨行品淺釋",
+      "title": "華嚴經淨行品淺釋",
+      "author": "宣化上人講述 974年於台灣",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/華嚴經淨行品淺釋.epub",
+      "coverUrl": "covers/華嚴經淨行品淺釋.png",
+      "metadata": {
+        "language": "tw",
+        "creator": "宣化上人講述 974年於台灣",
+        "title": "華嚴經淨行品淺釋",
+        "identifier": "urn:uuid:9de425a6-66fe-43b0-97d0-e261ecdf7b16",
+        "cover_id": "cover.png"
+      }
+    },
+    {
+      "id": "萬善先資集",
+      "title": "萬善先資集",
+      "author": "清朝‧懷西居士周安士著述",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/萬善先資集.epub",
+      "coverUrl": "covers/萬善先資集.png",
+      "metadata": {
+        "language": "tw",
+        "title": "萬善先資集",
+        "creator": "清朝‧懷西居士周安士著述",
+        "identifier": "urn:uuid:3b92496c-993b-4687-9ace-847d1573ccba",
+        "cover_id": "x1111.png"
+      }
+    },
+    {
+      "id": "萬善同歸集",
+      "title": "萬善同歸集",
+      "author": "杭州慧日永明寺智覺禪師延壽述",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/萬善同歸集.epub",
+      "coverUrl": "covers/萬善同歸集.png",
+      "metadata": {
+        "language": "tw",
+        "creator": "杭州慧日永明寺智覺禪師延壽述",
+        "title": "萬善同歸集",
+        "identifier": "urn:uuid:f4f839f1-7f60-4184-8560-a243eef68d65",
+        "cover_id": "x1111.png"
+      }
+    },
+    {
+      "id": "藥師本願經講記",
+      "title": "藥師本願經講記",
+      "author": "太虛大師講述",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/藥師本願經講記.epub",
+      "coverUrl": "covers/藥師本願經講記.png",
+      "metadata": {
+        "language": "tw",
+        "title": "藥師本願經講記",
+        "creator": "太虛大師講述",
+        "identifier": "urn:uuid:a2c8a7f0-c0b9-46e3-bcb1-190cdc9961aa",
+        "cover_id": "cover.png"
+      }
+    },
+    {
+      "id": "藥師琉璃光如來本願功德經淺釋",
+      "title": "藥師琉璃光如來本願功德經淺釋",
+      "author": "宣化上人講述",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/藥師琉璃光如來本願功德經淺釋.epub",
+      "coverUrl": "covers/藥師琉璃光如來本願功德經淺釋.png",
+      "metadata": {
+        "creator": "宣化上人講述",
+        "language": "tw",
+        "title": "藥師琉璃光如來本願功德經淺釋",
+        "identifier": "urn:uuid:4db45310-873e-4e0e-9601-7ad829bebc20",
+        "cover_id": "cover.png"
+      }
+    },
+    {
+      "id": "蟠桃宴記",
+      "title": "蟠桃宴記",
+      "author": "仙佛聖真",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/蟠桃宴記.epub",
+      "coverUrl": "covers/蟠桃宴記.png",
+      "metadata": {
+        "language": "tw",
+        "title": "蟠桃宴記",
+        "creator": "仙佛聖真",
+        "identifier": "urn:uuid:3867c04d-7a01-42f6-94d4-276513cc0064",
+        "cover_id": "x1111.png"
+      }
+    },
+    {
+      "id": "觀音法門",
+      "title": "觀音法門",
+      "author": "文珠法師講述",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/觀音法門.epub",
+      "coverUrl": "covers/觀音法門.png",
+      "metadata": {
+        "creator": "文珠法師講述",
+        "language": "tw",
+        "title": "觀音法門",
+        "identifier": "urn:uuid:0830df80-6ba7-4b07-87b7-473d8c9d2bda",
+        "cover_id": "x123456.png"
+      }
+    },
+    {
+      "id": "談因果",
+      "title": "談因果",
+      "author": "淨空法師講述",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/談因果.epub",
+      "coverUrl": "covers/談因果.png",
+      "metadata": {
+        "language": "tw",
+        "title": "談因果",
+        "creator": "淨空法師講述",
+        "identifier": "urn:uuid:5c430cd4-1579-42f9-af3f-75a0f8111835",
+        "cover_id": "x18.png"
+      }
+    },
+    {
+      "id": "赴龍華大會",
+      "title": "赴龍華大會",
+      "author": "仙佛聖真",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/赴龍華大會.epub",
+      "coverUrl": "covers/赴龍華大會.png",
+      "metadata": {
+        "language": "tw",
+        "creator": "仙佛聖真",
+        "title": "赴龍華大會",
+        "identifier": "urn:uuid:ad82d2fb-0a5a-4769-940f-f34f608f4daa",
+        "cover_id": "x1111.png"
+      }
+    },
+    {
+      "id": "道學基礎淺釋",
+      "title": "道學基礎淺釋",
+      "author": "前賢",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/道學基礎淺釋.epub",
+      "coverUrl": "covers/道學基礎淺釋.png",
+      "metadata": {
+        "language": "tw",
+        "creator": "前賢",
+        "title": "道學基礎淺釋",
+        "identifier": "urn:uuid:3cdfc4bf-b0b1-410f-895f-b25c35f973bb",
+        "cover_id": "x55.png"
+      }
+    },
+    {
+      "id": "重寫戒淫證輯",
+      "title": "重寫戒淫證輯",
+      "author": "夢醒居士編著",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/重寫戒淫證輯.epub",
+      "coverUrl": "covers/重寫戒淫證輯.png",
+      "metadata": {
+        "language": "tw",
+        "creator": "夢醒居士編著",
+        "title": "重寫戒淫證輯",
+        "identifier": "urn:uuid:0cba4593-fdbb-456a-930b-bfe5e8801b5f",
+        "cover_id": "x1111.png"
+      }
+    },
+    {
+      "id": "金剛經百家集註大成",
+      "title": "金剛經百家集註大成",
+      "author": "前賢",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/金剛經百家集註大成.epub",
+      "coverUrl": "covers/金剛經百家集註大成.png",
+      "metadata": {
+        "language": "tw",
+        "creator": "前賢",
+        "title": "金剛經百家集註大成",
+        "identifier": "urn:uuid:f9b2b85f-caef-4b83-b843-45837ca87ac0",
+        "cover_id": "cover.png"
+      }
+    },
+    {
+      "id": "金玉寶經",
+      "title": "金玉寶經",
+      "author": "仙佛聖真",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/金玉寶經.epub",
+      "coverUrl": "covers/金玉寶經.png",
+      "metadata": {
+        "language": "tw",
+        "creator": "仙佛聖真",
+        "title": "金玉寶經",
+        "identifier": "urn:uuid:43d0588e-9cb7-4dad-bafb-ec9878975050",
+        "cover_id": "x22.png"
+      }
+    },
+    {
+      "id": "閨範",
+      "title": "閨範",
+      "author": "明-呂叔簡",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/閨範.epub",
+      "coverUrl": "covers/閨範.png",
+      "metadata": {
+        "language": "tw",
+        "creator": "明-呂叔簡",
+        "title": "閨範",
+        "identifier": "urn:uuid:9a561151-24c5-48b5-b70c-6bf9d9db08e7",
+        "cover_id": "x53.png"
+      }
+    },
+    {
+      "id": "關聖帝君伏魔真經",
+      "title": "關聖帝君伏魔真經",
+      "author": "關聖帝君",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/關聖帝君伏魔真經.epub",
+      "coverUrl": "covers/關聖帝君伏魔真經.png",
+      "metadata": {
+        "language": "tw",
+        "creator": "關聖帝君",
+        "title": "關聖帝君伏魔真經",
+        "identifier": "urn:uuid:e3537471-719a-4d16-b5f7-265807158999",
+        "cover_id": "x3333.png"
+      }
+    },
+    {
+      "id": "阮文朝顯化",
+      "title": "阮文朝顯化",
+      "author": "阮文朝",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/阮文朝顯化.epub",
+      "coverUrl": "covers/阮文朝顯化.png",
+      "metadata": {
+        "creator": "阮文朝",
+        "language": "tw",
+        "title": "阮文朝顯化",
+        "identifier": "urn:uuid:70b48cd6-e331-4884-b49a-9f4749f83bee",
+        "cover_id": "jianzhengxianhua.png"
+      }
+    },
+    {
+      "id": "雲巢語錄",
+      "title": "雲巢語錄",
+      "author": "雲巢精舍語錄",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/雲巢語錄.epub",
+      "coverUrl": "covers/雲巢語錄.png",
+      "metadata": {
+        "creator": "雲巢精舍語錄",
+        "language": "tw",
+        "title": "雲巢語錄",
+        "identifier": "urn:uuid:17228b86-7de6-4a2b-bdeb-0a0aaa757fd8",
+        "cover_id": "x333.png"
+      }
+    },
+    {
+      "id": "靈山求道記",
+      "title": "靈山求道記",
+      "author": "仙佛聖真",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/靈山求道記.epub",
+      "coverUrl": "covers/靈山求道記.png",
+      "metadata": {
+        "language": "tw",
+        "creator": "仙佛聖真",
+        "title": "靈山求道記",
+        "identifier": "urn:uuid:3eadbbb1-eafc-4cd9-a795-56f75d654d09",
+        "cover_id": "x8888.png"
+      }
+    },
+    {
+      "id": "魚籃寶卷",
+      "title": "魚籃寶卷",
+      "author": "仙佛聖真",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/魚籃寶卷.epub",
+      "coverUrl": "covers/魚籃寶卷.png",
+      "metadata": {
+        "language": "tw",
+        "title": "魚籃寶卷",
+        "creator": "仙佛聖真",
+        "identifier": "urn:uuid:7a78c4b7-ef26-4db8-83d7-9f2d9114374b",
+        "cover_id": "x38.png"
+      }
+    },
+    {
+      "id": "鶴林福音",
+      "title": "鶴林福音",
+      "author": "仙佛聖真",
+      "language": "tw",
+      "description": "",
+      "publisher": "",
+      "date": "",
+      "epubUrl": "epub3/鶴林福音.epub",
+      "coverUrl": "covers/鶴林福音.png",
+      "metadata": {
+        "language": "tw",
+        "title": "鶴林福音",
+        "creator": "仙佛聖真",
+        "identifier": "urn:uuid:6e83d84a-6aa4-42f5-9431-e2cf512a31ba",
+        "cover_id": "x222.png"
+      }
+    }
+  ]
+}

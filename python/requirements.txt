@@ -1,0 +1,18 @@
+# EPUB 處理器所需的 Python 套件
+# 
+# 安裝方式:
+# pip install -r requirements.txt
+
+# 核心依賴 (Python 標準庫已包含)
+# - zipfile (標準庫)
+# - xml.etree.ElementTree (標準庫) 
+# - json (標準庫)
+# - pathlib (標準庫)
+# - urllib.parse (標準庫)
+
+# 可選的增強依賴 (如果需要更強大的 XML 處理)
+# lxml>=4.6.0  # 更強大的 XML 解析 (可選)
+
+# 開發和測試依賴 (可選)
+# pytest>=6.0.0  # 用於單元測試
+# black>=21.0.0   # 代碼格式化
