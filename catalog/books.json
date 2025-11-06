@@ -79,23 +79,6 @@
       }
     },
     {
-      "id": "佛說大乘無量壽莊嚴清淨平等覺經",
-      "title": "佛說大乘無量壽莊嚴清淨平等覺經",
-      "author": "後漢 支婁迦讖譯",
-      "language": "tw",
-      "description": "",
-      "publisher": "",
-      "date": "",
-      "epubUrl": "epub3/佛說大乘無量壽莊嚴清淨平等覺經.epub",
-      "coverUrl": "",
-      "metadata": {
-        "creator": "後漢 支婁迦讖譯",
-        "language": "tw",
-        "title": "佛說大乘無量壽莊嚴清淨平等覺經",
-        "identifier": "urn:uuid:ca6f6a69-c8c6-4624-9942-87ce0fb98bf1"
-      }
-    },
-    {
       "id": "佛說罪福報應經白話",
       "title": "佛說罪福報應經白話",
       "author": "劉宋于闐國三藏求那跋陀羅譯\n\n凡夫白話譯",
@@ -363,38 +346,6 @@
         "title": "善魂求道記",
         "identifier": "urn:uuid:7f4da0ba-cbe8-49b5-aed1-c76fd6149f7f",
         "cover_id": "shanhunqiudaoji.png"
-      }
-    },
-    {
-      "id": "因果報應錄",
-      "title": "[這裡填入主要標題]",
-      "author": "未知作者",
-      "language": "en",
-      "description": "",
-      "publisher": "",
-      "date": "",
-      "epubUrl": "epub3/因果報應錄.epub",
-      "coverUrl": "",
-      "metadata": {
-        "identifier": "urn:uuid:f0a9c605-1f14-4db7-a49a-91a0bb4c38f3",
-        "language": "en",
-        "title": "[這裡填入主要標題]"
-      }
-    },
-    {
-      "id": "國易堂易經",
-      "title": "[Main title here]",
-      "author": "未知作者",
-      "language": "en",
-      "description": "",
-      "publisher": "",
-      "date": "",
-      "epubUrl": "epub3/國易堂易經.epub",
-      "coverUrl": "",
-      "metadata": {
-        "language": "en",
-        "title": "[Main title here]",
-        "identifier": "urn:uuid:9035bb51-6cdb-4f83-9cfe-482146d24162"
       }
     },
     {
@@ -776,22 +727,6 @@
       }
     },
     {
-      "id": "彌勒收圓1",
-      "title": "[Main title here]",
-      "author": "未知作者",
-      "language": "en",
-      "description": "",
-      "publisher": "",
-      "date": "",
-      "epubUrl": "epub3/彌勒收圓1.epub",
-      "coverUrl": "",
-      "metadata": {
-        "identifier": "urn:uuid:fdfc227d-adc2-4346-9961-bf32e4b8c67a",
-        "language": "en",
-        "title": "[Main title here]"
-      }
-    },
-    {
       "id": "拘拏生魂警世寶鑑",
       "title": "拘拏生魂警世寶鑑",
       "author": "仙佛聖真",
@@ -990,22 +925,6 @@
       }
     },
     {
-      "id": "止",
-      "title": "[這裡填入主要標題]",
-      "author": "未知作者",
-      "language": "en",
-      "description": "",
-      "publisher": "",
-      "date": "",
-      "epubUrl": "epub3/止.epub",
-      "coverUrl": "",
-      "metadata": {
-        "identifier": "urn:uuid:16866e04-c5f0-469a-91c8-fcc445e1234e",
-        "language": "en",
-        "title": "[這裡填入主要標題]"
-      }
-    },
-    {
       "id": "止學",
       "title": "止學",
       "author": "文中子",
@@ -1075,22 +994,6 @@
         "title": "歸真罡",
         "identifier": "urn:uuid:9a374efd-13b1-4e53-934f-d818511dbe09",
         "cover_id": "x16.png"
-      }
-    },
-    {
-      "id": "涵三雜詠",
-      "title": "[Main title here]",
-      "author": "未知作者",
-      "language": "en",
-      "description": "",
-      "publisher": "",
-      "date": "",
-      "epubUrl": "epub3/涵三雜詠.epub",
-      "coverUrl": "",
-      "metadata": {
-        "identifier": "urn:uuid:c6e16c04-c256-4f3d-8b6c-87675033898b",
-        "language": "en",
-        "title": "[Main title here]"
       }
     },
     {
