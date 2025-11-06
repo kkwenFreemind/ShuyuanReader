@@ -1,127 +1,265 @@
 # 書苑閱讀器 (ShuyuanReader)
 
-一個自動化處理 EPUB 電子書的工具，專門用於管理中文古籍電子書收藏。
+一款專為繁體中文古籍設計的 Flutter EPUB 閱讀器 APP，採用創新的「GitHub 內容託管 + APP 本地緩存」架構。
 
-## 功能特點
+## 💡 核心特點
 
-- 🔄 **自動批次處理**：一次處理大量 EPUB 檔案
-- 📖 **元數據提取**：自動提取書名、作者、語言、描述等資訊
-- 🖼️ **封面提取**：自動從 EPUB 內部提取封面圖片
-- 📚 **統一目錄**：生成包含所有書籍資訊的 JSON 目錄檔案
-- 🔍 **問題診斷**：檢查缺少封面或有問題的 EPUB 檔案
+- � **100+ 繁體中文古籍**：佛經、道教經典、儒家經典等
+- ☁️ **GitHub 託管內容**：所有電子書和封面存放在 GitHub，零服務器成本
+- � **按需下載**：只下載用戶需要的書籍，節省空間和流量
+- � **離線閱讀**：已下載的書籍可完全離線使用
+- 🎨 **現代 UI**：Material Design + 流暢動畫體驗
 
-## 項目結構
+## 🏗️ 系統架構
+
+```
+┌────────────────────────────────────────────┐
+│       GitHub Repository (內容源)            │
+│  https://github.com/kkwenFreemind/        │
+│  ShuyuanReader                             │
+│                                            │
+│  📁 catalog/books.json  ← 書籍元數據(50KB)  │
+│  📁 covers/*.png        ← 100+ 封面圖片     │
+│  📁 epub3/*.epub        ← 100+ 電子書       │
+└────────────────────────────────────────────┘
+              ↓ HTTPS 下載
+              ↓ 按需獲取
+┌────────────────────────────────────────────┐
+│      Flutter APP (智能緩存層)               │
+│                                            │
+│  🗄️  Hive 數據庫    ← 書籍元數據 + 狀態     │
+│  📦  files/books/  ← 用戶下載的 EPUB       │
+│  🖼️  cache/covers/ ← 自動緩存的封面         │
+└────────────────────────────────────────────┘
+```
+
+## 📁 項目結構
 
 ```
 ShuyuanReader/
-├── catalog/              # 書籍目錄
-│   └── books.json       # 自動生成的書籍目錄檔案
-├── covers/              # 封面圖片 (自動提取)
-├── epub3/               # EPUB 電子書檔案
-├── python/              # Python 處理工具
-│   ├── epub_processor.py      # 主要處理邏輯
-│   ├── run_processor.py       # 快速執行腳本
-│   ├── check_missing_covers.py # 檢查缺少封面的書籍
-│   ├── inspect_problematic.py # 診斷有問題的檔案
-│   ├── requirements.txt       # 依賴說明
-│   └── README.md             # 工具使用說明
-└── app/                 # 應用程式目錄 (未來擴展)
+├── app/                 # Flutter APP 主程式目錄
+│   ├── lib/            # 應用程式源代碼
+│   ├── android/        # Android 平台配置
+│   ├── ios/            # iOS 平台配置
+│   └── pubspec.yaml    # Flutter 依賴配置
+│
+├── catalog/            # 書籍清單（GitHub 託管）
+│   └── books.json     # 所有書籍的元數據目錄
+│
+├── covers/             # 封面圖檔（GitHub 託管）
+│   ├── 一夢漫言.png
+│   ├── 三世因果目蓮救母經.png
+│   └── ... (100+ 封面圖片)
+│
+├── epub3/              # 電子書文件（GitHub 託管）
+│   ├── 一夢漫言.epub
+│   ├── 三世因果目蓮救母經.epub
+│   └── ... (100+ EPUB 文件)
+│
+├── doc/                # 完整設計文檔
+│   ├── README.md                    # 文檔導覽
+│   ├── app_design_spec.md          # 技術設計規格
+│   ├── storage_architecture.md     # 儲存架構設計
+│   ├── implementation_checklist.md # 開發檢查清單
+│   └── ...
+│
+└── python/             # Python 工具（內容管理）
+    ├── epub_processor.py      # EPUB 處理工具
+    ├── run_processor.py       # 批次處理腳本
+    └── ...
 ```
 
-## 使用方式
+## 🚀 快速開始
 
-### 1. 處理所有 EPUB 檔案
+### 使用者（閱讀書籍）
+
+1. **下載並安裝 APP**（即將推出）
+2. **瀏覽書籍列表**：自動從 GitHub 載入 100+ 書籍
+3. **下載想閱讀的書籍**：按需下載，節省空間
+4. **開始閱讀**：支持離線閱讀
+
+### 開發者（開發 APP）
+
+詳細開發指南請參閱：[doc/README.md](./doc/README.md)
+
+#### 環境需求
+
+- Flutter SDK 3.13+
+- Android Studio / VS Code
+- Android SDK (API 21+)
+- Git
+
+#### 開發流程
 
 ```bash
+# 1. 克隆倉庫
+git clone https://github.com/kkwenFreemind/ShuyuanReader.git
+cd ShuyuanReader
+
+# 2. 進入 APP 目錄
+cd app
+
+# 3. 安裝依賴
+flutter pub get
+
+# 4. 運行 APP
+flutter run
+```
+
+### 內容管理者（管理電子書）
+
+#### 添加新書籍
+
+```bash
+# 1. 處理 EPUB 文件（提取元數據和封面）
 cd python
 python run_processor.py
-```
 
-這會自動：
-- 掃描 `epub3/` 目錄下的所有 `.epub` 檔案
-- 提取書籍元數據和封面圖片
-- 將封面保存到 `covers/` 目錄
-- 生成或更新 `catalog/books.json` 目錄檔案
-
-### 2. 檢查缺少封面的書籍
-
-```bash
-cd python
+# 2. 檢查結果
 python check_missing_covers.py
+
+# 3. 提交到 GitHub
+git add catalog/books.json covers/*.png epub3/*.epub
+git commit -m "feat: 添加新書籍"
+git push origin main
 ```
 
-### 3. 診斷有問題的 EPUB 檔案
+#### Python 工具功能
 
-```bash
-cd python
-python inspect_problematic.py
+- **epub_processor.py**：批次處理 EPUB，提取元數據和封面
+- **check_missing_covers.py**：檢查缺少封面的書籍
+- **inspect_problematic.py**：診斷有問題的 EPUB 文件
+
+## 🛠️ 技術棧
+
+### Flutter APP
+
+```yaml
+dependencies:
+  # 狀態管理
+  get: ^4.6.5
+  
+  # 網絡請求
+  dio: ^5.3.3
+  connectivity_plus: ^5.0.1
+  
+  # 本地存儲
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  path_provider: ^2.1.1
+  
+  # EPUB 閱讀
+  epub_view: ^3.1.0
+  
+  # 圖片緩存
+  cached_network_image: ^3.3.0
+  
+  # UI 組件
+  flutter_screenutil: ^5.9.0
 ```
 
-## 技術特點
+### Python 工具
 
-### EPUB 標準支援
-- 支援 EPUB 2.0 和 EPUB 3.0 格式
-- 正確處理 XML 命名空間
-- 多種封面查找策略：
-  - `<meta name="cover" content="..."/>` 標籤
-  - `properties="cover-image"` 屬性
-  - 常見檔名模式識別
+- Python 3.6+
+- 標準庫：`zipfile`、`xml.etree.ElementTree`、`json`、`pathlib`
 
-### 錯誤處理
-- 優雅處理損壞的 EPUB 檔案
-- 詳細的處理進度和錯誤資訊
-- 即使部分檔案失敗也會繼續處理
+### 內容託管
 
-### 檔案格式支援
-- 圖片格式：JPG, PNG, GIF, WebP
-- 自動偵測圖片格式
-- 保持原有圖片品質
+- **平台**：GitHub Repository
+- **CDN**：GitHub Raw Content
+- **版本控制**：Git
+- **成本**：免費 ✅
 
-## 處理結果示例
+## 📊 項目統計
+
+| 項目 | 數據 |
+|------|------|
+| **書籍數量** | 100+ 本 |
+| **書籍格式** | EPUB 3.0 |
+| **封面格式** | PNG (400x600) |
+| **總文件大小** | ~200-500 MB |
+| **books.json** | ~50 KB |
+| **單本 EPUB** | 1-5 MB |
+| **單張封面** | 50-200 KB |
+| **APP 初始大小** | ~20 MB（不含書籍）|
+
+## 📚 書籍目錄結構
 
 ```json
 {
   "metadata": {
     "title": "書苑閱讀器書目",
     "description": "自動生成的書籍目錄",
-    "generated_at": "2025-11-05",
+    "generated_at": "2025-11-06",
     "total_books": 100
   },
   "books": [
     {
-      "id": "論語",
-      "title": "論語",
-      "author": "孔子",
+      "id": "金剛經",
+      "title": "金剛經",
+      "author": "鳩摩羅什譯",
       "language": "zh-Hant",
-      "description": "儒家經典著作",
-      "epubUrl": "epub3/論語.epub",
-      "coverUrl": "covers/論語.jpg"
+      "description": "佛教般若類經典",
+      "epubUrl": "epub3/金剛經.epub",
+      "coverUrl": "covers/金剛經.png"
     }
   ]
 }
 ```
 
-## 依賴需求
+## 📈 開發路線圖
 
-- Python 3.6+
-- 標準庫依賴：
-  - `zipfile` - EPUB 檔案解壓
-  - `xml.etree.ElementTree` - XML 解析
-  - `json` - JSON 處理
-  - `pathlib` - 路徑處理
+### Phase 1: MVP (進行中)
 
-## 統計資訊
+- ✅ 基礎架構設計
+- ✅ 存儲架構設計
+- ✅ Flutter 項目創建
+- ⬜ 網絡層實現
+- ⬜ 書籍列表 UI
+- ⬜ 下載管理器
+- ⬜ EPUB 閱讀器集成
 
-目前處理結果：
-- 總 EPUB 檔案：101 個
-- 成功處理：100 個
-- 成功提取封面：94 個
-- 封面提取成功率：94%
+### Phase 2: 功能增強
 
-## 貢獻
+- ⬜ 搜索和過濾
+- ⬜ 書籤和筆記
+- ⬜ 閱讀設置（字體、背景）
+- ⬜ 性能優化
 
-歡迎提交 Issues 和 Pull Requests 來改進這個工具。
+### Phase 3: 發布準備
 
-## 授權
+- ⬜ 多語言支持
+- ⬜ 隱私政策
+- ⬜ Google Play 上架
+
+## 🤝 貢獻指南
+
+歡迎貢獻！請參閱 [doc/README.md](./doc/README.md) 了解完整的開發指南。
+
+### 如何添加新書籍
+
+1. 將 EPUB 文件放入 `epub3/` 目錄
+2. 運行 Python 工具處理：`python python/run_processor.py`
+3. 檢查生成的封面和 `catalog/books.json`
+4. 提交到 Git：`git add . && git commit -m "feat: 添加新書籍" && git push`
+5. APP 會自動檢測更新 ✨
+
+## 📄 文檔
+
+完整的設計文檔位於 [doc/](./doc/) 目錄：
+
+- [README.md](./doc/README.md) - 文檔導覽（必讀）
+- [storage_architecture.md](./doc/storage_architecture.md) - 存儲架構設計
+- [app_design_spec.md](./doc/app_design_spec.md) - APP 技術設計
+- [implementation_checklist.md](./doc/implementation_checklist.md) - 開發檢查清單
+
+## 📧 聯繫方式
+
+- **GitHub**: [kkwenFreemind/ShuyuanReader](https://github.com/kkwenFreemind/ShuyuanReader)
+- **Issues**: [提交問題](https://github.com/kkwenFreemind/ShuyuanReader/issues)
+
+## 📄 授權
 
 MIT License
+
+書籍內容版權歸原作者所有，僅供學習和研究使用。
