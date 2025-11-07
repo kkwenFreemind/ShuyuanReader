@@ -35,20 +35,8 @@ class BookDetailPage extends GetView<BookDetailController> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildCoverImage(),
-          // TODO: 添加書籍信息組件
+          _buildBookInfo(),
           // TODO: 添加操作按鈕組件
-          
-          // 臨時內容：顯示書籍標題
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Text(
-              controller.book.value.title,
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
         ],
       ),
     );
@@ -101,3 +89,112 @@ class BookDetailPage extends GetView<BookDetailController> {
       ),
     );
   }
+
+  /// 構建書籍信息區域
+  /// 
+  /// 顯示書名、作者、語言、文件大小和描述信息
+  Widget _buildBookInfo() {
+    final book = controller.book.value;
+    
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 書名
+          Text(
+            book.title,
+            style: const TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              height: 1.3,
+            ),
+          ),
+          const SizedBox(height: 12),
+          
+          // 作者
+          Row(
+            children: [
+              Icon(
+                Icons.person_outline,
+                size: 20,
+                color: Colors.grey[600],
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  book.author,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.grey[700],
+                    height: 1.4,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          
+          // 語言
+          Row(
+            children: [
+              Icon(
+                Icons.language,
+                size: 20,
+                color: Colors.grey[600],
+              ),
+              const SizedBox(width: 8),
+              Text(
+                book.language,
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey[600],
+                ),
+              ),
+              const SizedBox(width: 24),
+              
+              // 文件大小
+              Icon(
+                Icons.insert_drive_file_outlined,
+                size: 20,
+                color: Colors.grey[600],
+              ),
+              const SizedBox(width: 8),
+              Text(
+                book.fileSizeFormatted,
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey[600],
+                ),
+              ),
+            ],
+          ),
+          
+          // 描述（如果有）
+          if (book.description.isNotEmpty) ...[
+            const SizedBox(height: 20),
+            const Divider(),
+            const SizedBox(height: 12),
+            Text(
+              '簡介',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: Colors.grey[800],
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              book.description,
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.grey[700],
+                height: 1.6,
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
