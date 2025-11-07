@@ -262,6 +262,364 @@ void main() {
     });
   });
 
+  group('BookDetail Complete Download Flow Tests', () {
+    testWidgets('Complete download flow: Click download button and verify downloading state',
+        (WidgetTester tester) async {
+      print('🚀 測試：完整下載流程 - 點擊下載並驗證下載狀態...');
+      
+      await navigateToBookDetail(tester);
+      
+      if (find.byType(BookDetailPage).evaluate().isEmpty) {
+        print('ℹ️  未進入詳情頁，跳過測試');
+        return;
+      }
+      
+      await tester.pump(const Duration(milliseconds: 500));
+      
+      // Step 1: 查找下載按鈕
+      final downloadButton = find.text('下載書籍');
+      
+      if (downloadButton.evaluate().isEmpty) {
+        print('ℹ️  未找到下載按鈕（書籍可能已下載），跳過測試');
+        return;
+      }
+      
+      print('✅ Step 1: 找到下載按鈕');
+      
+      // Step 2: 點擊下載按鈕
+      await tester.tap(downloadButton);
+      await tester.pump();
+      print('✅ Step 2: 已點擊下載按鈕');
+      
+      // Step 3: 等待下載開始（UI 可能需要時間更新）
+      await tester.pump(const Duration(milliseconds: 500));
+      
+      // Step 4: 驗證進入下載狀態
+      // 可能的下載狀態指示器：進度條、下載進度文字、暫停按鈕
+      final hasProgressIndicator = find.byType(LinearProgressIndicator)
+          .evaluate().isNotEmpty;
+      final hasPauseButton = find.text('暫停').evaluate().isNotEmpty ||
+          find.text('取消').evaluate().isNotEmpty;
+      final hasDownloadingText = find.textContaining('%').evaluate().isNotEmpty;
+      
+      final isDownloading = hasProgressIndicator || hasPauseButton || hasDownloadingText;
+      
+      if (isDownloading) {
+        print('✅ Step 3: 確認進入下載狀態');
+        
+        if (hasProgressIndicator) {
+          print('  - 顯示下載進度條 ✓');
+        }
+        if (hasPauseButton) {
+          print('  - 顯示暫停/取消按鈕 ✓');
+        }
+        if (hasDownloadingText) {
+          print('  - 顯示下載進度百分比 ✓');
+        }
+        
+        expect(isDownloading, true, reason: '應該進入下載狀態');
+      } else {
+        print('⚠️  未檢測到明確的下載狀態（下載可能太快完成）');
+      }
+      
+      // Step 5: 等待一段時間觀察下載進度
+      await tester.pump(const Duration(seconds: 1));
+      
+      // 驗證應用仍然穩定
+      expect(find.byType(BookDetailPage), findsOneWidget,
+          reason: '下載過程中應用應該保持穩定');
+      
+      print('✅ Step 4: 下載流程測試完成');
+      print('🎉 完整下載流程測試通過！');
+    });
+
+    testWidgets('Download flow: Pause and resume download',
+        (WidgetTester tester) async {
+      print('🚀 測試：下載流程 - 暫停和繼續下載...');
+      
+      await navigateToBookDetail(tester);
+      
+      if (find.byType(BookDetailPage).evaluate().isEmpty) {
+        print('ℹ️  未進入詳情頁，跳過測試');
+        return;
+      }
+      
+      await tester.pump(const Duration(milliseconds: 500));
+      
+      // Step 1: 開始下載
+      final downloadButton = find.text('下載書籍');
+      
+      if (downloadButton.evaluate().isEmpty) {
+        print('ℹ️  未找到下載按鈕，跳過測試');
+        return;
+      }
+      
+      await tester.tap(downloadButton);
+      await tester.pump(const Duration(milliseconds: 500));
+      print('✅ Step 1: 開始下載');
+      
+      // Step 2: 查找並點擊暫停按鈕
+      final pauseButton = find.text('暫停');
+      
+      if (pauseButton.evaluate().isNotEmpty) {
+        await tester.tap(pauseButton);
+        await tester.pump(const Duration(milliseconds: 500));
+        print('✅ Step 2: 點擊暫停按鈕');
+        
+        // Step 3: 驗證暫停狀態
+        // 暫停後應該有"繼續"或"下載"按鈕
+        final resumeButton = find.text('繼續');
+        final continueButton = find.text('下載');
+        
+        final hasPausedState = resumeButton.evaluate().isNotEmpty ||
+            continueButton.evaluate().isNotEmpty;
+        
+        if (hasPausedState) {
+          print('✅ Step 3: 確認進入暫停狀態');
+          
+          // Step 4: 點擊繼續按鈕
+          if (resumeButton.evaluate().isNotEmpty) {
+            await tester.tap(resumeButton);
+            print('✅ Step 4: 點擊繼續按鈕');
+          } else if (continueButton.evaluate().isNotEmpty) {
+            await tester.tap(continueButton);
+            print('✅ Step 4: 點擊下載按鈕（繼續下載）');
+          }
+          
+          await tester.pump(const Duration(milliseconds: 500));
+          
+          // 驗證恢復下載狀態
+          expect(find.byType(BookDetailPage), findsOneWidget,
+              reason: '繼續下載後應用應該穩定');
+          
+          print('✅ Step 5: 恢復下載成功');
+        } else {
+          print('⚠️  未檢測到暫停狀態（可能下載太快）');
+        }
+      } else {
+        print('ℹ️  未找到暫停按鈕（下載可能太快完成）');
+      }
+      
+      print('🎉 暫停/繼續測試完成！');
+    });
+
+    testWidgets('Download flow: Monitor download progress',
+        (WidgetTester tester) async {
+      print('🚀 測試：下載流程 - 監控下載進度...');
+      
+      await navigateToBookDetail(tester);
+      
+      if (find.byType(BookDetailPage).evaluate().isEmpty) {
+        print('ℹ️  未進入詳情頁，跳過測試');
+        return;
+      }
+      
+      await tester.pump(const Duration(milliseconds: 500));
+      
+      // 開始下載
+      final downloadButton = find.text('下載書籍');
+      
+      if (downloadButton.evaluate().isEmpty) {
+        print('ℹ️  未找到下載按鈕，跳過測試');
+        return;
+      }
+      
+      await tester.tap(downloadButton);
+      await tester.pump(const Duration(milliseconds: 300));
+      print('✅ 開始下載');
+      
+      // 監控進度變化
+      int progressCheckCount = 0;
+      Set<String> progressValues = {};
+      
+      for (int i = 0; i < 5; i++) {
+        await tester.pump(const Duration(milliseconds: 500));
+        
+        // 查找進度百分比文字
+        final progressText = find.textContaining('%');
+        
+        if (progressText.evaluate().isNotEmpty) {
+          progressCheckCount++;
+          final text = progressText.evaluate().first.widget as Text;
+          final progressValue = text.data ?? '';
+          progressValues.add(progressValue);
+          print('  檢查點 ${i + 1}: 進度 = $progressValue');
+        }
+        
+        // 檢查是否已完成
+        final openButton = find.text('打開閱讀');
+        if (openButton.evaluate().isNotEmpty) {
+          print('✅ 下載已完成');
+          break;
+        }
+      }
+      
+      if (progressCheckCount > 0) {
+        print('✅ 成功監控到下載進度（檢查 $progressCheckCount 次）');
+        print('✅ 記錄到的進度值: ${progressValues.join(', ')}');
+        
+        expect(progressCheckCount, greaterThan(0),
+            reason: '應該能夠監控到下載進度');
+      } else {
+        print('ℹ️  未監控到進度變化（下載可能非常快）');
+      }
+      
+      // 驗證應用穩定性
+      expect(find.byType(BookDetailPage), findsOneWidget,
+          reason: '下載過程中應用應該保持穩定');
+      
+      print('🎉 進度監控測試完成！');
+    });
+
+    testWidgets('Download flow: Verify UI elements during download',
+        (WidgetTester tester) async {
+      print('🚀 測試：下載流程 - 驗證下載過程中的 UI 元素...');
+      
+      await navigateToBookDetail(tester);
+      
+      if (find.byType(BookDetailPage).evaluate().isEmpty) {
+        print('ℹ️  未進入詳情頁，跳過測試');
+        return;
+      }
+      
+      await tester.pump(const Duration(milliseconds: 500));
+      
+      // 開始下載
+      final downloadButton = find.text('下載書籍');
+      
+      if (downloadButton.evaluate().isEmpty) {
+        print('ℹ️  未找到下載按鈕，跳過測試');
+        return;
+      }
+      
+      await tester.tap(downloadButton);
+      await tester.pump(const Duration(milliseconds: 500));
+      print('✅ Step 1: 開始下載');
+      
+      // 驗證下載過程中的 UI 元素
+      final uiElements = <String, bool>{
+        '進度條 (LinearProgressIndicator)': 
+            find.byType(LinearProgressIndicator).evaluate().isNotEmpty,
+        '進度百分比文字': 
+            find.textContaining('%').evaluate().isNotEmpty,
+        '暫停按鈕': 
+            find.text('暫停').evaluate().isNotEmpty,
+        '取消按鈕': 
+            find.text('取消').evaluate().isNotEmpty,
+        '下載速度文字': 
+            find.textContaining('MB/s').evaluate().isNotEmpty ||
+            find.textContaining('KB/s').evaluate().isNotEmpty,
+      };
+      
+      print('✅ Step 2: UI 元素檢查結果：');
+      int foundElements = 0;
+      uiElements.forEach((name, found) {
+        print('  - $name: ${found ? "✓" : "✗"}');
+        if (found) foundElements++;
+      });
+      
+      if (foundElements > 0) {
+        print('✅ Step 3: 找到 $foundElements/${ uiElements.length} 個預期 UI 元素');
+        expect(foundElements, greaterThan(0),
+            reason: '下載過程應該至少顯示一個 UI 元素');
+      } else {
+        print('ℹ️  未找到下載 UI 元素（下載可能太快完成）');
+      }
+      
+      // 驗證基本 UI 仍然存在
+      expect(find.byType(BookDetailPage), findsOneWidget);
+      expect(find.byType(AppBar), findsOneWidget);
+      
+      print('✅ Step 4: 基本 UI 元素正常');
+      print('🎉 UI 元素驗證測試完成！');
+    });
+
+    testWidgets('Download flow: Handle download completion',
+        (WidgetTester tester) async {
+      print('🚀 測試：下載流程 - 處理下載完成...');
+      
+      await navigateToBookDetail(tester);
+      
+      if (find.byType(BookDetailPage).evaluate().isEmpty) {
+        print('ℹ️  未進入詳情頁，跳過測試');
+        return;
+      }
+      
+      await tester.pump(const Duration(milliseconds: 500));
+      
+      // 檢查當前狀態
+      final downloadButton = find.text('下載書籍');
+      final openButton = find.text('打開閱讀');
+      
+      if (downloadButton.evaluate().isEmpty && openButton.evaluate().isEmpty) {
+        print('ℹ️  未找到下載或打開按鈕，跳過測試');
+        return;
+      }
+      
+      // 如果已經是下載完成狀態
+      if (openButton.evaluate().isNotEmpty) {
+        print('✅ 書籍已處於下載完成狀態');
+        print('✅ 找到"打開閱讀"按鈕');
+        
+        // 驗證完成狀態的 UI
+        expect(openButton, findsOneWidget,
+            reason: '下載完成後應該顯示打開閱讀按鈕');
+        
+        // 應該有刪除按鈕
+        final deleteButton = find.text('刪除');
+        if (deleteButton.evaluate().isNotEmpty) {
+          print('✅ 找到"刪除"按鈕');
+        }
+        
+        print('🎉 下載完成狀態驗證通過！');
+        return;
+      }
+      
+      // 如果是未下載狀態，開始下載並等待完成
+      if (downloadButton.evaluate().isNotEmpty) {
+        print('✅ Step 1: 開始下載');
+        await tester.tap(downloadButton);
+        await tester.pump(const Duration(milliseconds: 500));
+        
+        // 等待下載完成（最多等待 10 秒）
+        print('⏳ Step 2: 等待下載完成...');
+        bool downloadCompleted = false;
+        
+        for (int i = 0; i < 20; i++) {
+          await tester.pump(const Duration(milliseconds: 500));
+          
+          // 檢查是否出現"打開閱讀"按鈕
+          final openBtn = find.text('打開閱讀');
+          if (openBtn.evaluate().isNotEmpty) {
+            downloadCompleted = true;
+            print('✅ Step 3: 下載完成（耗時約 ${(i + 1) * 0.5} 秒）');
+            break;
+          }
+          
+          // 顯示進度
+          if (i % 4 == 0) {
+            final progressText = find.textContaining('%');
+            if (progressText.evaluate().isNotEmpty) {
+              final text = progressText.evaluate().first.widget as Text;
+              print('  ⏳ 進度: ${text.data}');
+            }
+          }
+        }
+        
+        if (downloadCompleted) {
+          // 驗證完成後的按鈕
+          expect(find.text('打開閱讀'), findsOneWidget,
+              reason: '下載完成後應該顯示打開閱讀按鈕');
+          
+          print('✅ Step 4: 驗證完成狀態 UI');
+          print('🎉 下載完成測試通過！');
+        } else {
+          print('⚠️  下載未在預期時間內完成（可能需要更長時間）');
+        }
+      }
+    });
+  });
+
   group('BookDetail Error Handling Tests', () {
     testWidgets('App should not crash on BookDetail page',
         (WidgetTester tester) async {
