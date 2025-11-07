@@ -17,8 +17,8 @@
 | Stage 2: Data Layer | 4 | 4 | 100% | 6h | 6.5h | ✅ 已完成 |
 | Stage 3: Domain Layer | 3 | 3 | 100% | 4h | 3h | ✅ 已完成 |
 | Stage 4: Presentation Layer | 6 | 6 | 100% | 10h | 4h | ✅ 已完成 |
-| Stage 5: 測試 | 4 | 1 | 25% | 6h | 0.5h | 🔄 進行中 |
-| **總計** | **19** | **16** | **84.2%** | **28h** | **15h** | 🔄 進行中 |
+| Stage 5: 測試 | 4 | 2 | 50% | 6h | 0.5h | 🔄 進行中 |
+| **總計** | **19** | **17** | **89.5%** | **28h** | **15h** | 🔄 進行中 |
 
 ---
 
@@ -1534,11 +1534,13 @@ class BookGridItem extends StatelessWidget {
 
 ## 🧪 Stage 5: 測試 (6 小時)
 
-### Task 2.5.1: 單元測試
+### Task 2.5.1: 單元測試 ✅
 
 **描述**: 編寫並執行單元測試
 
-**預計時間**: 2 小時
+**預計時間**: 2 小時  
+**實際時間**: 0.5 小時  
+**狀態**: ✅ 已完成 (2024-11-07)
 
 **依賴**: 
 - 所有實現任務完成
@@ -1629,34 +1631,48 @@ void main() {
 
 ---
 
-### Task 2.5.2: Widget 測試
+### Task 2.5.2: Widget 測試 ✅
 
 **描述**: 編寫並執行 Widget 測試
 
-**預計時間**: 2 小時
+**預計時間**: 2 小時  
+**實際時間**: 0 小時 (已在 Task 2.4.2 中完成)  
+**狀態**: ✅ 已完成 (2024-11-07)
 
 **依賴**: 
 - Task 2.5.1 完成
 
 **輸出**:
-- `test/presentation/pages/book_list/book_list_page_test.dart`
-- `test/presentation/pages/book_list/widgets/book_grid_item_test.dart`
-- `test/presentation/pages/book_list/widgets/empty_state_test.dart`
-- `test/presentation/pages/book_list/widgets/error_state_test.dart`
+- `test/presentation/pages/book_list/book_list_page_test.dart` ✅
+- 注意：由於所有 Widget 都內聯在 BookListPage 中，不需要單獨的測試文件
 
 **任務清單**:
-- [ ] 測試 `BookListPage` 各種狀態顯示
-- [ ] 測試 `BookGridItem` 點擊事件
-- [ ] 測試 `EmptyState` 刷新按鈕
-- [ ] 測試 `ErrorState` 重試按鈕
-- [ ] 測試下拉刷新功能
-- [ ] 測試離線 Banner 顯示
-- [ ] 運行 `flutter test`
+- [x] 測試 `BookListPage` 各種狀態顯示 ✅ (4 states: loading/success/error/empty)
+- [x] 測試 `BookGridItem` 點擊事件 ✅
+- [x] 測試 `EmptyState` 刷新按鈕 ✅
+- [x] 測試 `ErrorState` 重試按鈕 ✅
+- [x] 測試下拉刷新功能 ✅ (RefreshIndicator)
+- [x] 測試離線 Banner 顯示 ✅
+- [x] 運行 `flutter test` ✅
 
 **驗收標準**:
-- ✅ 所有 Widget 測試通過
-- ✅ UI 交互正常
+- ✅ 所有 Widget 測試通過 (21 tests)
+- ✅ UI 交互正常 (tap, refresh, retry)
 - ✅ 無測試警告
+
+**完成總結** (2024-11-07):
+- ✅ **21 個 Widget 測試全部通過**：
+  - UI Components: AppBar, offline banner, RefreshIndicator (4 tests)
+  - Loading State: Shimmer display (2 tests)
+  - Success State: Book grid, titles, tap interaction (3 tests)
+  - Error State: Error display, retry button (3 tests)
+  - Empty State: Empty display, refresh button (2 tests)
+  - BookGridItem: Placeholder, network image, card styling (3 tests)
+  - State Transitions: Loading→success, error→retry (2 tests)
+  - Grid Layout: 2-column configuration (1 test)
+  - Offline Mode: Banner + cached books display (1 test)
+- ✅ **代碼覆蓋率**: 所有 UI 狀態和交互已測試
+- ⏱️ **實際用時**: 0小時 (測試已在 Task 2.4.2 實現階段完成)
 
 **實現提示**:
 ```dart
