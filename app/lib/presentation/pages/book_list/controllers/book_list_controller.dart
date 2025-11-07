@@ -6,6 +6,7 @@ import 'package:shuyuan_reader/domain/entities/book.dart';
 import 'package:shuyuan_reader/domain/usecases/get_books_usecase.dart';
 import 'package:shuyuan_reader/domain/usecases/refresh_books_usecase.dart';
 import 'package:shuyuan_reader/domain/usecases/get_book_by_id_usecase.dart';
+import 'package:shuyuan_reader/routes/app_routes.dart';
 
 /// 書籍列表頁面控制器
 /// 
@@ -191,18 +192,8 @@ class BookListController extends GetxController {
   void onBookTap(Book book) {
     debugPrint('👆 [BookListController] 用戶點擊書籍: ${book.title}');
     
-    // TODO: 在 Spec 03 實現書籍詳情頁面後啟用路由跳轉
-    // Get.toNamed(Routes.BOOK_DETAIL, arguments: book);
-    
-    // Show temporary toast (only if not in test mode)
-    if (!Get.testMode) {
-      Get.snackbar(
-        '書籍詳情',
-        '《${book.title}》\n作者：${book.author}',
-        snackPosition: SnackPosition.BOTTOM,
-        duration: const Duration(seconds: 2),
-      );
-    }
+    // 跳轉到書籍詳情頁面
+    Get.toNamed(Routes.BOOK_DETAIL, arguments: book);
   }
 
   /// 重試加載

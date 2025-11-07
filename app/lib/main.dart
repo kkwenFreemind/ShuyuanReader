@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'presentation/pages/splash/splash_page.dart';
+import 'routes/app_pages.dart';
 
 /// 應用程序入口
 /// 
@@ -34,8 +34,11 @@ class MyApp extends StatelessWidget {
       // 關閉調試標籤
       debugShowCheckedModeBanner: false,
       
-      // 設置啟動頁面為首頁
-      home: const SplashPage(),
+      // 初始路由
+      initialRoute: AppPages.INITIAL,
+      
+      // 路由配置
+      getPages: AppPages.routes,
     );
   }
 }
