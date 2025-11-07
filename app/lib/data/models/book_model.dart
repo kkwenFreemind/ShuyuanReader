@@ -66,12 +66,14 @@ class BookModel extends HiveObject {
     return BookModel(
       id: json['id'] as String,
       title: json['title'] as String,
-      author: json['author'] as String,
-      coverUrl: json['cover_url'] as String,
-      epubUrl: json['epub_url'] as String,
-      description: json['description'] as String? ?? '',
-      language: json['language'] as String,
-      fileSize: json['file_size'] as int,
+      author: (json['author'] as String?) ?? '未知作者',
+      // Handle both snake_case and camelCase for API compatibility
+      coverUrl: (json['coverUrl'] ?? json['cover_url']) as String? ?? '',
+      epubUrl: (json['epubUrl'] ?? json['epub_url']) as String? ?? '',
+      description: (json['description'] as String?) ?? '',
+      language: json['language'] as String? ?? 'zh-TW',
+      // Default file_size to 0 if not provided
+      fileSize: (json['file_size'] as int?) ?? 0,
       downloadedAt: json['downloaded_at'] != null
           ? DateTime.parse(json['downloaded_at'] as String)
           : null,

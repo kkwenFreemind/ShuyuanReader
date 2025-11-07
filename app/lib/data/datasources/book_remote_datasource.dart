@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
@@ -11,6 +13,14 @@ import '../models/book_model.dart';
 class BookRemoteDataSource {
   /// Base URL for the GitHub repository raw content
   static const String baseUrl =
+      'https://raw.githubusercontent.com/kkwenFreemind/ShuyuanReader/main';
+
+  /// Base URL for cover images (same branch as catalog)
+  static const String coverBaseUrl =
+      'https://raw.githubusercontent.com/kkwenFreemind/ShuyuanReader/main';
+
+  /// Base URL for EPUB files (same branch as catalog)
+  static const String epubBaseUrl =
       'https://raw.githubusercontent.com/kkwenFreemind/ShuyuanReader/main';
 
   /// Endpoint for books catalog
@@ -46,6 +56,9 @@ class BookRemoteDataSource {
       _dio.options.receiveTimeout = receiveTimeout;
     }
 
+    // Set response type to JSON to enable automatic JSON parsing
+    _dio.options.responseType = ResponseType.json;
+
     // Add logging interceptor in debug mode if not already added
     if (kDebugMode && _dio.interceptors.isEmpty) {
       _dio.interceptors.add(
@@ -76,9 +89,17 @@ class BookRemoteDataSource {
       final response = await _dio.get(booksEndpoint);
 
       debugPrint('[BookRemoteDataSource] Response status: ${response.statusCode}');
+      debugPrint('[BookRemoteDataSource] Response data type: ${response.data.runtimeType}');
 
       if (response.statusCode == 200) {
-        return _parseResponse(response.data);
+        // Handle both String and Map responses
+        dynamic data = response.data;
+        if (data is String) {
+          debugPrint('[BookRemoteDataSource] Response is String, parsing JSON manually');
+          data = jsonDecode(data);
+        }
+        
+        return _parseResponse(data);
       } else {
         throw ServerException(
           'Server returned status code: ${response.statusCode}',
@@ -118,14 +139,47 @@ class BookRemoteDataSource {
 
       debugPrint('[BookRemoteDataSource] Parsing ${booksJson.length} books');
 
-      final books = booksJson.map((json) {
-        if (json is! Map<String, dynamic>) {
-          throw ParseException('Expected a Map for book but got ${json.runtimeType}');
+      final books = <BookModel>[];
+      for (var i = 0; i < booksJson.length; i++) {
+        try {
+          final json = booksJson[i];
+          if (json is! Map<String, dynamic>) {
+            debugPrint('[BookRemoteDataSource] Book at index $i is not a Map: ${json.runtimeType}');
+            continue;
+          }
+          
+          // Convert relative URLs to absolute URLs
+          final coverUrl = json['coverUrl'] as String?;
+          final epubUrl = json['epubUrl'] as String?;
+          
+          if (coverUrl != null && !coverUrl.startsWith('http')) {
+            final fullCoverUrl = '$coverBaseUrl/$coverUrl';
+            json['coverUrl'] = fullCoverUrl;
+            if (i < 3) {
+              // Log first 3 books for debugging
+              debugPrint('[BookRemoteDataSource] Book #$i cover URL: $fullCoverUrl');
+            }
+          }
+          
+          if (epubUrl != null && !epubUrl.startsWith('http')) {
+            final fullEpubUrl = '$epubBaseUrl/$epubUrl';
+            json['epubUrl'] = fullEpubUrl;
+            if (i < 3) {
+              // Log first 3 books for debugging
+              debugPrint('[BookRemoteDataSource] Book #$i epub URL: $fullEpubUrl');
+            }
+          }
+          
+          final book = BookModel.fromJson(json);
+          books.add(book);
+        } catch (e) {
+          debugPrint('[BookRemoteDataSource] Failed to parse book at index $i: $e');
+          debugPrint('[BookRemoteDataSource] Book data: ${booksJson[i]}');
+          // Continue parsing other books instead of failing completely
         }
-        return BookModel.fromJson(json);
-      }).toList();
+      }
 
-      debugPrint('[BookRemoteDataSource] Successfully parsed ${books.length} books');
+      debugPrint('[BookRemoteDataSource] Successfully parsed ${books.length} books out of ${booksJson.length}');
 
       return books;
     } catch (e) {

@@ -137,7 +137,7 @@ class BookListPage extends GetView<BookListController> {
       padding: const EdgeInsets.all(16),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        childAspectRatio: 0.6,
+        childAspectRatio: 0.65, // 調整為更適合封面的比例
         crossAxisSpacing: 16,
         mainAxisSpacing: 16,
       ),
@@ -181,45 +181,45 @@ class BookGridItem extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // 書籍封面區域
             Expanded(
-              flex: 3,
+              flex: 5, // 增加封面的比例
               child: _buildCover(context),
             ),
             // 書籍信息區域
-            Expanded(
-              flex: 2,
-              child: Padding(
-                padding: const EdgeInsets.all(12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // 書籍標題
+            Padding(
+              padding: const EdgeInsets.all(8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // 書籍標題
+                  Text(
+                    book.title,
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                      height: 1.2,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 2),
+                  // 書籍作者
+                  if (book.author.isNotEmpty)
                     Text(
-                      book.title,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
+                      book.author,
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: Colors.grey[600],
+                        height: 1.2,
                       ),
-                      maxLines: 2,
+                      maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 4),
-                    // 書籍作者
-                    if (book.author.isNotEmpty)
-                      Text(
-                        book.author,
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey[600],
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                  ],
-                ),
+                ],
               ),
             ),
           ],
@@ -232,27 +232,50 @@ class BookGridItem extends StatelessWidget {
   Widget _buildCover(BuildContext context) {
     if (book.coverUrl.isNotEmpty) {
       // 如果有封面 URL，顯示圖片
-      return Image.network(
-        book.coverUrl,
-        fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) => _buildPlaceholder(),
-        loadingBuilder: (context, child, loadingProgress) {
-          if (loadingProgress == null) return child;
-          return Container(
-            color: Colors.grey[200],
-            child: Center(
-              child: CircularProgressIndicator(
-                value: loadingProgress.expectedTotalBytes != null
-                    ? loadingProgress.cumulativeBytesLoaded /
-                        loadingProgress.expectedTotalBytes!
-                    : null,
+      debugPrint('[BookGridItem] Loading cover for "${book.title}": ${book.coverUrl}');
+      
+      return Container(
+        color: Colors.grey[100], // 添加淺色背景
+        child: Image.network(
+          book.coverUrl,
+          fit: BoxFit.contain, // 改為 contain，確保圖片完整顯示
+          errorBuilder: (context, error, stackTrace) {
+            debugPrint('[BookGridItem] ❌ Failed to load cover for "${book.title}"');
+            debugPrint('[BookGridItem] Error: $error');
+            debugPrint('[BookGridItem] URL: ${book.coverUrl}');
+            return _buildPlaceholder();
+          },
+          loadingBuilder: (context, child, loadingProgress) {
+            if (loadingProgress == null) {
+              debugPrint('[BookGridItem] ✅ Successfully loaded cover for "${book.title}"');
+              return child;
+            }
+            
+            final progress = loadingProgress.expectedTotalBytes != null
+                ? (loadingProgress.cumulativeBytesLoaded / 
+                   loadingProgress.expectedTotalBytes! * 100).toStringAsFixed(0)
+                : 'unknown';
+            
+            debugPrint('[BookGridItem] 📥 Loading cover for "${book.title}": $progress%');
+            
+            return Container(
+              color: Colors.grey[100],
+              child: Center(
+                child: CircularProgressIndicator(
+                  value: loadingProgress.expectedTotalBytes != null
+                      ? loadingProgress.cumulativeBytesLoaded /
+                          loadingProgress.expectedTotalBytes!
+                      : null,
+                  strokeWidth: 2,
+                ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       );
     } else {
       // 沒有封面，顯示佔位符
+      debugPrint('[BookGridItem] No cover URL for "${book.title}", showing placeholder');
       return _buildPlaceholder();
     }
   }
