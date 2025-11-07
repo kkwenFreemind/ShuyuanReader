@@ -14,11 +14,11 @@
 |------|--------|--------|------|----------|----------|
 | 🔧 環境配置 | 2 | 2 | 100% | 0.5h | 0.4h |
 | 🎨 UI 實現 | 6 | 6 | 100% | 2h | 1.73h |
-| 🧠 邏輯實現 | 4 | 3 | 75% | 2h | 1.83h |
+| 🧠 邏輯實現 | 4 | 4 | 100% | 2h | 2.00h |
 | 💾 初始化 | 2 | 0 | 0% | 1h | ___ |
 | 🧪 測試編寫 | 4 | 0 | 0% | 2h | ___ |
 | 📱 真機測試 | 3 | 0 | 0% | 0.5h | ___ |
-| **總計** | **21** | **11** | **52.4%** | **8h** | **3.96h** |
+| **總計** | **21** | **12** | **57.1%** | **8h** | **4.13h** |
 
 ---
 
@@ -711,18 +711,19 @@ I/flutter ( 8926): 🚀 [SplashController] 準備跳轉到主頁（當前已註�
 - **優先級**: P1
 - **預估時間**: 10 分鐘
 - **依賴**: 無
-- **狀態**: ⬜ 未開始
+- **狀態**: ✅ 已完成
+- **實際時間**: 10 分鐘
 
 **文件**: `app/lib/core/constants/app_constants.dart`
 
 **操作步驟**:
-1. 創建 `AppConstants` 類
-2. 定義啟動畫面相關常量：
+1. ✅ 創建 `AppConstants` 類
+2. ✅ 定義啟動畫面相關常量：
    - SPLASH_DURATION (3 秒)
    - LOGO_SIZE (120)
    - FADE_IN_DURATION (500ms)
-3. 定義顏色常量
-4. 定義字體大小常量
+3. ✅ 定義顏色常量
+4. ✅ 定義字體大小常量
 
 **代碼參考**:
 ```dart
@@ -747,8 +748,44 @@ class AppConstants {
 ```
 
 **驗收標準**:
-- [ ] AppConstants 文件創建
-- [ ] 常量定義完整
+- [x] AppConstants 文件創建
+- [x] 常量定義完整
+
+**完成內容**:
+- ✅ 創建了完整的 `AppConstants` 類，包含靜態常量
+- ✅ 定義了啟動畫面相關常量：
+  - `splashDurationSeconds`: 3 秒延遲時長
+  - `logoSize`: 120.0 Logo 尺寸
+  - `fadeInDurationMs`: 500ms 淡入動畫時長
+  - `logoRadius`: 24.0 圓角半徑
+  - `loadingIndicatorSize`: 32.0 加載指示器大小
+  - `loadingStrokeWidth`: 3.0 加載線寬
+- ✅ 定義了顏色常量：
+  - `primaryColor`: 0xFF2196F3 (藍色)
+  - `secondaryColor`: 0xFF1976D2 (深藍色)
+  - `backgroundColor`: 0xFFFFFFFF (白色)
+  - `logoBackgroundColor`: 0xFFE3F2FD (淺藍色)
+  - `textColor`: 0xFF000000 (黑色)
+  - `secondaryTextColor`: 0xFF424242 (深灰色)
+  - `hintTextColor`: 0xFF9E9E9E (淺灰色)
+- ✅ 定義了字體大小常量：
+  - `logoEmojiFontSize`: 64.0 (表情符號)
+  - `titleFontSize`: 24.0 (標題)
+  - `subtitleFontSize`: 16.0 (副標題)
+  - `loadingTextFontSize`: 14.0 (Loading文字)
+  - `versionFontSize`: 12.0 (版本號)
+- ✅ 定義了間距常量：
+  - `spacingXLarge`: 48.0
+  - `spacingLarge`: 24.0
+  - `spacingMedium`: 16.0
+  - `spacingSmall`: 8.0
+- ✅ 定義了文字常量：
+  - `appNameZh`: "書苑閱讀器"
+  - `appNameEn`: "ShuyuanReader"
+  - `loadingText`: "Loading..."
+- ✅ 添加了完整的中文文檔註釋，說明每個常量的用途
+- ✅ 添加了私有構造函數防止實例化
+- ✅ 無編譯錯誤或警告
 
 ---
 
