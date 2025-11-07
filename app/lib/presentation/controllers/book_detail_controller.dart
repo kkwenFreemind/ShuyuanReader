@@ -178,7 +178,27 @@ class BookDetailController extends GetxController {
   /// - 取消後需要重新開始下載
   /// - 已下載的部分會被刪除
   Future<void> cancelDownload() async {
-    // TODO: 實現取消邏輯
+    // 步驟 1: 取消當前下載
+    _downloadService.cancelDownload(book.value.id);
+    
+    // 步驟 2: 刪除部分下載的文件（如果存在）
+    if (book.value.localPath != null) {
+      try {
+        await _downloadService.deleteBook(book.value.localPath!);
+      } catch (_) {
+        // 忽略刪除錯誤，文件可能不存在
+      }
+    }
+    
+    // 步驟 3-4: 重置書籍狀態為未下載，清空進度和路徑
+    book.value = book.value.copyWith(
+      downloadStatus: DownloadStatus.notDownloaded,
+      downloadProgress: 0.0,
+      localPath: null,
+    );
+    
+    // 步驟 5: 保存到數據庫
+    await _bookRepository.updateBook(book.value);
   }
   
   /// 刪除已下載的書籍
