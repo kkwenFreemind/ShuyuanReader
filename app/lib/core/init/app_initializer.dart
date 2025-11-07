@@ -1,5 +1,6 @@
 import 'package:hive_flutter/hive_flutter.dart';
 import '../../data/models/book_model.dart';
+import '../../data/models/download_status.dart';
 
 /// 應用初始化器
 /// 
@@ -49,6 +50,10 @@ class AppInitializer {
       // 註冊 BookModel Adapter 用於書籍列表緩存
       Hive.registerAdapter(BookModelAdapter());
       print('📝 [AppInitializer] BookModel Adapter 已註冊');
+      
+      // 註冊 DownloadStatus Adapter 用於下載狀態管理
+      Hive.registerAdapter(DownloadStatusAdapter());
+      print('📝 [AppInitializer] DownloadStatus Adapter 已註冊');
       
       // 步驟 4: 打開應用所需的 Box
       // 打開書籍列表緩存 Box

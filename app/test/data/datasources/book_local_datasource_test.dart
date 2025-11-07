@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:hive/hive.dart';
 import 'package:shuyuan_reader/data/datasources/book_local_datasource.dart';
 import 'package:shuyuan_reader/data/models/book_model.dart';
+import 'package:shuyuan_reader/data/models/download_status.dart';
 
 void main() {
   late Box<BookModel> bookBox;
@@ -17,8 +18,9 @@ void main() {
     // Initialize Hive with test directory
     Hive.init(testDir.path);
     
-    // Register BookModel adapter
+    // Register adapters
     Hive.registerAdapter(BookModelAdapter());
+    Hive.registerAdapter(DownloadStatusAdapter());
   });
 
   setUp(() async {
