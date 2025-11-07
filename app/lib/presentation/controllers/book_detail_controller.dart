@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:flutter/material.dart';
 import '../../domain/entities/book.dart';
 import '../../data/services/download_service.dart';
 import '../../domain/repositories/book_repository.dart';
@@ -215,7 +216,56 @@ class BookDetailController extends GetxController {
   /// - 刪除失敗時顯示錯誤提示
   /// - 不更新書籍狀態
   Future<void> deleteBook() async {
-    // TODO: 實現刪除邏輯
+    // 步驟 1: 顯示確認對話框
+    final confirmed = await Get.dialog<bool>(
+      AlertDialog(
+        title: Text('確認刪除'),
+        content: Text('確定要刪除《${book.value.title}》嗎？'),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(result: false),
+            child: Text('取消'),
+          ),
+          TextButton(
+            onPressed: () => Get.back(result: true),
+            child: Text('刪除', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true) return;
+
+    try {
+      // 步驟 2: 刪除本地文件（如果存在）
+      if (book.value.localPath != null) {
+        await _downloadService.deleteBook(book.value.localPath!);
+      }
+
+      // 步驟 3-4: 重置狀態
+      book.value = book.value.copyWith(
+        downloadStatus: DownloadStatus.notDownloaded,
+        downloadProgress: 0.0,
+        localPath: null,
+        downloadedAt: null,
+      );
+      // 步驟 5: 保存到數據庫
+      await _bookRepository.updateBook(book.value);
+
+      // 步驟 6: 顯示成功提示
+      Get.snackbar(
+        '刪除成功',
+        '《${book.value.title}》已刪除',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    } on DeletionFailedException catch (e) {
+      // 錯誤處理：刪除失敗
+      Get.snackbar(
+        '刪除失敗',
+        e.message,
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    }
   }
   
   /// 打開閱讀器
