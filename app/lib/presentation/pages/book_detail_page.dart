@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../controllers/book_detail_controller.dart';
 
 /// 書籍詳情頁面
@@ -33,7 +34,7 @@ class BookDetailPage extends GetView<BookDetailController> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // TODO: 添加封面圖片組件
+          _buildCoverImage(),
           // TODO: 添加書籍信息組件
           // TODO: 添加操作按鈕組件
           
@@ -52,4 +53,51 @@ class BookDetailPage extends GetView<BookDetailController> {
       ),
     );
   }
-}
+
+  /// 構建封面圖片組件
+  /// 
+  /// 使用 Hero 動畫實現從列表頁到詳情頁的平滑過渡
+  /// 使用 CachedNetworkImage 加載網絡圖片並提供緩存
+  Widget _buildCoverImage() {
+    final book = controller.book.value;
+    
+    return Hero(
+      tag: 'book-cover-${book.id}',
+      child: Container(
+        width: double.infinity,
+        height: 400,
+        color: Colors.grey[200],
+        child: CachedNetworkImage(
+          imageUrl: book.coverUrl,
+          fit: BoxFit.cover,
+          placeholder: (context, url) => Container(
+            color: Colors.grey[200],
+            child: const Center(
+              child: CircularProgressIndicator(),
+            ),
+          ),
+          errorWidget: (context, url, error) => Container(
+            color: Colors.grey[300],
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.book,
+                  size: 80,
+                  color: Colors.grey[400],
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  '封面加載失敗',
+                  style: TextStyle(
+                    color: Colors.grey[600],
+                    fontSize: 14,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
