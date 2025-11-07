@@ -31,10 +31,23 @@ dependencies:
   flutter:
     sdk: flutter
 
-  get: ^4.6.5
-  dio: ^5.3.3
+  # 状态管理与路由
+  get: ^4.6.6
+
+  # 本地数据库
   hive: ^2.2.3
   hive_flutter: ^1.1.0
+
+  # 网络请求
+  dio: ^5.3.3
+
+  # 网络状态检测
+  connectivity_plus: ^5.0.2
+
+  # 应用信息
+  package_info_plus: ^5.0.1
+
+  # 其他依赖
   path_provider: ^2.1.1
   epub_view: ^3.1.0
   cached_network_image: ^3.3.0
@@ -53,6 +66,15 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
+
+  # 代码生成（Hive）
+  hive_generator: ^2.0.1
+  build_runner: ^2.4.6
+
+  # 测试工具
+  mockito: ^5.4.3
+  integration_test:
+    sdk: flutter
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
