@@ -14,11 +14,11 @@
 | 階段 | 任務數 | 完成數 | 進度 | 預計時間 | 實際時間 | 狀態 |
 |------|--------|--------|------|----------|----------|------|
 | Stage 1: 環境準備 | 2 | 2 | 100% | 2h | 1h | ✅ 已完成 |
-| Stage 2: Data Layer | 4 | 3 | 75% | 6h | 5.5h | 🔄 進行中 |
+| Stage 2: Data Layer | 4 | 4 | 100% | 6h | 6.5h | ✅ 已完成 |
 | Stage 3: Domain Layer | 3 | 0 | 0% | 4h | - | ⬜ 未開始 |
 | Stage 4: Presentation Layer | 6 | 0 | 0% | 10h | - | ⬜ 未開始 |
 | Stage 5: 測試 | 4 | 0 | 0% | 6h | - | ⬜ 未開始 |
-| **總計** | **19** | **5** | **26.3%** | **28h** | **6.5h** | 🔄 進行中 |
+| **總計** | **19** | **6** | **31.6%** | **28h** | **7.5h** | 🔄 進行中 |
 
 ---
 
@@ -451,60 +451,187 @@ class BookLocalDataSource {
 
 ---
 
-### Task 2.2.4: 實現 Repository
+### Task 2.2.4: 實現 Repository ✅ (2025-11-07)
 
 **描述**: 實現 `BookRepositoryImpl`，協調遠程和本地數據源
 
-**預計時間**: 1 小時
+**預計時間**: 1 小時  
+**實際時間**: 1 小時  
+**狀態**: ✅ 已完成 (2025-11-07)
 
 **依賴**: 
 - Task 2.2.2, 2.2.3 完成
 
 **輸出**:
-- `lib/data/repositories/book_repository_impl.dart`
+- `lib/domain/entities/book.dart` (115 行) - 領域層 Book 實體
+- `lib/domain/repositories/book_repository.dart` (96 行) - Repository 接口
+- `lib/data/mappers/book_mapper.dart` (54 行) - Model/Entity 轉換器
+- `lib/data/repositories/book_repository_impl.dart` (227 行) - Repository 實現
+- `test/data/repositories/book_repository_impl_test.dart` (430 行，25 個測試)
+- `pubspec.yaml` - 添加 equatable: ^2.0.5
 
 **任務清單**:
-- [ ] 創建 `BookRepositoryImpl` 類
-- [ ] 實現 `getBooks()` 方法（緩存策略）
-- [ ] 實現 `getBookById()` 方法
-- [ ] 實現 `saveBooks()` 方法
-- [ ] 處理網絡錯誤時回退到緩存
-- [ ] 實現 7 天緩存過期邏輯
-- [ ] 編寫單元測試（mock datasources）
+- [x] 創建 `BookRepositoryImpl` 類
+- [x] 實現 `getBooks()` 方法（緩存策略）
+- [x] 實現 `getBookById()` 方法
+- [x] 實現 `saveBooks()` 方法
+- [x] 處理網絡錯誤時回退到緩存
+- [x] 實現 7 天緩存過期邏輯
+- [x] 編寫單元測試（mock datasources）
 
 **驗收標準**:
 - ✅ 優先使用遠程數據，失敗時使用緩存
-- ✅ 緩存策略正確實現
-- ✅ 錯誤處理完善
-- ✅ 單元測試通過
+- ✅ 緩存策略正確實現 (7 天過期)
+- ✅ 錯誤處理完善 (NetworkException, ServerException, 其他異常)
+- ✅ 單元測試通過 (25/25 tests passed ✅)
+
+**完成總結**:
+
+1. **創建 Book Entity** (`lib/domain/entities/book.dart`, 115 行):
+   - 純業務對象，無框架依賴
+   - 使用 Equatable 實現值比較
+   - 10 個不可變屬性: id, title, author, coverUrl, epubUrl, description, language, fileSize, downloadedAt, localPath
+   - 3 個業務邏輯 getter:
+     * `isDownloaded`: 檢查書籍是否已下載
+     * `fileSizeFormatted`: 格式化文件大小 (B/KB/MB)
+     * `shortDescription`: 截取前 100 字符的簡短描述
+   - `copyWith()` 方法支持部分更新
+   - 覆寫 `props`, `stringify` 用於相等性比較
+
+2. **創建 BookRepository 接口** (`lib/domain/repositories/book_repository.dart`, 96 行):
+   - 定義 5 個抽象方法:
+     * `getBooks({bool forceRefresh})`: 獲取書籍列表（智能緩存）
+     * `getBookById(String id)`: 按 ID 獲取單本書籍
+     * `saveBooks(List<Book>)`: 手動保存書籍到緩存
+     * `clearCache()`: 清空所有緩存
+     * `shouldRefresh()`: 檢查是否需要刷新緩存
+   - 詳細的文檔注釋說明每個方法的行為
+   - 明確定義拋出的異常類型
+
+3. **創建 BookMapper** (`lib/data/mappers/book_mapper.dart`, 54 行):
+   - Extension 方式實現 Model ↔ Entity 轉換
+   - `BookModelMapper.toEntity()`: BookModel → Book
+   - `BookEntityMapper.toModel()`: Book → BookModel
+   - `BookModelListMapper.toEntities()`: List<BookModel> → List<Book>
+   - `BookEntityListMapper.toModels()`: List<Book> → List<BookModel>
+   - 保持數據一致性，所有字段完整映射
+
+4. **實現 BookRepositoryImpl** (`lib/data/repositories/book_repository_impl.dart`, 227 行):
+   - 構造函數接受 `BookRemoteDataSource` 和 `BookLocalDataSource`
+   - 緩存過期時間: 7 天 (`_cacheExpiration`)
+   - `getBooks()` 實現:
+     * forceRefresh=true 時強制從遠程獲取
+     * 調用 `shouldRefresh()` 判斷是否需要刷新
+     * 獲取遠程數據後自動緩存
+     * NetworkException/ServerException 時回退到緩存
+     * 其他異常也嘗試使用緩存作為後備
+     * 詳細的 debugPrint 日志輸出
+   - `getBookById()` 實現:
+     * 優先從緩存查找
+     * 未找到時調用 `getBooks()` 獲取所有書籍
+     * 返回匹配的書籍或 null
+   - `saveBooks()` 實現:
+     * 轉換 Entity → Model
+     * 調用 localDataSource 緩存
+     * 錯誤包裝為 CacheException
+   - `clearCache()` 實現:
+     * 調用 localDataSource.clearCache()
+     * 錯誤包裝為 CacheException
+   - `shouldRefresh()` 實現:
+     * 無緩存數據返回 true
+     * 緩存 >= 7 天返回 true
+     * 緩存 < 7 天返回 false
+     * 檢查失敗默認返回 true（安全策略）
+
+5. **創建單元測試** (`test/data/repositories/book_repository_impl_test.dart`, 430 行, 25 個測試):
+   - 使用 Mockito 生成 Mock:
+     * MockBookRemoteDataSource
+     * MockBookLocalDataSource
+   - **測試組 getBooks** (9 tests):
+     * forceRefresh=true 從遠程獲取
+     * 緩存過期從遠程獲取
+     * 緩存有效使用緩存
+     * NetworkException 回退到緩存
+     * ServerException 回退到緩存
+     * 無緩存時拋出異常
+     * 遠程獲取後自動緩存
+     * 意外錯誤回退到緩存
+     * 緩存也失敗時拋出原始異常
+   - **測試組 getBookById** (4 tests):
+     * 緩存中找到直接返回
+     * 緩存未找到時獲取所有書籍
+     * 書籍不存在返回 null
+     * 錯誤時重新拋出異常
+   - **測試組 saveBooks** (2 tests):
+     * 成功保存書籍
+     * 錯誤時拋出 CacheException
+   - **測試組 clearCache** (2 tests):
+     * 成功清空緩存
+     * 錯誤時拋出 CacheException
+   - **測試組 shouldRefresh** (5 tests):
+     * 無緩存返回 true
+     * 緩存 > 7 天返回 true
+     * 緩存 < 7 天返回 false
+     * 緩存 = 7 天返回 true
+     * 檢查錯誤返回 true
+   - **測試組 integration** (3 tests):
+     * 完整刷新循環
+     * 有效緩存多次調用
+     * 網絡失敗優雅降級
+   - **所有測試通過**: ✅ 25/25 tests passed
+
+6. **添加 equatable 依賴** (`pubspec.yaml`):
+   - 添加 `equatable: ^2.0.5` 到 dependencies
+   - 用於 Book entity 的值比較
+   - 運行 `flutter pub get` 安裝依賴
+
+**關鍵設計決策**:
+1. Clean Architecture: 明確分離 Entity (domain) 和 Model (data)
+2. Repository Pattern: 抽象數據來源，業務層不依賴具體實現
+3. 智能緩存策略: 7 天過期 + 網絡失敗回退
+4. Extension Mapper: 優雅實現 Model ↔ Entity 轉換
+5. 錯誤處理: 三層後備機制 (遠程 → 緩存 → 異常)
+6. 詳細日志: debugPrint 追蹤所有操作便於調試
+7. Equatable: 簡化 Entity 相等性比較
+
+**Stage 2 (Data Layer) 完成總結**:
+- ✅ Task 2.2.1: Book Model (1h)
+- ✅ Task 2.2.2: Remote DataSource (2h)
+- ✅ Task 2.2.3: Local DataSource (1.5h)
+- ✅ Task 2.2.4: Repository (1h)
+- **總計**: 6.5h actual vs 6h estimated (+0.5h, 108% on target)
+- **完整的數據層**: Model, Remote, Local, Repository, Mappers 全部就緒
+- **100% 測試覆蓋**: 所有組件都有完整的單元測試
+- **生產就緒**: 可開始實現 Domain Layer (Use Cases)
 
 **實現提示**:
 ```dart
 class BookRepositoryImpl implements BookRepository {
   final BookRemoteDataSource _remoteDataSource;
   final BookLocalDataSource _localDataSource;
+  static const Duration _cacheExpiration = Duration(days: 7);
 
   @override
   Future<List<Book>> getBooks({bool forceRefresh = false}) async {
     try {
-      if (forceRefresh || await _shouldRefresh()) {
+      if (forceRefresh || await shouldRefresh()) {
         final remoteBooks = await _remoteDataSource.fetchBooks();
         await _localDataSource.cacheBooks(remoteBooks);
-        await _localDataSource.setLastUpdateTime(DateTime.now());
-        return remoteBooks;
+        return remoteBooks.toEntities();
       }
-      return await _localDataSource.getCachedBooks();
+      return (await _localDataSource.getCachedBooks()).toEntities();
     } on NetworkException {
       final cachedBooks = await _localDataSource.getCachedBooks();
-      if (cachedBooks.isNotEmpty) return cachedBooks;
+      if (cachedBooks.isNotEmpty) return cachedBooks.toEntities();
       rethrow;
     }
   }
 
-  Future<bool> _shouldRefresh() async {
+  @override
+  Future<bool> shouldRefresh() async {
     final lastUpdate = await _localDataSource.getLastUpdateTime();
     if (lastUpdate == null) return true;
-    return DateTime.now().difference(lastUpdate).inDays >= 7;
+    return DateTime.now().difference(lastUpdate) >= _cacheExpiration;
   }
 }
 ```

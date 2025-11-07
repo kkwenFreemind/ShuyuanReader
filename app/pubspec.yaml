@@ -44,6 +44,9 @@ dependencies:
   # 网络状态检测
   connectivity_plus: ^5.0.2
 
+  # 数据比较
+  equatable: ^2.0.5
+
   # 应用信息
   package_info_plus: ^5.0.1
 
