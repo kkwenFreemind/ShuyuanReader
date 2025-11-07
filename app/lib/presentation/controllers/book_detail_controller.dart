@@ -153,7 +153,16 @@ class BookDetailController extends GetxController {
   /// - 暫停後可以通過 startDownload 繼續下載
   /// - 暫停狀態會保存下載進度
   void pauseDownload() {
-    // TODO: 實現暫停邏輯
+    // 步驟 1: 取消當前下載
+    _downloadService.cancelDownload(book.value.id);
+    
+    // 步驟 2: 更新狀態為暫停
+    book.value = book.value.copyWith(
+      downloadStatus: DownloadStatus.paused,
+    );
+    
+    // 步驟 3: 保存到數據庫
+    _bookRepository.updateBook(book.value);
   }
   
   /// 取消下載
