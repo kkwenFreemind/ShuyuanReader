@@ -16,9 +16,9 @@
 | 🎨 UI 實現 | 6 | 6 | 100% | 2h | 1.73h |
 | 🧠 邏輯實現 | 4 | 4 | 100% | 2h | 2.00h |
 | 💾 初始化 | 2 | 2 | 100% | 1h | 0.5h |
-| 🧪 測試編寫 | 4 | 2 | 50% | 2h | 1.5h |
+| 🧪 測試編寫 | 4 | 3 | 75% | 2h | 1.7h |
 | 📱 真機測試 | 3 | 0 | 0% | 0.5h | ___ |
-| **總計** | **21** | **16** | **76.2%** | **8h** | **6.13h** |
+| **總計** | **21** | **17** | **81.0%** | **8h** | **6.33h** |
 
 ---
 
@@ -1175,23 +1175,115 @@ Future<void> _initializeApp() async {
 - **優先級**: P1
 - **預估時間**: 20 分鐘
 - **依賴**: Task 2.3
-- **狀態**: ⬜ 未開始
+- **狀態**: ✅ 已完成
+- **實際時間**: 20 分鐘
 
 **文件**: `app/test/golden/splash_page_golden_test.dart`
 
 **操作步驟**:
-1. 創建測試目錄 `app/test/golden/`
-2. 創建 `splash_page_golden_test.dart`
-3. 編寫 Golden 測試
-4. 運行 `flutter test --update-goldens test/golden/` 生成快照
-5. 驗證 `test/golden/goldens/splash_page.png` 生成
+1. ✅ 創建測試目錄 `app/test/golden/`
+2. ✅ 創建 `splash_page_golden_test.dart`
+3. ✅ 編寫 Golden 測試（12 個測試）
+4. ✅ 運行 `flutter test --update-goldens test/golden/` 生成快照
+5. ✅ 驗證 Golden 快照文件生成（15 個 PNG 文件）
+6. ✅ 運行測試驗證快照匹配
 
-**代碼參考**: 見 Spec 01 文檔
+**測試覆蓋範圍**:
+Golden 測試（也稱為快照測試）用於捕獲 UI 的視覺快照，當 UI 發生意外變化時測試會失敗，幫助我們發現視覺回歸問題。
+
+**測試組織** (12 個測試):
+1. **LogoWidget 測試組** (4 個測試)
+   - `1. LogoWidget should match golden snapshot - initial state`
+     * 測試 Logo 組件的初始狀態（📖 表情符號和卡片樣式）
+   - `2. LogoWidget should match golden snapshot - after animation`
+     * 測試 Logo 動畫完成後的狀態（2 秒後）
+   - `3. LogoWidget should match golden snapshot - mid animation`
+     * 測試 Logo 動畫中間狀態（500ms 時）
+   - `4. LogoWidget should match golden snapshot - with custom background`
+     * 測試 Logo 在不同背景色下的顯示（白色背景）
+
+2. **LoadingWidget 測試組** (2 個測試)
+   - `5. LoadingWidget should match golden snapshot`
+     * 測試 Loading 組件的默認狀態（圓形進度指示器）
+   - `6. LoadingWidget should match golden snapshot - with custom background`
+     * 測試 Loading 在不同背景色下的顯示（藍灰色背景）
+
+3. **組合布局測試組** (2 個測試)
+   - `7. Logo and Loading together should match golden snapshot`
+     * 測試 Logo 和 Loading 組件組合在一起的布局（垂直排列，間距 48）
+   - `8. Full splash layout should match golden`
+     * 測試完整的啟動畫面布局（Logo + Loading + 版本號底部顯示）
+
+4. **響應式布局測試組** (3 個測試)
+   - `9. Full layout should match golden - small screen (320x480)`
+     * 測試小屏幕設備上的完整布局（物理尺寸 320x480）
+   - `10. Full layout should match golden - large screen (414x896)`
+     * 測試大屏幕設備上的完整布局（物理尺寸 414x896，iPhone 11 Pro Max）
+   - `11. Full layout should match golden - tablet (1024x768)`
+     * 測試平板設備上的完整布局（物理尺寸 1024x768）
+
+5. **文字樣式測試組** (1 個測試)
+   - `12. Text elements should match golden snapshot`
+     * 測試不同版本號文字的樣式一致性（短版本、長版本、空版本）
+
+**技術實現細節**:
+- 避免了 GetX 控制器的使用（onInit 會觸發原生插件錯誤導致測試超時）
+- 直接測試 UI 組件（LogoWidget, LoadingWidget）而不是完整的 SplashPage
+- 手動構建布局來測試完整的啟動畫面視覺效果
+- 使用 `tester.view.physicalSize` 和 `tester.view.devicePixelRatio` 模擬不同設備
+- 使用 `addTearDown` 確保測試後恢復默認設備設置
+- 使用 `matchesGoldenFile()` 匹配器與 PNG 快照文件比對
+
+**代碼參考**: 見 `app/test/golden/splash_page_golden_test.dart`
+
+**測試執行結果**:
+```
+PS D:\SideProject\ShuyuanReader\app> flutter test --update-goldens test\golden\splash_page_golden_test.dart
+00:01 +12: All tests passed!
+
+PS D:\SideProject\ShuyuanReader\app> flutter test test\golden\splash_page_golden_test.dart
+00:01 +12: All tests passed!
+```
+
+**生成的 Golden 快照文件** (15 個 PNG 文件):
+```
+test/golden/goldens/
+├── combined_layout.png               (3,420 bytes) - Logo + Loading 組合布局
+├── full_splash_large_screen.png      (3,576 bytes) - 大屏幕完整布局
+├── full_splash_layout.png            (3,477 bytes) - 標準完整布局
+├── full_splash_small_screen.png      (1,882 bytes) - 小屏幕完整布局
+├── full_splash_tablet.png            (5,125 bytes) - 平板完整布局
+├── loading_widget.png                (2,517 bytes) - [重複文件]
+├── loading_widget_custom_bg.png      (3,416 bytes) - 自定義背景 Loading
+├── loading_widget_default.png        (3,420 bytes) - 默認 Loading
+├── logo_widget.png                   (3,216 bytes) - [重複文件]
+├── logo_widget_after_animation.png   (1,417 bytes) - 動畫完成後 Logo
+├── logo_widget_custom_bg.png         (3,265 bytes) - 自定義背景 Logo
+├── logo_widget_initial.png           (3,268 bytes) - 初始狀態 Logo
+├── logo_widget_mid_animation.png     (1,417 bytes) - 動畫中間 Logo
+├── splash_page_animation_mid.png     (4,584 bytes) - [額外文件]
+└── text_styling.png                  (3,372 bytes) - 文字樣式快照
+```
+總計：15 個 PNG 文件，總大小 ~45 KB
 
 **驗收標準**:
-- [ ] Golden 測試文件創建
-- [ ] Golden 快照生成
-- [ ] 測試通過
+- [x] Golden 測試文件創建
+- [x] Golden 快照生成（15 個 PNG 文件）
+- [x] 所有測試通過（12/12）
+- [x] 測試覆蓋全面（組件、布局、響應式、文字樣式）
+
+**完成內容**:
+- ✅ 創建了 Golden 測試目錄 `app/test/golden/`
+- ✅ 編寫了 12 個 Golden 測試用例，涵蓋所有重要視覺場景
+- ✅ 測試覆蓋了 LogoWidget、LoadingWidget 獨立組件
+- ✅ 測試覆蓋了組合布局和完整啟動畫面布局
+- ✅ 測試覆蓋了 3 種屏幕尺寸（小屏、大屏、平板）
+- ✅ 測試覆蓋了不同背景色和文字樣式
+- ✅ 成功生成 15 個 Golden 快照 PNG 文件
+- ✅ 所有測試通過率 100% (12/12)
+- ✅ 避免了 GetX 控制器導致的測試超時問題
+- ✅ 實現了設備尺寸模擬和清理邏輯
+- ✅ 為視覺回歸檢測提供了完整的快照基線
 
 ---
 
