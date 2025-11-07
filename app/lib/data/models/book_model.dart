@@ -1,4 +1,5 @@
 import 'package:hive/hive.dart';
+import 'download_status.dart';
 
 part 'book_model.g.dart';
 
@@ -48,6 +49,14 @@ class BookModel extends HiveObject {
   @HiveField(9)
   final String? localPath;
 
+  /// Download status tracking
+  @HiveField(10)
+  final DownloadStatus downloadStatus;
+
+  /// Download progress (0.0 to 1.0)
+  @HiveField(11)
+  final double downloadProgress;
+
   BookModel({
     required this.id,
     required this.title,
@@ -59,6 +68,8 @@ class BookModel extends HiveObject {
     required this.fileSize,
     this.downloadedAt,
     this.localPath,
+    this.downloadStatus = DownloadStatus.notDownloaded,
+    this.downloadProgress = 0.0,
   });
 
   /// Create BookModel from JSON
@@ -78,6 +89,10 @@ class BookModel extends HiveObject {
           ? DateTime.parse(json['downloaded_at'] as String)
           : null,
       localPath: json['local_path'] as String?,
+      downloadStatus: json['download_status'] != null
+          ? DownloadStatus.values[json['download_status'] as int]
+          : DownloadStatus.notDownloaded,
+      downloadProgress: (json['download_progress'] as num?)?.toDouble() ?? 0.0,
     );
   }
 
@@ -94,18 +109,26 @@ class BookModel extends HiveObject {
       'file_size': fileSize,
       'downloaded_at': downloadedAt?.toIso8601String(),
       'local_path': localPath,
+      'download_status': downloadStatus.index,
+      'download_progress': downloadProgress,
     };
   }
 
   /// Check if the book is downloaded locally
-  bool get isDownloaded => localPath != null && localPath!.isNotEmpty;
+  bool get isDownloaded => downloadStatus == DownloadStatus.downloaded;
+
+  /// Check if the book is currently downloading
+  bool get isDownloading => downloadStatus == DownloadStatus.downloading;
 
   /// Get formatted file size (KB or MB)
   String get fileSizeFormatted {
-    if (fileSize < 1024 * 1024) {
+    if (fileSize < 1024) {
+      return '$fileSize B';
+    } else if (fileSize < 1024 * 1024) {
       return '${(fileSize / 1024).toStringAsFixed(1)} KB';
+    } else {
+      return '${(fileSize / (1024 * 1024)).toStringAsFixed(1)} MB';
     }
-    return '${(fileSize / (1024 * 1024)).toStringAsFixed(1)} MB';
   }
 
   /// Create a copy with updated fields
@@ -120,6 +143,8 @@ class BookModel extends HiveObject {
     int? fileSize,
     DateTime? downloadedAt,
     String? localPath,
+    DownloadStatus? downloadStatus,
+    double? downloadProgress,
   }) {
     return BookModel(
       id: id ?? this.id,
@@ -132,6 +157,8 @@ class BookModel extends HiveObject {
       fileSize: fileSize ?? this.fileSize,
       downloadedAt: downloadedAt ?? this.downloadedAt,
       localPath: localPath ?? this.localPath,
+      downloadStatus: downloadStatus ?? this.downloadStatus,
+      downloadProgress: downloadProgress ?? this.downloadProgress,
     );
   }
 
@@ -149,7 +176,9 @@ class BookModel extends HiveObject {
         other.language == language &&
         other.fileSize == fileSize &&
         other.downloadedAt == downloadedAt &&
-        other.localPath == localPath;
+        other.localPath == localPath &&
+        other.downloadStatus == downloadStatus &&
+        other.downloadProgress == downloadProgress;
   }
 
   @override
@@ -163,13 +192,16 @@ class BookModel extends HiveObject {
         language.hashCode ^
         fileSize.hashCode ^
         downloadedAt.hashCode ^
-        localPath.hashCode;
+        localPath.hashCode ^
+        downloadStatus.hashCode ^
+        downloadProgress.hashCode;
   }
 
   @override
   String toString() {
     return 'BookModel(id: $id, title: $title, author: $author, '
         'language: $language, fileSize: $fileSizeFormatted, '
+        'downloadStatus: $downloadStatus, downloadProgress: ${(downloadProgress * 100).toStringAsFixed(1)}%, '
         'isDownloaded: $isDownloaded)';
   }
 }

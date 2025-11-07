@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shuyuan_reader/data/models/book_model.dart';
+import 'package:shuyuan_reader/data/models/download_status.dart';
 
 void main() {
   group('BookModel', () {
@@ -15,6 +16,8 @@ void main() {
         description: '這是一本測試書籍的描述',
         language: 'zh-TW',
         fileSize: 2621440, // 2.5 MB
+        downloadStatus: DownloadStatus.notDownloaded,
+        downloadProgress: 0.0,
       );
     });
 
@@ -31,6 +34,8 @@ void main() {
           'description': '千華寺繼任主持見月老人的自傳，記錄了見月老人的修行歷程與佛法心得。',
           'language': 'zh-TW',
           'file_size': 2621440,
+          'download_status': 0,
+          'download_progress': 0.0,
         };
 
         final book = BookModel.fromJson(json);
@@ -45,6 +50,8 @@ void main() {
         expect(book.fileSize, 2621440);
         expect(book.downloadedAt, isNull);
         expect(book.localPath, isNull);
+        expect(book.downloadStatus, DownloadStatus.notDownloaded);
+        expect(book.downloadProgress, 0.0);
       });
 
       test('should parse JSON with optional fields', () {
@@ -59,6 +66,8 @@ void main() {
           'file_size': 1024000,
           'downloaded_at': '2025-11-07T10:00:00.000Z',
           'local_path': '/storage/books/test.epub',
+          'download_status': 3,
+          'download_progress': 1.0,
         };
 
         final book = BookModel.fromJson(json);
@@ -69,6 +78,8 @@ void main() {
         expect(book.downloadedAt!.month, 11);
         expect(book.downloadedAt!.day, 7);
         expect(book.localPath, '/storage/books/test.epub');
+        expect(book.downloadStatus, DownloadStatus.downloaded);
+        expect(book.downloadProgress, 1.0);
       });
 
       test('should handle missing description gracefully', () {
@@ -102,12 +113,16 @@ void main() {
         expect(json['file_size'], 2621440);
         expect(json['downloaded_at'], isNull);
         expect(json['local_path'], isNull);
+        expect(json['download_status'], 0);
+        expect(json['download_progress'], 0.0);
       });
 
       test('should serialize optional fields when present', () {
         final downloadedBook = testBook.copyWith(
           downloadedAt: DateTime(2025, 11, 7, 10, 0, 0),
           localPath: '/storage/books/test.epub',
+          downloadStatus: DownloadStatus.downloaded,
+          downloadProgress: 1.0,
         );
 
         final json = downloadedBook.toJson();
@@ -115,27 +130,92 @@ void main() {
         expect(json['downloaded_at'], isNotNull);
         expect(json['downloaded_at'], contains('2025-11-07'));
         expect(json['local_path'], '/storage/books/test.epub');
+        expect(json['download_status'], 3);
+        expect(json['download_progress'], 1.0);
       });
     });
 
     group('isDownloaded getter', () {
-      test('should return false when localPath is null', () {
-        expect(testBook.isDownloaded, false);
+      test('should return false when downloadStatus is notDownloaded', () {
+        final book = testBook.copyWith(
+          downloadStatus: DownloadStatus.notDownloaded,
+        );
+        expect(book.isDownloaded, false);
       });
 
-      test('should return false when localPath is empty', () {
-        final bookWithEmptyPath = testBook.copyWith(localPath: '');
-        expect(bookWithEmptyPath.isDownloaded, false);
+      test('should return false when downloadStatus is downloading', () {
+        final book = testBook.copyWith(
+          downloadStatus: DownloadStatus.downloading,
+        );
+        expect(book.isDownloaded, false);
       });
 
-      test('should return true when localPath has value', () {
-        final downloadedBook =
-            testBook.copyWith(localPath: '/storage/books/test.epub');
-        expect(downloadedBook.isDownloaded, true);
+      test('should return false when downloadStatus is paused', () {
+        final book = testBook.copyWith(
+          downloadStatus: DownloadStatus.paused,
+        );
+        expect(book.isDownloaded, false);
+      });
+
+      test('should return false when downloadStatus is failed', () {
+        final book = testBook.copyWith(
+          downloadStatus: DownloadStatus.failed,
+        );
+        expect(book.isDownloaded, false);
+      });
+
+      test('should return true when downloadStatus is downloaded', () {
+        final book = testBook.copyWith(
+          downloadStatus: DownloadStatus.downloaded,
+        );
+        expect(book.isDownloaded, true);
+      });
+    });
+
+    group('isDownloading getter', () {
+      test('should return false when downloadStatus is notDownloaded', () {
+        final book = testBook.copyWith(
+          downloadStatus: DownloadStatus.notDownloaded,
+        );
+        expect(book.isDownloading, false);
+      });
+
+      test('should return true when downloadStatus is downloading', () {
+        final book = testBook.copyWith(
+          downloadStatus: DownloadStatus.downloading,
+          downloadProgress: 0.5,
+        );
+        expect(book.isDownloading, true);
+      });
+
+      test('should return false when downloadStatus is paused', () {
+        final book = testBook.copyWith(
+          downloadStatus: DownloadStatus.paused,
+        );
+        expect(book.isDownloading, false);
+      });
+
+      test('should return false when downloadStatus is downloaded', () {
+        final book = testBook.copyWith(
+          downloadStatus: DownloadStatus.downloaded,
+        );
+        expect(book.isDownloading, false);
+      });
+
+      test('should return false when downloadStatus is failed', () {
+        final book = testBook.copyWith(
+          downloadStatus: DownloadStatus.failed,
+        );
+        expect(book.isDownloading, false);
       });
     });
 
     group('fileSizeFormatted getter', () {
+      test('should format size in B when less than 1KB', () {
+        final tinyBook = testBook.copyWith(fileSize: 512); // 512 B
+        expect(tinyBook.fileSizeFormatted, '512 B');
+      });
+
       test('should format size in KB when less than 1MB', () {
         final smallBook = testBook.copyWith(fileSize: 512000); // 500 KB
         expect(smallBook.fileSizeFormatted, '500.0 KB');
@@ -155,6 +235,21 @@ void main() {
         final tinyBook = testBook.copyWith(fileSize: 10240); // 10 KB
         expect(tinyBook.fileSizeFormatted, '10.0 KB');
       });
+
+      test('should format 1 byte correctly', () {
+        final singleByte = testBook.copyWith(fileSize: 1);
+        expect(singleByte.fileSizeFormatted, '1 B');
+      });
+
+      test('should format exactly 1KB correctly', () {
+        final exactKB = testBook.copyWith(fileSize: 1024);
+        expect(exactKB.fileSizeFormatted, '1.0 KB');
+      });
+
+      test('should format exactly 1MB correctly', () {
+        final exactMB = testBook.copyWith(fileSize: 1048576);
+        expect(exactMB.fileSizeFormatted, '1.0 MB');
+      });
     });
 
     group('copyWith', () {
@@ -162,12 +257,16 @@ void main() {
         final updatedBook = testBook.copyWith(
           title: '更新的標題',
           fileSize: 5242880, // 5 MB
+          downloadStatus: DownloadStatus.downloading,
+          downloadProgress: 0.5,
         );
 
         expect(updatedBook.id, testBook.id);
         expect(updatedBook.title, '更新的標題');
         expect(updatedBook.author, testBook.author);
         expect(updatedBook.fileSize, 5242880);
+        expect(updatedBook.downloadStatus, DownloadStatus.downloading);
+        expect(updatedBook.downloadProgress, 0.5);
       });
 
       test('should keep original values when not specified', () {
@@ -177,6 +276,8 @@ void main() {
         expect(copiedBook.title, testBook.title);
         expect(copiedBook.author, testBook.author);
         expect(copiedBook.fileSize, testBook.fileSize);
+        expect(copiedBook.downloadStatus, testBook.downloadStatus);
+        expect(copiedBook.downloadProgress, testBook.downloadProgress);
       });
     });
 
@@ -191,6 +292,8 @@ void main() {
           description: 'Same description',
           language: 'zh-TW',
           fileSize: 1024000,
+          downloadStatus: DownloadStatus.notDownloaded,
+          downloadProgress: 0.0,
         );
 
         final book2 = BookModel(
@@ -202,6 +305,8 @@ void main() {
           description: 'Same description',
           language: 'zh-TW',
           fileSize: 1024000,
+          downloadStatus: DownloadStatus.notDownloaded,
+          downloadProgress: 0.0,
         );
 
         expect(book1, equals(book2));
@@ -214,6 +319,22 @@ void main() {
 
         expect(book1, isNot(equals(book2)));
         expect(book1.hashCode, isNot(equals(book2.hashCode)));
+      });
+
+      test('should not be equal when downloadStatus differs', () {
+        final book1 = testBook;
+        final book2 = testBook.copyWith(
+          downloadStatus: DownloadStatus.downloading,
+        );
+
+        expect(book1, isNot(equals(book2)));
+      });
+
+      test('should not be equal when downloadProgress differs', () {
+        final book1 = testBook;
+        final book2 = testBook.copyWith(downloadProgress: 0.5);
+
+        expect(book1, isNot(equals(book2)));
       });
 
       test('should be equal to itself', () {
@@ -231,15 +352,34 @@ void main() {
         expect(str, contains('測試作者'));
         expect(str, contains('zh-TW'));
         expect(str, contains('2.5 MB'));
+        expect(str, contains('downloadStatus: DownloadStatus.notDownloaded'));
+        expect(str, contains('downloadProgress: 0.0%'));
         expect(str, contains('isDownloaded: false'));
       });
 
       test('should show downloaded status correctly', () {
-        final downloadedBook =
-            testBook.copyWith(localPath: '/storage/books/test.epub');
+        final downloadedBook = testBook.copyWith(
+          localPath: '/storage/books/test.epub',
+          downloadStatus: DownloadStatus.downloaded,
+          downloadProgress: 1.0,
+        );
         final str = downloadedBook.toString();
 
+        expect(str, contains('downloadStatus: DownloadStatus.downloaded'));
+        expect(str, contains('downloadProgress: 100.0%'));
         expect(str, contains('isDownloaded: true'));
+      });
+
+      test('should show downloading status correctly', () {
+        final downloadingBook = testBook.copyWith(
+          downloadStatus: DownloadStatus.downloading,
+          downloadProgress: 0.5,
+        );
+        final str = downloadingBook.toString();
+
+        expect(str, contains('downloadStatus: DownloadStatus.downloading'));
+        expect(str, contains('downloadProgress: 50.0%'));
+        expect(str, contains('isDownloaded: false'));
       });
     });
 
@@ -256,6 +396,8 @@ void main() {
           fileSize: 3145728,
           downloadedAt: DateTime(2025, 11, 7, 12, 30, 0),
           localPath: '/storage/books/test.epub',
+          downloadStatus: DownloadStatus.downloaded,
+          downloadProgress: 1.0,
         );
 
         final json = originalBook.toJson();
@@ -271,6 +413,8 @@ void main() {
         expect(reconstructedBook.fileSize, originalBook.fileSize);
         expect(reconstructedBook.downloadedAt, originalBook.downloadedAt);
         expect(reconstructedBook.localPath, originalBook.localPath);
+        expect(reconstructedBook.downloadStatus, originalBook.downloadStatus);
+        expect(reconstructedBook.downloadProgress, originalBook.downloadProgress);
       });
     });
   });

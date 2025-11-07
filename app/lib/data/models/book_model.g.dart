@@ -27,13 +27,15 @@ class BookModelAdapter extends TypeAdapter<BookModel> {
       fileSize: fields[7] as int,
       downloadedAt: fields[8] as DateTime?,
       localPath: fields[9] as String?,
+      downloadStatus: fields[10] as DownloadStatus,
+      downloadProgress: fields[11] as double,
     );
   }
 
   @override
   void write(BinaryWriter writer, BookModel obj) {
     writer
-      ..writeByte(10)
+      ..writeByte(12)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -53,7 +55,11 @@ class BookModelAdapter extends TypeAdapter<BookModel> {
       ..writeByte(8)
       ..write(obj.downloadedAt)
       ..writeByte(9)
-      ..write(obj.localPath);
+      ..write(obj.localPath)
+      ..writeByte(10)
+      ..write(obj.downloadStatus)
+      ..writeByte(11)
+      ..write(obj.downloadProgress);
   }
 
   @override
