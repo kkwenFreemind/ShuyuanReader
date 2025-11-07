@@ -47,10 +47,11 @@ dependencies:
   # 应用信息
   package_info_plus: ^5.0.1
 
-  # 其他依赖
+  # 其他依賴
   path_provider: ^2.1.1
   epub_view: ^3.1.0
   cached_network_image: ^3.3.0
+  shimmer: ^3.0.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
