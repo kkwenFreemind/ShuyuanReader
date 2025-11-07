@@ -217,8 +217,7 @@ class BookDetailPage extends GetView<BookDetailController> {
             // TODO: 實現暫停狀態組件
             return const Center(child: Text('已暫停'));
           case DownloadStatus.downloaded:
-            // TODO: 實現已下載組件
-            return const Center(child: Text('已下載'));
+            return _buildDownloadedButtons();
           case DownloadStatus.failed:
             return _buildDownloadButton();
         }
@@ -345,6 +344,65 @@ class BookDetailPage extends GetView<BookDetailController> {
               ),
             ),
           ],
+        ),
+      ],
+    );
+  }
+
+  /// 構建已下載組件
+  /// 
+  /// 顯示打開閱讀和刪除書籍按鈕
+  Widget _buildDownloadedButtons() {
+    return Column(
+      children: [
+        // 打開閱讀按鈕
+        SizedBox(
+          width: double.infinity,
+          height: 50,
+          child: ElevatedButton.icon(
+            onPressed: controller.openReader,
+            icon: const Icon(Icons.menu_book, size: 24),
+            label: const Text(
+              '打開閱讀',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.green,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              elevation: 2,
+            ),
+          ),
+        ),
+        const SizedBox(height: 12),
+        
+        // 刪除書籍按鈕
+        SizedBox(
+          width: double.infinity,
+          height: 50,
+          child: OutlinedButton.icon(
+            onPressed: controller.deleteBook,
+            icon: const Icon(Icons.delete_outline, size: 24),
+            label: const Text(
+              '刪除書籍',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: Colors.red[700],
+              side: BorderSide(color: Colors.red[700]!, width: 1.5),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+          ),
         ),
       ],
     );
