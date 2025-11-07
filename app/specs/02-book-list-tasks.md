@@ -14,11 +14,11 @@
 | 階段 | 任務數 | 完成數 | 進度 | 預計時間 | 實際時間 | 狀態 |
 |------|--------|--------|------|----------|----------|------|
 | Stage 1: 環境準備 | 2 | 2 | 100% | 2h | 1h | ✅ 已完成 |
-| Stage 2: Data Layer | 4 | 2 | 50% | 6h | 3h | 🔄 進行中 |
+| Stage 2: Data Layer | 4 | 3 | 75% | 6h | 5.5h | 🔄 進行中 |
 | Stage 3: Domain Layer | 3 | 0 | 0% | 4h | - | ⬜ 未開始 |
 | Stage 4: Presentation Layer | 6 | 0 | 0% | 10h | - | ⬜ 未開始 |
 | Stage 5: 測試 | 4 | 0 | 0% | 6h | - | ⬜ 未開始 |
-| **總計** | **19** | **4** | **21.1%** | **28h** | **4h** | 🔄 進行中 |
+| **總計** | **19** | **5** | **26.3%** | **28h** | **6.5h** | 🔄 進行中 |
 
 ---
 
@@ -298,39 +298,121 @@ class BookRemoteDataSource {
 
 ---
 
-### Task 2.2.3: 實現 Local DataSource
+### Task 2.2.3: 實現 Local DataSource ✅ (2025-11-07)
 
 **描述**: 實現 `BookLocalDataSource`，使用 Hive 緩存書籍數據
 
-**預計時間**: 1.5 小時
+**預計時間**: 1.5 小時  
+**實際時間**: 1.5 小時  
+**狀態**: ✅ 已完成 (2025-11-07)
 
 **依賴**: 
 - Task 2.2.1 完成
 
 **輸出**:
-- `lib/data/datasources/book_local_datasource.dart`
+- `lib/data/datasources/book_local_datasource.dart` (141 行)
+- `lib/core/init/app_initializer.dart` (已更新，註冊 Adapter 和打開 Box)
+- `test/data/datasources/book_local_datasource_test.dart` (450 行，26 個測試)
 
 **任務清單**:
-- [ ] 創建 `BookLocalDataSource` 類
-- [ ] 在 `AppInitializer` 中註冊 `BookModel` 適配器
-- [ ] 實現 `getCachedBooks()` 方法
-- [ ] 實現 `cacheBooks()` 方法
-- [ ] 實現 `getLastUpdateTime()` 方法
-- [ ] 實現 `setLastUpdateTime()` 方法
-- [ ] 實現 `clearCache()` 方法
-- [ ] 編寫單元測試
+- [x] 創建 `BookLocalDataSource` 類
+- [x] 在 `AppInitializer` 中註冊 `BookModel` 適配器
+- [x] 實現 `getCachedBooks()` 方法
+- [x] 實現 `cacheBooks()` 方法
+- [x] 實現 `getLastUpdateTime()` 方法
+- [x] 實現 `setLastUpdateTime()` 方法
+- [x] 實現 `clearCache()` 方法
+- [x] 編寫單元測試
 
 **驗收標準**:
-- ✅ Hive Box 正確初始化
-- ✅ 數據正確存儲和讀取
-- ✅ 時間戳正確記錄
-- ✅ 單元測試通過
+- ✅ Hive Box 正確初始化 (books box + metadata box)
+- ✅ 數據正確存儲和讀取 (使用 book.id 作為 key)
+- ✅ 時間戳正確記錄 (ISO8601 格式存儲)
+- ✅ 單元測試通過 (26/26 tests passed ✅)
+
+**完成總結**:
+
+1. **更新 AppInitializer** (`lib/core/init/app_initializer.dart`):
+   - 導入 `BookModel` 類
+   - 註冊 `BookModelAdapter()` (TypeId 1)
+   - 打開 `books` Box (`Box<BookModel>`)
+   - 打開 `metadata` Box (`Box<dynamic>`)
+   - 添加詳細的日志輸出用於調試
+
+2. **創建 BookLocalDataSource** (`lib/data/datasources/book_local_datasource.dart`, 141 行):
+   - 構造函數接受兩個 Hive Box: `_bookBox` 和 `_metaBox`
+   - `getCachedBooks()`: 返回所有緩存書籍 (`_bookBox.values.toList()`)
+   - `cacheBooks(List<BookModel>)`: 
+     * 清空現有緩存 (`_bookBox.clear()`)
+     * 使用 book.id 作為 key 存儲每本書
+     * 自動調用 `setLastUpdateTime(DateTime.now())`
+   - `getLastUpdateTime()`: 
+     * 從 metadata box 讀取時間戳字符串
+     * 解析為 DateTime 對象
+     * 處理空值和解析錯誤（返回 null）
+   - `setLastUpdateTime(DateTime)`: 
+     * 將時間戳轉換為 ISO8601 字符串格式
+     * 存儲到 metadata box (key: 'books_last_update')
+   - `clearCache()`: 
+     * 清空 books box
+     * 清空 metadata box（包括時間戳）
+   - 完整的文檔注釋和使用示例
+
+3. **創建單元測試** (`test/data/datasources/book_local_datasource_test.dart`, 450 行, 26 個測試):
+   - **測試設置**:
+     * 使用臨時目錄初始化 Hive (`Directory.systemTemp.createTempSync()`)
+     * 註冊 BookModelAdapter
+     * 每個測試打開獨立的 test boxes
+     * tearDown 清理並關閉 boxes
+     * tearDownAll 刪除測試數據和目錄
+   - **測試組 getCachedBooks** (4 tests):
+     * 空緩存返回空列表
+     * 返回所有緩存的書籍
+     * 保持存儲順序
+   - **測試組 cacheBooks** (7 tests):
+     * 成功緩存書籍
+     * 清空現有緩存再存儲新書籍
+     * 使用 book.id 作為存儲 key
+     * 自動設置最後更新時間
+     * 處理空列表
+     * 處理大量書籍 (100 本)
+   - **測試組 getLastUpdateTime** (5 tests):
+     * 無時間戳時返回 null
+     * cacheBooks 後返回正確時間戳
+     * setLastUpdateTime 後返回正確時間
+     * 無效時間戳格式返回 null
+     * 正確解析 ISO8601 格式
+   - **測試組 setLastUpdateTime** (4 tests):
+     * 成功存儲時間戳
+     * 使用 ISO8601 格式存儲
+     * 覆蓋現有時間戳
+     * 處理當前時間
+   - **測試組 clearCache** (4 tests):
+     * 清空所有書籍
+     * 清空 metadata（包括時間戳）
+     * 處理已空的緩存
+     * 清空後可再次緩存
+   - **測試組 integration scenarios** (2 tests):
+     * 完整的緩存刷新流程
+     * 緩存過期檢查流程
+     * 按 ID 更新書籍
+     * 跨操作的數據完整性
+   - **所有測試通過**: ✅ 26/26 tests passed
+
+**關鍵設計決策**:
+1. 使用兩個 Hive Box: books (強類型) + metadata (動態類型)
+2. book.id 作為存儲 key，方便按 ID 查詢和更新
+3. 時間戳使用 ISO8601 字符串格式，便於可讀性和調試
+4. cacheBooks 自動更新時間戳，減少重複調用
+5. 完整的錯誤處理（時間戳解析失敗返回 null）
+6. 測試使用臨時目錄，確保測試隔離和清理
 
 **實現提示**:
 ```dart
 class BookLocalDataSource {
   final Box<BookModel> _bookBox;
   final Box<dynamic> _metaBox;
+  static const String _lastUpdateKey = 'books_last_update';
 
   BookLocalDataSource(this._bookBox, this._metaBox);
 
@@ -343,11 +425,26 @@ class BookLocalDataSource {
     for (var book in books) {
       await _bookBox.put(book.id, book);
     }
+    await setLastUpdateTime(DateTime.now());
   }
 
   Future<DateTime?> getLastUpdateTime() async {
-    final timestamp = _metaBox.get('last_book_update');
-    return timestamp != null ? DateTime.parse(timestamp) : null;
+    final timestamp = _metaBox.get(_lastUpdateKey) as String?;
+    if (timestamp == null) return null;
+    try {
+      return DateTime.parse(timestamp);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  Future<void> setLastUpdateTime(DateTime time) async {
+    await _metaBox.put(_lastUpdateKey, time.toIso8601String());
+  }
+
+  Future<void> clearCache() async {
+    await _bookBox.clear();
+    await _metaBox.clear();
   }
 }
 ```
