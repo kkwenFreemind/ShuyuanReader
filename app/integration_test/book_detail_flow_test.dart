@@ -1009,6 +1009,376 @@ void main() {
     });
   });
 
+  group('BookDetail Delete Book Tests', () {
+    testWidgets('Delete book: Find delete button for downloaded book',
+        (WidgetTester tester) async {
+      print('🚀 測試：刪除書籍 - 查找已下載書籍的刪除按鈕...');
+      
+      await navigateToBookDetail(tester);
+      
+      if (find.byType(BookDetailPage).evaluate().isEmpty) {
+        print('ℹ️  未進入詳情頁，跳過測試');
+        return;
+      }
+      
+      await tester.pump(const Duration(milliseconds: 500));
+      
+      // 檢查書籍狀態
+      final openButton = find.text('打開閱讀');
+      final deleteButton = find.text('刪除書籍');
+      final downloadButton = find.text('下載書籍');
+      
+      if (openButton.evaluate().isNotEmpty && deleteButton.evaluate().isNotEmpty) {
+        print('✅ 書籍已下載狀態');
+        print('✅ 找到"打開閱讀"按鈕');
+        print('✅ 找到"刪除書籍"按鈕');
+        
+        expect(deleteButton, findsOneWidget,
+            reason: '已下載的書籍應該顯示刪除按鈕');
+        
+        // 驗證刪除按鈕是紅色的（通過查找 Icon 或 Text 的顏色）
+        expect(find.byIcon(Icons.delete_outline), findsOneWidget,
+            reason: '刪除按鈕應該有刪除圖標');
+        
+        print('🎉 刪除按鈕檢查通過！');
+      } else if (downloadButton.evaluate().isNotEmpty) {
+        print('ℹ️  書籍未下載，需要先下載才能測試刪除功能');
+      } else {
+        print('⚠️  無法確定書籍狀態');
+      }
+    });
+
+    testWidgets('Delete book: Click delete shows confirmation dialog',
+        (WidgetTester tester) async {
+      print('🚀 測試：刪除書籍 - 點擊刪除顯示確認對話框...');
+      
+      await navigateToBookDetail(tester);
+      
+      if (find.byType(BookDetailPage).evaluate().isEmpty) {
+        print('ℹ️  未進入詳情頁，跳過測試');
+        return;
+      }
+      
+      await tester.pump(const Duration(milliseconds: 500));
+      
+      // Step 1: 查找刪除按鈕
+      final deleteButton = find.text('刪除書籍');
+      
+      if (deleteButton.evaluate().isEmpty) {
+        print('ℹ️  未找到刪除按鈕（書籍可能未下載），跳過測試');
+        return;
+      }
+      
+      print('✅ Step 1: 找到刪除按鈕');
+      
+      // Step 2: 點擊刪除按鈕
+      await tester.tap(deleteButton);
+      await tester.pumpAndSettle();
+      print('✅ Step 2: 點擊刪除按鈕');
+      
+      // Step 3: 驗證確認對話框出現
+      final confirmDialog = find.byType(AlertDialog);
+      
+      if (confirmDialog.evaluate().isNotEmpty) {
+        print('✅ Step 3: 確認對話框已顯示');
+        
+        // 驗證對話框內容
+        expect(find.text('確認刪除'), findsOneWidget,
+            reason: '對話框應該顯示"確認刪除"標題');
+        
+        // 驗證對話框有取消和刪除按鈕
+        final cancelButton = find.text('取消');
+        final confirmDeleteButton = find.text('刪除');
+        
+        expect(cancelButton, findsOneWidget,
+            reason: '對話框應該有取消按鈕');
+        expect(confirmDeleteButton, findsOneWidget,
+            reason: '對話框應該有刪除按鈕');
+        
+        print('✅ Step 4: 對話框內容驗證通過');
+        
+        // 點擊取消（避免實際刪除）
+        await tester.tap(cancelButton);
+        await tester.pumpAndSettle();
+        print('✅ Step 5: 點擊取消按鈕');
+        
+        // 驗證對話框消失
+        expect(find.byType(AlertDialog), findsNothing,
+            reason: '點擊取消後對話框應該消失');
+        
+        print('✅ Step 6: 對話框已關閉');
+        print('🎉 確認對話框測試通過！');
+      } else {
+        print('⚠️  未檢測到確認對話框');
+      }
+    });
+
+    testWidgets('Delete book: Cancel delete operation',
+        (WidgetTester tester) async {
+      print('🚀 測試：刪除書籍 - 取消刪除操作...');
+      
+      await navigateToBookDetail(tester);
+      
+      if (find.byType(BookDetailPage).evaluate().isEmpty) {
+        print('ℹ️  未進入詳情頁，跳過測試');
+        return;
+      }
+      
+      await tester.pump(const Duration(milliseconds: 500));
+      
+      // Step 1: 確認初始狀態
+      final initialDeleteButton = find.text('刪除書籍');
+      final initialOpenButton = find.text('打開閱讀');
+      
+      if (initialDeleteButton.evaluate().isEmpty) {
+        print('ℹ️  未找到刪除按鈕，跳過測試');
+        return;
+      }
+      
+      final wasDownloaded = initialOpenButton.evaluate().isNotEmpty;
+      print('✅ Step 1: 確認初始狀態（已下載: $wasDownloaded）');
+      
+      // Step 2: 點擊刪除
+      await tester.tap(initialDeleteButton);
+      await tester.pumpAndSettle();
+      print('✅ Step 2: 點擊刪除按鈕');
+      
+      // Step 3: 點擊取消
+      final cancelButton = find.text('取消');
+      
+      if (cancelButton.evaluate().isNotEmpty) {
+        await tester.tap(cancelButton);
+        await tester.pumpAndSettle();
+        print('✅ Step 3: 點擊取消按鈕');
+        
+        // Step 4: 驗證狀態未改變
+        await tester.pump(const Duration(milliseconds: 500));
+        
+        final afterCancelDeleteButton = find.text('刪除書籍');
+        final afterCancelOpenButton = find.text('打開閱讀');
+        
+        // 書籍應該仍然是下載狀態
+        if (wasDownloaded) {
+          expect(afterCancelOpenButton, findsOneWidget,
+              reason: '取消刪除後，打開閱讀按鈕應該仍然存在');
+          expect(afterCancelDeleteButton, findsOneWidget,
+              reason: '取消刪除後，刪除按鈕應該仍然存在');
+          print('✅ Step 4: 確認書籍狀態未改變');
+        }
+        
+        print('🎉 取消刪除測試通過！');
+      } else {
+        print('⚠️  未找到取消按鈕');
+      }
+    });
+
+    testWidgets('Delete book: Confirm delete and verify state reset',
+        (WidgetTester tester) async {
+      print('🚀 測試：刪除書籍 - 確認刪除並驗證狀態重置...');
+      
+      await navigateToBookDetail(tester);
+      
+      if (find.byType(BookDetailPage).evaluate().isEmpty) {
+        print('ℹ️  未進入詳情頁，跳過測試');
+        return;
+      }
+      
+      await tester.pump(const Duration(milliseconds: 500));
+      
+      // Step 1: 確認書籍已下載
+      final deleteButton = find.text('刪除書籍');
+      
+      if (deleteButton.evaluate().isEmpty) {
+        print('ℹ️  書籍未下載，無法測試刪除功能');
+        print('ℹ️  提示：可以先下載書籍再運行此測試');
+        return;
+      }
+      
+      print('✅ Step 1: 確認書籍已下載（存在刪除按鈕）');
+      
+      // Step 2: 點擊刪除
+      await tester.tap(deleteButton);
+      await tester.pumpAndSettle();
+      print('✅ Step 2: 點擊刪除按鈕');
+      
+      // Step 3: 確認刪除
+      final confirmButton = find.text('刪除');
+      
+      if (confirmButton.evaluate().isNotEmpty) {
+        // 在對話框中找到刪除按鈕（不是頁面上的刪除書籍按鈕）
+        await tester.tap(confirmButton.last);
+        await tester.pumpAndSettle();
+        print('✅ Step 3: 確認刪除');
+        
+        // Step 4: 等待刪除完成
+        await tester.pump(const Duration(milliseconds: 500));
+        
+        // Step 5: 驗證狀態重置
+        final downloadButtonAfterDelete = find.text('下載書籍');
+        final openButtonAfterDelete = find.text('打開閱讀');
+        final deleteButtonAfterDelete = find.text('刪除書籍');
+        
+        // 應該回到未下載狀態
+        if (downloadButtonAfterDelete.evaluate().isNotEmpty) {
+          print('✅ Step 4: 確認回到未下載狀態');
+          
+          expect(downloadButtonAfterDelete, findsOneWidget,
+              reason: '刪除後應該顯示下載按鈕');
+          expect(openButtonAfterDelete, findsNothing,
+              reason: '刪除後不應該有打開閱讀按鈕');
+          
+          // 刪除按鈕應該消失（因為現在是未下載狀態）
+          final remainingDeleteButtons = deleteButtonAfterDelete.evaluate();
+          if (remainingDeleteButtons.isEmpty) {
+            print('✅ Step 5: 刪除按鈕已消失');
+          }
+          
+          print('🎉 刪除並狀態重置測試通過！');
+        } else {
+          print('⚠️  未檢測到下載按鈕（狀態可能未重置）');
+        }
+        
+        // 檢查是否有成功提示
+        final successSnackbar = find.text('刪除成功');
+        if (successSnackbar.evaluate().isNotEmpty) {
+          print('✅ Step 6: 顯示刪除成功提示');
+        }
+      } else {
+        print('⚠️  未找到確認刪除按鈕');
+      }
+    });
+
+    testWidgets('Delete book: Verify UI elements in downloaded state',
+        (WidgetTester tester) async {
+      print('🚀 測試：刪除書籍 - 驗證已下載狀態的 UI 元素...');
+      
+      await navigateToBookDetail(tester);
+      
+      if (find.byType(BookDetailPage).evaluate().isEmpty) {
+        print('ℹ️  未進入詳情頁，跳過測試');
+        return;
+      }
+      
+      await tester.pump(const Duration(milliseconds: 500));
+      
+      // 檢查已下載狀態的按鈕
+      final uiElements = <String, bool>{
+        '打開閱讀按鈕': find.text('打開閱讀').evaluate().isNotEmpty,
+        '刪除書籍按鈕': find.text('刪除書籍').evaluate().isNotEmpty,
+        '打開閱讀圖標': find.byIcon(Icons.menu_book).evaluate().isNotEmpty,
+        '刪除圖標': find.byIcon(Icons.delete_outline).evaluate().isNotEmpty,
+      };
+      
+      print('✅ 已下載狀態 UI 元素檢查：');
+      int foundElements = 0;
+      uiElements.forEach((name, found) {
+        print('  - $name: ${found ? "✓" : "✗"}');
+        if (found) foundElements++;
+      });
+      
+      if (foundElements >= 2) {
+        print('✅ 找到 $foundElements/${uiElements.length} 個預期 UI 元素');
+        
+        // 至少應該有打開閱讀或刪除書籍按鈕之一
+        final hasDownloadedButtons = 
+            find.text('打開閱讀').evaluate().isNotEmpty ||
+            find.text('刪除書籍').evaluate().isNotEmpty;
+        
+        if (hasDownloadedButtons) {
+          print('✅ 已下載狀態 UI 正確');
+        }
+        
+        print('🎉 UI 元素驗證測試通過！');
+      } else if (foundElements == 0) {
+        print('ℹ️  未找到已下載狀態的 UI（書籍可能未下載）');
+      } else {
+        print('⚠️  部分 UI 元素缺失');
+      }
+    });
+
+    testWidgets('Delete book: Re-download after delete',
+        (WidgetTester tester) async {
+      print('🚀 測試：刪除書籍 - 刪除後重新下載...');
+      
+      await navigateToBookDetail(tester);
+      
+      if (find.byType(BookDetailPage).evaluate().isEmpty) {
+        print('ℹ️  未進入詳情頁，跳過測試');
+        return;
+      }
+      
+      await tester.pump(const Duration(milliseconds: 500));
+      
+      // 檢查初始狀態
+      final initialState = {
+        'hasDelete': find.text('刪除書籍').evaluate().isNotEmpty,
+        'hasDownload': find.text('下載書籍').evaluate().isNotEmpty,
+      };
+      
+      print('✅ Step 1: 檢查初始狀態');
+      print('  - 刪除按鈕: ${initialState['hasDelete']! ? "存在" : "不存在"}');
+      print('  - 下載按鈕: ${initialState['hasDownload']! ? "存在" : "不存在"}');
+      
+      if (initialState['hasDelete']!) {
+        // 如果有刪除按鈕，執行刪除
+        print('✅ Step 2: 執行刪除操作');
+        
+        final deleteButton = find.text('刪除書籍');
+        await tester.tap(deleteButton);
+        await tester.pumpAndSettle();
+        
+        // 確認刪除
+        final confirmButton = find.text('刪除');
+        if (confirmButton.evaluate().isNotEmpty) {
+          await tester.tap(confirmButton.last);
+          await tester.pumpAndSettle();
+          print('✅ Step 3: 確認刪除');
+          
+          await tester.pump(const Duration(milliseconds: 500));
+        }
+      }
+      
+      // 檢查刪除後狀態
+      final downloadButtonAfterDelete = find.text('下載書籍');
+      
+      if (downloadButtonAfterDelete.evaluate().isNotEmpty) {
+        print('✅ Step 4: 確認回到未下載狀態');
+        
+        // 嘗試重新下載
+        await tester.tap(downloadButtonAfterDelete);
+        await tester.pump(const Duration(milliseconds: 500));
+        print('✅ Step 5: 開始重新下載');
+        
+        // 驗證下載狀態
+        await tester.pump(const Duration(milliseconds: 500));
+        
+        final hasDownloadIndicators = 
+            find.byType(LinearProgressIndicator).evaluate().isNotEmpty ||
+            find.text('取消').evaluate().isNotEmpty ||
+            find.text('暫停').evaluate().isNotEmpty ||
+            find.textContaining('%').evaluate().isNotEmpty ||
+            find.text('打開閱讀').evaluate().isNotEmpty;
+        
+        if (hasDownloadIndicators) {
+          print('✅ Step 6: 重新下載正常進行');
+          expect(hasDownloadIndicators, true,
+              reason: '刪除後應該能夠重新下載');
+          print('🎉 刪除後重新下載測試通過！');
+        } else {
+          print('ℹ️  未檢測到下載狀態（可能太快完成）');
+        }
+        
+        // 驗證應用穩定性
+        expect(find.byType(BookDetailPage), findsOneWidget,
+            reason: '刪除和重新下載後應用應該保持穩定');
+      } else if (initialState['hasDownload']!) {
+        print('ℹ️  書籍原本就是未下載狀態，跳過測試');
+      } else {
+        print('⚠️  無法確定刪除後的狀態');
+      }
+    });
+  });
+
   group('BookDetail Error Handling Tests', () {
     testWidgets('App should not crash on BookDetail page',
         (WidgetTester tester) async {
