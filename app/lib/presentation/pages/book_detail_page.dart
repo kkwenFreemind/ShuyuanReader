@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../controllers/book_detail_controller.dart';
+import '../../data/models/download_status.dart';
 
 /// 書籍詳情頁面
 /// 
@@ -36,7 +37,7 @@ class BookDetailPage extends GetView<BookDetailController> {
         children: [
           _buildCoverImage(),
           _buildBookInfo(),
-          // TODO: 添加操作按鈕組件
+          _buildActionButtons(),
         ],
       ),
     );
@@ -194,6 +195,63 @@ class BookDetailPage extends GetView<BookDetailController> {
             ),
           ],
         ],
+      ),
+    );
+  }
+
+  /// 構建操作按鈕區域
+  /// 
+  /// 根據書籍的下載狀態顯示不同的操作按鈕
+  Widget _buildActionButtons() {
+    final book = controller.book.value;
+    
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: () {
+        switch (book.downloadStatus) {
+          case DownloadStatus.notDownloaded:
+            return _buildDownloadButton();
+          case DownloadStatus.downloading:
+            // TODO: 實現下載中組件
+            return const Center(child: Text('下載中...'));
+          case DownloadStatus.paused:
+            // TODO: 實現暫停狀態組件
+            return const Center(child: Text('已暫停'));
+          case DownloadStatus.downloaded:
+            // TODO: 實現已下載組件
+            return const Center(child: Text('已下載'));
+          case DownloadStatus.failed:
+            return _buildDownloadButton();
+        }
+      }(),
+    );
+  }
+
+  /// 構建下載按鈕（未下載狀態）
+  /// 
+  /// 顯示主要的下載按鈕，點擊後開始下載書籍
+  Widget _buildDownloadButton() {
+    return SizedBox(
+      width: double.infinity,
+      height: 50,
+      child: ElevatedButton.icon(
+        onPressed: controller.startDownload,
+        icon: const Icon(Icons.download, size: 24),
+        label: const Text(
+          '下載書籍',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.blue,
+          foregroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+          elevation: 2,
+        ),
       ),
     );
   }
