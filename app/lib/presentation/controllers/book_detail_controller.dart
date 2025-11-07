@@ -280,7 +280,18 @@ class BookDetailController extends GetxController {
   /// - 只有已下載的書籍才能打開
   /// - 文件不存在時顯示錯誤提示
   void openReader() {
-    // TODO: 實現打開閱讀器邏輯
+    // 步驟 1-2: 檢查本地文件路徑是否存在
+    if (book.value.localPath == null) {
+      Get.snackbar(
+        '錯誤',
+        '書籍文件不存在',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      return;
+    }
+
+    // 步驟 3-4: 跳轉到閱讀器頁面（Spec 04）
+    Get.toNamed('/reader', arguments: book.value);
   }
   
   // ==================== 私有輔助方法 ====================
