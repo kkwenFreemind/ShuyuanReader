@@ -16,9 +16,9 @@
 | Stage 1: 環境準備 | 2 | 2 | 100% | 2h | 1h | ✅ 已完成 |
 | Stage 2: Data Layer | 4 | 4 | 100% | 6h | 6.5h | ✅ 已完成 |
 | Stage 3: Domain Layer | 3 | 3 | 100% | 4h | 3h | ✅ 已完成 |
-| Stage 4: Presentation Layer | 6 | 0 | 0% | 10h | - | ⬜ 未開始 |
+| Stage 4: Presentation Layer | 6 | 1 | 17% | 10h | 2h | 🔄 進行中 |
 | Stage 5: 測試 | 4 | 0 | 0% | 6h | - | ⬜ 未開始 |
-| **總計** | **19** | **9** | **47.4%** | **28h** | **10.5h** | 🔄 進行中 |
+| **總計** | **19** | **10** | **52.6%** | **28h** | **12.5h** | 🔄 進行中 |
 
 ---
 
@@ -929,34 +929,118 @@ class RefreshBooksUseCase {
 
 ## 🎨 Stage 4: Presentation Layer (10 小時)
 
-### Task 2.4.1: 創建 BookListController
+### Task 2.4.1: 創建 BookListController ✅
 
 **描述**: 實現 GetX Controller，管理書籍列表狀態
 
-**預計時間**: 2 小時
+**預計時間**: 2 小時  
+**實際時間**: 2 小時  
+**狀態**: ✅ 已完成 (2025-11-07)
 
 **依賴**: 
 - Task 2.3.3 完成
 
 **輸出**:
-- `lib/presentation/pages/book_list/controllers/book_list_controller.dart`
+- `lib/core/enums/loading_state.dart` (17 行)
+- `lib/presentation/pages/book_list/controllers/book_list_controller.dart` (261 行)
+- `test/presentation/pages/book_list/controllers/book_list_controller_test.dart` (22 tests)
 
 **任務清單**:
-- [ ] 創建 `BookListController` 類
-- [ ] 定義響應式狀態變量（books, loadingState, etc.）
-- [ ] 實現 `onInit()` 方法
-- [ ] 實現 `loadBooks()` 方法
-- [ ] 實現 `refreshBooks()` 方法
-- [ ] 實現 `onBookTap()` 方法
-- [ ] 實現 `retry()` 方法
-- [ ] 添加日誌記錄
-- [ ] 編寫單元測試（mock usecases）
+- [x] 創建 `LoadingState` enum
+- [x] 創建 `BookListController` 類
+- [x] 定義響應式狀態變量（books, loadingState, errorMessage, isOffline）
+- [x] 實現 `onInit()` 方法
+- [x] 實現 `loadBooks()` 方法
+- [x] 實現 `refreshBooks()` 方法
+- [x] 實現 `onBookTap()` 方法
+- [x] 實現 `retry()` 方法
+- [x] 實現 `_handleOfflineMode()` 私有方法
+- [x] 實現 `_getErrorMessage()` 私有方法
+- [x] 添加詳細日誌記錄（emoji 指示器）
+- [x] 編寫單元測試（mock usecases）
+- [x] 所有測試通過 ✅
 
 **驗收標準**:
 - ✅ Controller 狀態管理正確
 - ✅ 錯誤處理完善
 - ✅ 離線模式支持
-- ✅ 單元測試通過
+- ✅ 單元測試通過: **22/22 tests passed**
+
+**完成總結**:
+
+1. **LoadingState Enum** (`lib/core/enums/loading_state.dart`, 17 行):
+   - 定義 4 種加載狀態：loading、success、error、empty
+   - 用於控制 UI 顯示
+   - 清晰的文檔註釋
+
+2. **BookListController** (`lib/presentation/pages/book_list/controllers/book_list_controller.dart`, 261 行):
+   - 繼承 GetxController
+   - **4 個響應式變量**:
+     * `books` (RxList<Book>): 書籍列表
+     * `loadingState` (Rx<LoadingState>): 加載狀態
+     * `errorMessage` (RxString): 錯誤消息
+     * `isOffline` (RxBool): 離線模式標記
+   
+   - **8 個公開方法**:
+     * `onInit()`: 初始化時自動加載書籍
+     * `loadBooks({bool forceRefresh})`: 加載書籍列表（智能緩存）
+     * `refreshBooks()`: 強制刷新（用於下拉刷新）
+     * `onBookTap(Book)`: 處理書籍點擊事件
+     * `retry()`: 重試加載
+     * `_handleOfflineMode()`: 處理離線模式（私有）
+     * `_getErrorMessage()`: 獲取友好錯誤消息（私有）
+   
+   - **核心功能**:
+     * 智能緩存策略: forceRefresh=false 時優先使用緩存
+     * 離線模式支持: 網絡錯誤時自動回退到緩存數據
+     * 三層錯誤處理: NetworkException → ServerException → CacheException
+     * 用戶友好提示: 使用 Get.snackbar 顯示操作結果
+     * 詳細日誌: debugPrint with emoji (📚 開始, ✅ 成功, ❌ 失敗, 🔄 刷新, 👆 點擊)
+     * 測試友好: Get.testMode 檢查避免單元測試中的 snackbar 錯誤
+   
+   - **狀態管理**:
+     * 空列表 → LoadingState.empty
+     * 有數據 → LoadingState.success
+     * 錯誤 → LoadingState.error
+     * 初始 → LoadingState.loading
+
+3. **單元測試** (`test/presentation/pages/book_list/controllers/book_list_controller_test.dart`):
+   - **總計 22 個測試用例**，全部通過 ✅
+   - 使用 Mockito mock 3 個 UseCases
+   - **測試組織** (6 groups):
+     * Initialization (2 tests): 初始值、onInit 調用
+     * loadBooks (8 tests): 成功加載、空列表、網絡錯誤、緩存回退、強制刷新
+     * refreshBooks (5 tests): 成功刷新、空列表、各種異常處理
+     * onBookTap (1 test): 點擊事件處理
+     * retry (1 test): 重試功能
+     * Offline Mode (2 tests): 進入離線模式、無緩存錯誤
+     * Error Messages (3 tests): 不同異常的錯誤消息
+   
+   - **測試覆蓋**:
+     * 正常流程: 成功加載、刷新、空列表
+     * 錯誤處理: Network、Server、Cache 異常
+     * 離線模式: 緩存回退、無緩存處理
+     * 狀態管理: 所有 LoadingState 轉換
+     * 用戶交互: 點擊、重試
+     * 邊界情況: 空數據、錯誤恢復
+
+**關鍵設計決策**:
+1. **響應式狀態**: 使用 GetX 的 Rx 系列類型實現響應式
+2. **離線優先**: 網絡錯誤時自動嘗試使用緩存（用戶體驗優化）
+3. **錯誤友好**: 將技術異常轉換為用戶可讀的錯誤消息
+4. **詳細日誌**: 使用 emoji 增強日誌可讀性
+5. **測試友好**: Get.testMode 條件避免測試環境中的 UI 操作
+6. **清晰的職責分離**: 
+   - Controller: 狀態管理 + 業務邏輯協調
+   - UseCases: 純業務邏輯
+   - Repository: 數據獲取策略
+
+**Task 2.4.1 完成總結**:
+- ✅ LoadingState enum 完成
+- ✅ BookListController 完成 (261 行)
+- ✅ 22 個單元測試全部通過
+- **總計**: 2h actual vs 2h estimated (100% on target)
+- **生產就緒**: Controller 可開始集成到 UI 組件
 
 **實現提示**:
 ```dart
