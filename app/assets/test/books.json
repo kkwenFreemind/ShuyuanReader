@@ -1,0 +1,56 @@
+{
+  "version": "1.0",
+  "updated_at": "2025-11-07T00:00:00Z",
+  "books": [
+    {
+      "id": "yi-meng-man-yan",
+      "title": "一夢漫言",
+      "author": "千華寺繼任主持 見月老人自述",
+      "cover_url": "https://raw.githubusercontent.com/kkwenFreemind/ShuyuanReader/main/covers/一夢漫言.png",
+      "epub_url": "https://raw.githubusercontent.com/kkwenFreemind/ShuyuanReader/main/epub3/一夢漫言.epub",
+      "description": "千華寺繼任主持見月老人的自傳，記錄了見月老人的修行歷程與佛法心得。",
+      "language": "zh-TW",
+      "file_size": 2621440
+    },
+    {
+      "id": "liu-zu-tan-jing-jiang-ji",
+      "title": "六祖壇經講記",
+      "author": "淨空法師講述",
+      "cover_url": "https://raw.githubusercontent.com/kkwenFreemind/ShuyuanReader/main/covers/六祖壇經講記.png",
+      "epub_url": "https://raw.githubusercontent.com/kkwenFreemind/ShuyuanReader/main/epub3/六祖壇經講記.epub",
+      "description": "淨空法師對六祖慧能大師《壇經》的詳細講解，深入淺出地闡述禪宗心法。",
+      "language": "zh-TW",
+      "file_size": 3145728
+    },
+    {
+      "id": "shou-kang-bao-jian",
+      "title": "壽康寶鑑",
+      "author": "印光大師增訂",
+      "cover_url": "https://raw.githubusercontent.com/kkwenFreemind/ShuyuanReader/main/covers/壽康寶鑑.png",
+      "epub_url": "https://raw.githubusercontent.com/kkwenFreemind/ShuyuanReader/main/epub3/壽康寶鑑.epub",
+      "description": "印光大師增訂的戒淫善書，匯集古今戒淫故事，勸人遠離邪淫，保身延壽。",
+      "language": "zh-TW",
+      "file_size": 1572864
+    },
+    {
+      "id": "di-zang-jing-lue-shuo",
+      "title": "地藏經略說",
+      "author": "聖一老和尚講述 弟子衍輪恭錄",
+      "cover_url": "https://raw.githubusercontent.com/kkwenFreemind/ShuyuanReader/main/covers/地藏經略說.png",
+      "epub_url": "https://raw.githubusercontent.com/kkwenFreemind/ShuyuanReader/main/epub3/地藏經略說.epub",
+      "description": "聖一老和尚講解《地藏菩薩本願經》，詳述地藏菩薩的大願與因果輪迴之理。",
+      "language": "zh-TW",
+      "file_size": 2097152
+    },
+    {
+      "id": "kong-zi-zhuan",
+      "title": "孔子傳",
+      "author": "曹堯德宋均平楊佐仁著",
+      "cover_url": "https://raw.githubusercontent.com/kkwenFreemind/ShuyuanReader/main/covers/孔子傳.png",
+      "epub_url": "https://raw.githubusercontent.com/kkwenFreemind/ShuyuanReader/main/epub3/孔子傳.epub",
+      "description": "詳細記述孔子生平事蹟、思想發展與教育貢獻，是了解儒家文化的重要著作。",
+      "language": "zh-TW",
+      "file_size": 2883584
+    }
+  ]
+}
