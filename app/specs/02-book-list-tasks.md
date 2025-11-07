@@ -15,10 +15,10 @@
 |------|--------|--------|------|----------|----------|------|
 | Stage 1: 環境準備 | 2 | 2 | 100% | 2h | 1h | ✅ 已完成 |
 | Stage 2: Data Layer | 4 | 4 | 100% | 6h | 6.5h | ✅ 已完成 |
-| Stage 3: Domain Layer | 3 | 0 | 0% | 4h | - | ⬜ 未開始 |
+| Stage 3: Domain Layer | 3 | 2 | 67% | 4h | 0h | 🔄 進行中 |
 | Stage 4: Presentation Layer | 6 | 0 | 0% | 10h | - | ⬜ 未開始 |
 | Stage 5: 測試 | 4 | 0 | 0% | 6h | - | ⬜ 未開始 |
-| **總計** | **19** | **6** | **31.6%** | **28h** | **7.5h** | 🔄 進行中 |
+| **總計** | **19** | **8** | **42.1%** | **28h** | **7.5h** | 🔄 進行中 |
 
 ---
 
@@ -640,30 +640,48 @@ class BookRepositoryImpl implements BookRepository {
 
 ## 🎯 Stage 3: Domain Layer (4 小時)
 
-### Task 2.3.1: 創建 Book Entity
+### Task 2.3.1: 創建 Book Entity ✅ (2025-11-07)
 
 **描述**: 定義 `Book` 實體類（純業務對象）
 
-**預計時間**: 0.5 小時
+**預計時間**: 0.5 小時  
+**實際時間**: 0 小時 (已在 Task 2.2.4 中完成)  
+**狀態**: ✅ 已完成 (2025-11-07)
 
 **依賴**: 
 - 無
 
 **輸出**:
-- `lib/domain/entities/book.dart`
+- `lib/domain/entities/book.dart` (115 行)
 
 **任務清單**:
-- [ ] 創建 `Book` 類（不依賴任何框架）
-- [ ] 定義所有必要字段
-- [ ] 實現 `copyWith()` 方法
-- [ ] 實現 `==` 和 `hashCode`
-- [ ] 添加業務邏輯 getter
-- [ ] 編寫單元測試
+- [x] 創建 `Book` 類（不依賴任何框架）
+- [x] 定義所有必要字段
+- [x] 實現 `copyWith()` 方法
+- [x] 實現 `==` 和 `hashCode`
+- [x] 添加業務邏輯 getter
+- [x] 編寫單元測試 (已在 Repository 測試中覆蓋)
 
 **驗收標準**:
-- ✅ `Book` 類純粹，無外部依賴
-- ✅ 所有字段定義清晰
-- ✅ 單元測試通過
+- ✅ `Book` 類純粹，無外部依賴 (使用 Equatable)
+- ✅ 所有字段定義清晰 (10 個屬性)
+- ✅ 單元測試通過 (在 Repository 測試中驗證)
+
+**完成總結**:
+
+**Book Entity** (`lib/domain/entities/book.dart`, 115 行):
+- 繼承 `Equatable` 實現值比較
+- 10 個不可變屬性:
+  * 必需: id, title, author, coverUrl, epubUrl, description, language, fileSize
+  * 可選: downloadedAt, localPath
+- 3 個業務邏輯 getter:
+  * `isDownloaded`: 檢查書籍是否已下載
+  * `fileSizeFormatted`: 格式化文件大小 (B/KB/MB)
+  * `shortDescription`: 截取前 100 字符的簡短描述
+- `copyWith()` 方法支持部分更新
+- 使用 Equatable 的 `props` 和 `stringify` 實現相等性比較
+
+**注意**: 此任務已在 Task 2.2.4 實現 Repository 時完成，因為 Repository 需要使用 Book Entity。這是合理的依賴關系，符合 Clean Architecture 原則
 
 **實現提示**:
 ```dart
@@ -713,29 +731,46 @@ class Book {
 
 ---
 
-### Task 2.3.2: 創建 Repository 接口
+### Task 2.3.2: 創建 Repository 接口 ✅ (2025-11-07)
 
 **描述**: 定義 `BookRepository` 抽象接口
 
-**預計時間**: 0.5 小時
+**預計時間**: 0.5 小時  
+**實際時間**: 0 小時 (已在 Task 2.2.4 中完成)  
+**狀態**: ✅ 已完成 (2025-11-07)
 
 **依賴**: 
 - Task 2.3.1 完成
 
 **輸出**:
-- `lib/domain/repositories/book_repository.dart`
+- `lib/domain/repositories/book_repository.dart` (96 行)
 
 **任務清單**:
-- [ ] 創建 `BookRepository` 抽象類
-- [ ] 定義 `getBooks()` 方法簽名
-- [ ] 定義 `getBookById()` 方法簽名
-- [ ] 定義 `saveBooks()` 方法簽名
-- [ ] 添加文檔註釋
+- [x] 創建 `BookRepository` 抽象類
+- [x] 定義 `getBooks()` 方法簽名
+- [x] 定義 `getBookById()` 方法簽名
+- [x] 定義 `saveBooks()` 方法簽名
+- [x] 添加 `clearCache()` 和 `shouldRefresh()` 方法
+- [x] 添加文檔註釋
 
 **驗收標準**:
-- ✅ 接口定義清晰
+- ✅ 接口定義清晰 (5 個方法)
 - ✅ 方法簽名合理
 - ✅ 文檔註釋完整
+
+**完成總結**:
+
+**BookRepository Interface** (`lib/domain/repositories/book_repository.dart`, 96 行):
+- 定義 5 個抽象方法:
+  * `getBooks({bool forceRefresh})`: 獲取書籍列表（智能緩存）
+  * `getBookById(String id)`: 按 ID 獲取單本書籍
+  * `saveBooks(List<Book>)`: 手動保存書籍到緩存
+  * `clearCache()`: 清空所有緩存
+  * `shouldRefresh()`: 檢查是否需要刷新緩存
+- 詳細的文檔注釋說明每個方法的行為
+- 明確定義拋出的異常類型 (NetworkException, ServerException, CacheException)
+
+**注意**: 此任務已在 Task 2.2.4 實現 Repository 時完成，符合 Clean Architecture 的依賴反轉原則 (DIP)
 
 **實現提示**:
 ```dart
