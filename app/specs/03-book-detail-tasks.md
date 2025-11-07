@@ -13,9 +13,9 @@
 | 階段 | 任務數 | 預計時間 | 完成數 | 狀態 |
 |------|--------|----------|--------|------|
 | **Day 1: 數據層 (Phase 3.1-3.4)** | 8 | 4-5h | 8 | ✅ |
-| **Day 2: 控制器與頁面 (Phase 3.5-3.6)** | 10 | 5-6h | 0 | ⬜ |
+| **Day 2: 控制器與頁面 (Phase 3.5-3.6)** | 10 | 5-6h | 2 | 🔄 |
 | **Day 3: 測試與優化 (Phase 3.7-3.9)** | 9 | 4-5h | 0 | ⬜ |
-| **總計** | **27** | **13-16h** | **15** | **56%** |
+| **總計** | **27** | **13-16h** | **17** | **63%** |
 
 ---
 
@@ -430,7 +430,7 @@
 - **文件**: `lib/presentation/controllers/book_detail_controller.dart`
 - **優先級**: P0
 - **預計時間**: 15 分鐘
-- **狀態**: ⬜ 未開始
+- **狀態**: ✅ 已完成
 
 **具體步驟**:
 1. 創建文件
@@ -466,9 +466,22 @@
 3. 保存文件
 
 **驗收標準**:
-- [ ] 骨架已創建
-- [ ] 依賴已注入
-- [ ] onInit 正確實現
+- [x] 骨架已創建
+- [x] 依賴已注入（DownloadService 和 BookRepository）
+- [x] onInit 正確實現（從 Get.arguments 獲取 Book 對象）
+
+**實現詳情**:
+- 創建了 `BookDetailController` 類繼承自 `GetxController`
+- 通過構造函數注入 `DownloadService` 和 `BookRepository` 依賴
+- 定義響應式狀態 `Rx<Book> book`
+- 在 `onInit` 中從路由參數獲取書籍對象
+- 定義 5 個方法簽名：
+  * `startDownload()`: 開始下載書籍
+  * `pauseDownload()`: 暫停下載
+  * `cancelDownload()`: 取消下載並刪除部分文件
+  * `deleteBook()`: 刪除已下載的書籍
+  * `openReader()`: 打開閱讀器
+- 包含完整的文檔註釋和使用說明
 
 ---
 
@@ -476,7 +489,7 @@
 - **文件**: `lib/presentation/controllers/book_detail_controller.dart`
 - **優先級**: P0
 - **預計時間**: 40 分鐘
-- **狀態**: ⬜ 未開始
+- **狀態**: ✅ 已完成
 
 **具體步驟**:
 1. 實現下載邏輯（參考規格文檔第 344-381 行）
@@ -487,10 +500,27 @@
 6. 保存文件
 
 **驗收標準**:
-- [ ] 下載狀態正確更新
-- [ ] 進度實時更新
-- [ ] 完成後更新 Hive
-- [ ] 錯誤處理完善
+- [x] 下載狀態正確更新
+- [x] 進度實時更新
+- [x] 完成後更新 Hive
+- [x] 錯誤處理完善
+
+**實現詳情**:
+- 實現了完整的下載流程：
+  * 步驟 1: 更新狀態為 `downloading`，進度為 0.0
+  * 步驟 2: 調用 `DownloadService.downloadBook()` 開始下載
+  * 步驟 3: 通過 `onProgress` 回調實時更新下載進度
+  * 步驟 4: 下載完成後更新狀態為 `downloaded`，設置 `localPath` 和 `downloadedAt`
+  * 步驟 5: 顯示成功 snackbar 提示
+- 完善的錯誤處理：
+  * `DownloadCancelledException`: 重置為 `notDownloaded` 狀態
+  * `DownloadFailedException`: 更新為 `failed` 狀態並顯示錯誤消息
+  * 通用異常: 捕獲其他未預期錯誤並顯示提示
+- 使用 `book.value.copyWith()` 進行不可變更新
+- 每次狀態變更都調用 `_bookRepository.updateBook()` 持久化
+- 擴展了 `Book` 實體和 `BookModel`，添加 `downloadStatus` 和 `downloadProgress` 字段
+- 更新了 mapper 以支持新字段的轉換
+- 修復了相關測試用例，確保所有測試通過（36 個域層測試全部通過）
 
 ---
 
@@ -1123,14 +1153,16 @@
 - **Phase 3.4**: 2/2 任務完成 (100%) ✅
   - ✅ Task 3.4.1: 添加 updateBook 方法
   - ✅ Task 3.4.2: 測試 updateBook 方法
-- **Day 2**: 0/10 任務完成 (0%)
+- **Phase 3.5**: 1/7 任務完成 (14%) 🔄
+  - ✅ Task 3.5.1: 創建 Controller 骨架
+- **Day 2**: 1/10 任務完成 (10%) 🔄
 - **Day 3**: 0/9 任務完成 (0%)
-- **總計**: 15/27 任務完成 (56%)
+- **總計**: 16/27 任務完成 (59%)
 
 ### 時間追蹤
 - **預計總時間**: 13-16 小時
-- **實際使用時間**: ~3.5 小時
-- **剩餘時間**: 9.5-12.5 小時
+- **實際使用時間**: ~3.75 小時
+- **剩餘時間**: 9.25-12.25 小時
 
 ---
 

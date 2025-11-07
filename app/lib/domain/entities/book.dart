@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import '../../data/models/download_status.dart';
 
 /// Domain entity representing a book in the application.
 /// 
@@ -36,6 +37,12 @@ class Book extends Equatable {
   
   /// Local file path where the book is stored (null if not downloaded)
   final String? localPath;
+  
+  /// Download status tracking
+  final DownloadStatus downloadStatus;
+  
+  /// Download progress (0.0 to 1.0)
+  final double downloadProgress;
 
   const Book({
     required this.id,
@@ -48,10 +55,15 @@ class Book extends Equatable {
     required this.fileSize,
     this.downloadedAt,
     this.localPath,
+    this.downloadStatus = DownloadStatus.notDownloaded,
+    this.downloadProgress = 0.0,
   });
 
   /// Returns true if the book has been downloaded to local storage
-  bool get isDownloaded => localPath != null && localPath!.isNotEmpty;
+  bool get isDownloaded => downloadStatus == DownloadStatus.downloaded;
+  
+  /// Returns true if the book is currently downloading
+  bool get isDownloading => downloadStatus == DownloadStatus.downloading;
 
   /// Returns a human-readable file size string
   String get fileSizeFormatted {
@@ -84,6 +96,8 @@ class Book extends Equatable {
     int? fileSize,
     DateTime? downloadedAt,
     String? localPath,
+    DownloadStatus? downloadStatus,
+    double? downloadProgress,
   }) {
     return Book(
       id: id ?? this.id,
@@ -96,6 +110,8 @@ class Book extends Equatable {
       fileSize: fileSize ?? this.fileSize,
       downloadedAt: downloadedAt ?? this.downloadedAt,
       localPath: localPath ?? this.localPath,
+      downloadStatus: downloadStatus ?? this.downloadStatus,
+      downloadProgress: downloadProgress ?? this.downloadProgress,
     );
   }
 
@@ -111,6 +127,8 @@ class Book extends Equatable {
         fileSize,
         downloadedAt,
         localPath,
+        downloadStatus,
+        downloadProgress,
       ];
 
   @override

@@ -16,6 +16,8 @@ extension BookModelMapper on BookModel {
       fileSize: fileSize,
       downloadedAt: downloadedAt,
       localPath: localPath,
+      downloadStatus: downloadStatus,
+      downloadProgress: downloadProgress,
     );
   }
 }
@@ -35,6 +37,8 @@ extension BookEntityMapper on Book {
       fileSize: fileSize,
       downloadedAt: downloadedAt,
       localPath: localPath,
+      downloadStatus: downloadStatus,
+      downloadProgress: downloadProgress,
     );
   }
 }

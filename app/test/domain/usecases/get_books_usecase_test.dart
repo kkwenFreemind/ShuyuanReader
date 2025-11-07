@@ -5,6 +5,7 @@ import 'package:shuyuan_reader/core/errors/exceptions.dart';
 import 'package:shuyuan_reader/domain/entities/book.dart';
 import 'package:shuyuan_reader/domain/repositories/book_repository.dart';
 import 'package:shuyuan_reader/domain/usecases/get_books_usecase.dart';
+import 'package:shuyuan_reader/data/models/download_status.dart';
 
 import 'get_books_usecase_test.mocks.dart';
 
@@ -175,6 +176,8 @@ void main() {
         fileSize: 99999,
         downloadedAt: DateTime(2024, 1, 15, 10, 30),
         localPath: '/storage/emulated/0/books/book999.epub',
+        downloadStatus: DownloadStatus.downloaded,
+        downloadProgress: 1.0,
       );
 
       when(mockRepository.getBooks(forceRefresh: false))
