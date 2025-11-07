@@ -185,6 +185,48 @@ class BookRepositoryImpl implements BookRepository {
     }
   }
 
+  /// Updates a single book in the local cache.
+  /// 
+  /// This method is useful for updating book metadata such as:
+  /// - Download status (downloading, downloaded, failed)
+  /// - Download progress (0.0 - 1.0)
+  /// - Local file path after download
+  /// 
+  /// The book must be a HiveObject that is already stored in the cache.
+  /// If the book is not in cache, this method will fail.
+  /// 
+  /// Parameters:
+  /// - [book]: The Book entity to update
+  /// 
+  /// Example usage:
+  /// ```dart
+  /// // Update book download status
+  /// final updatedBook = book.copyWith(
+  ///   downloadStatus: DownloadStatus.downloaded,
+  ///   localPath: '/path/to/book.epub',
+  /// );
+  /// await repository.updateBook(updatedBook);
+  /// ```
+  /// 
+  /// Throws:
+  /// - [CacheException] if the update operation fails
+  Future<void> updateBook(Book book) async {
+    try {
+      debugPrint('[BookRepository] Updating book ${book.id}');
+      
+      // Convert entity to model
+      final model = book.toModel();
+      
+      // Use HiveObject's save method to update the book
+      await model.save();
+      
+      debugPrint('[BookRepository] Successfully updated book ${book.id}');
+    } catch (e) {
+      debugPrint('[BookRepository] Error updating book ${book.id}: $e');
+      throw CacheException('Failed to update book: $e');
+    }
+  }
+
   @override
   Future<bool> shouldRefresh() async {
     try {

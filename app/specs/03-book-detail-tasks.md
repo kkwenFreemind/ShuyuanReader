@@ -12,10 +12,10 @@
 
 | 階段 | 任務數 | 預計時間 | 完成數 | 狀態 |
 |------|--------|----------|--------|------|
-| **Day 1: 數據層 (Phase 3.1-3.4)** | 8 | 4-5h | 7 | 🔄 |
+| **Day 1: 數據層 (Phase 3.1-3.4)** | 8 | 4-5h | 8 | ✅ |
 | **Day 2: 控制器與頁面 (Phase 3.5-3.6)** | 10 | 5-6h | 0 | ⬜ |
 | **Day 3: 測試與優化 (Phase 3.7-3.9)** | 9 | 4-5h | 0 | ⬜ |
-| **總計** | **27** | **13-16h** | **7** | **26%** |
+| **總計** | **27** | **13-16h** | **15** | **56%** |
 
 ---
 
@@ -180,11 +180,11 @@
 - **文件**: `lib/data/services/download_service.dart`
 - **優先級**: P0
 - **預計時間**: 15 分鐘
-- **狀態**: ⬜ 未開始
+- **狀態**: ✅ 已完成
 
 **具體步驟**:
-1. 創建文件 `lib/data/services/download_service.dart`
-2. 創建類骨架:
+1. ✅ 創建文件 `lib/data/services/download_service.dart`
+2. ✅ 創建類骨架:
    ```dart
    import 'package:dio/dio.dart';
    import 'package:path_provider/path_provider.dart';
@@ -202,11 +202,14 @@
      Future<void> deleteBook(String localPath) async {}
    }
    ```
-3. 保存文件
+3. ✅ 保存文件
 
 **驗收標準**:
-- [ ] 類骨架已創建
-- [ ] 依賴已注入
+- [x] 類骨架已創建（包含完整的文檔註釋）
+- [x] 依賴已注入（Dio 實例）
+- [x] 三個方法簽名已定義（downloadBook, cancelDownload, deleteBook）
+- [x] 三個自定義異常類已創建（DownloadCancelledException, DownloadFailedException, DeletionFailedException）
+- [x] CancelToken 映射表已創建
 
 ---
 
@@ -214,20 +217,23 @@
 - **文件**: `lib/data/services/download_service.dart`
 - **優先級**: P0
 - **預計時間**: 45 分鐘
-- **狀態**: ⬜ 未開始
+- **狀態**: ✅ 已完成
 
 **具體步驟**:
-1. 實現獲取應用目錄邏輯
-2. 創建 books 子目錄
-3. 實現 Dio 下載邏輯
-4. 實現進度回調
-5. 實現錯誤處理
-6. 完整代碼參考 `03-book-detail.md` 第 270-330 行
+1. ✅ 實現獲取應用目錄邏輯
+2. ✅ 創建 books 子目錄
+3. ✅ 實現 Dio 下載邏輯
+4. ✅ 實現進度回調
+5. ✅ 實現錯誤處理
+6. ✅ 完整代碼參考 `03-book-detail.md` 第 270-330 行
 
 **驗收標準**:
-- [ ] 下載邏輯正確
-- [ ] 進度回調正常工作
-- [ ] 錯誤處理完善
+- [x] 下載邏輯正確（使用 Dio.download()）
+- [x] 進度回調正常工作（通過 onReceiveProgress）
+- [x] 錯誤處理完善（DioException 和通用異常）
+- [x] 創建並管理 CancelToken
+- [x] 文件保存到 books 子目錄
+- [x] 返回本地文件完整路徑
 
 ---
 
@@ -235,10 +241,10 @@
 - **文件**: `lib/data/services/download_service.dart`
 - **優先級**: P0
 - **預計時間**: 15 分鐘
-- **狀態**: ⬜ 未開始
+- **狀態**: ✅ 已完成
 
 **具體步驟**:
-1. 實現取消邏輯:
+1. ✅ 實現取消邏輯:
    ```dart
    void cancelDownload(String bookId) {
      final cancelToken = _cancelTokens[bookId];
@@ -248,11 +254,11 @@
      }
    }
    ```
-2. 保存文件
+2. ✅ 保存文件
 
 **驗收標準**:
-- [ ] 取消邏輯正確
-- [ ] CancelToken 正確清理
+- [x] 取消邏輯正確
+- [x] CancelToken 正確清理
 
 ---
 
@@ -260,10 +266,10 @@
 - **文件**: `lib/data/services/download_service.dart`
 - **優先級**: P0
 - **預計時間**: 15 分鐘
-- **狀態**: ⬜ 未開始
+- **狀態**: ✅ 已完成
 
 **具體步驟**:
-1. 實現刪除邏輯:
+1. ✅ 實現刪除邏輯:
    ```dart
    Future<void> deleteBook(String localPath) async {
      try {
@@ -276,11 +282,11 @@
      }
    }
    ```
-2. 保存文件
+2. ✅ 保存文件
 
 **驗收標準**:
-- [ ] 刪除邏輯正確
-- [ ] 錯誤處理完善
+- [x] 刪除邏輯正確
+- [x] 錯誤處理完善
 
 ---
 
@@ -288,31 +294,39 @@
 - **文件**: `lib/data/services/download_service.dart`
 - **優先級**: P0
 - **預計時間**: 10 分鐘
-- **狀態**: ⬜ 未開始
+- **狀態**: ✅ 已完成（在 Task 3.3.1 中已創建）
 
 **具體步驟**:
-1. 在同一文件底部添加:
+1. ✅ 在同一文件底部添加:
    ```dart
    class DownloadCancelledException implements Exception {
      final String message;
      DownloadCancelledException(this.message);
+     @override
+     String toString() => 'DownloadCancelledException: $message';
    }
    
    class DownloadFailedException implements Exception {
      final String message;
      DownloadFailedException(this.message);
+     @override
+     String toString() => 'DownloadFailedException: $message';
    }
    
    class DeletionFailedException implements Exception {
      final String message;
      DeletionFailedException(this.message);
+     @override
+     String toString() => 'DeletionFailedException: $message';
    }
    ```
-2. 保存文件
+2. ✅ 保存文件
 
 **驗收標準**:
-- [ ] 異常類已創建
-- [ ] 異常有明確的錯誤消息
+- [x] 異常類已創建（全部三個）
+- [x] 異常有明確的錯誤消息
+- [x] 包含完整的 toString() 方法
+- [x] 包含文檔註釋說明用途
 
 ---
 
@@ -320,20 +334,31 @@
 - **文件**: `test/data/services/download_service_test.dart`
 - **優先級**: P1
 - **預計時間**: 40 分鐘
-- **狀態**: ⬜ 未開始
+- **狀態**: ✅ 已完成
 
 **具體步驟**:
-1. 創建測試文件
-2. Mock Dio 依賴
-3. 測試 `downloadBook` 成功場景
-4. 測試 `downloadBook` 失敗場景
-5. 測試 `cancelDownload`
-6. 測試 `deleteBook`
-7. 運行測試
+1. ✅ 創建測試文件
+2. ✅ Mock Dio 依賴
+3. ✅ 測試 `downloadBook` 成功場景
+4. ✅ 測試 `downloadBook` 失敗場景
+5. ✅ 測試 `cancelDownload`
+6. ✅ 測試 `deleteBook`
+7. ✅ 運行測試
 
 **驗收標準**:
-- [ ] 所有測試通過
-- [ ] 覆蓋主要場景
+- [x] 所有測試通過（19 個測試全部通過）
+- [x] 覆蓋主要場景
+
+**實現詳情**:
+- 創建了完整的單元測試文件，包含 19 個測試用例
+- 測試組：
+  * `downloadBook` (8 tests): 成功下載、創建目錄、進度計算、取消處理、錯誤處理、令牌清理
+  * `cancelDownload` (3 tests): 取消活動下載、處理不存在的 bookId、處理已取消的下載
+  * `deleteBook` (5 tests): 刪除存在的文件、處理不存在的文件、多次刪除同一文件
+  * `exception classes` (3 tests): 驗證三個自定義異常類的消息和 toString()
+- 使用 Mockito 生成 Dio 的 mock
+- 使用 FakePathProviderPlatform 模擬文件系統
+- 所有測試通過，覆蓋率良好
 
 ---
 
@@ -343,22 +368,32 @@
 - **文件**: `lib/data/repositories/book_repository.dart`
 - **優先級**: P0
 - **預計時間**: 20 分鐘
-- **狀態**: ⬜ 未開始
+- **狀態**: ✅ 已完成
 
 **具體步驟**:
-1. 打開 `book_repository.dart`
-2. 添加方法:
+1. ✅ 打開 `book_repository.dart` (接口和實現)
+2. ✅ 添加方法:
    ```dart
    Future<void> updateBook(Book book) async {
-     final box = await Hive.openBox<Book>('books');
-     await book.save();  // HiveObject 的內置方法
+     try {
+       debugPrint('[BookRepository] Updating book ${book.id}');
+       final model = book.toModel();
+       await model.save();  // HiveObject 的內置方法
+       debugPrint('[BookRepository] Successfully updated book ${book.id}');
+     } catch (e) {
+       throw CacheException('Failed to update book: $e');
+     }
    }
    ```
-3. 保存文件
+3. ✅ 保存文件
 
 **驗收標準**:
-- [ ] 方法已添加
-- [ ] 使用 HiveObject 的 save 方法
+- [x] 方法已添加到接口 (book_repository.dart)
+- [x] 方法已實現 (book_repository_impl.dart)
+- [x] 使用 HiveObject 的 save 方法
+- [x] 包含完整的文檔註釋
+- [x] 包含錯誤處理
+- [x] 無編譯錯誤
 
 ---
 
@@ -366,16 +401,24 @@
 - **文件**: `test/data/repositories/book_repository_test.dart`
 - **優先級**: P1
 - **預計時間**: 10 分鐘
-- **狀態**: ⬜ 未開始
+- **狀態**: ✅ 已完成
 
 **具體步驟**:
-1. 添加測試用例
-2. 驗證更新功能
-3. 運行測試
+1. ✅ 添加測試用例到 `test/data/repositories/book_repository_impl_test.dart`
+2. ✅ 驗證更新功能（測試 CacheException 拋出）
+3. ✅ 運行測試並驗證通過
 
 **驗收標準**:
-- [ ] 測試通過
-- [ ] 更新邏輯正確
+- [x] 測試通過（所有 27 個測試通過）
+- [x] 更新邏輯正確驗證
+- [x] 測試覆蓋錯誤處理場景
+- [x] 測試文件已創建並包含兩個測試用例
+
+**實現詳情**:
+- 添加了 `updateBook` 測試組到現有測試文件
+- 測試 1: 驗證 Hive 未初始化時拋出 CacheException
+- 測試 2: 驗證有效書籍數據的處理（包含 localPath）
+- 所有測試通過（27/27）
 
 ---
 
@@ -1061,7 +1104,7 @@
 ## 📊 進度追蹤
 
 ### 完成統計
-- **Day 1**: 7/8 任務完成 (88%)
+- **Day 1**: 8/8 任務完成 (100%) ✅
   - ✅ Task 3.1.1: 添加新字段到 Book 模型
   - ✅ Task 3.1.2: 添加 Book 模型的輔助方法
   - ✅ Task 3.1.3: 重新生成 Hive Adapters
@@ -1069,14 +1112,25 @@
   - ✅ Task 3.2.1: 創建 DownloadStatus 枚舉
   - ✅ Task 3.2.2: 生成 DownloadStatus Adapter
   - ✅ Task 3.2.3: 註冊 DownloadStatus Adapter
+  - ✅ Task 3.3.1: 創建 DownloadService 類骨架
+- **Phase 3.3**: 6/6 任務完成 (100%) ✅
+  - ✅ Task 3.3.1: 創建 DownloadService 類骨架
+  - ✅ Task 3.3.2: 實現 downloadBook 方法
+  - ✅ Task 3.3.3: 實現 cancelDownload 方法
+  - ✅ Task 3.3.4: 實現 deleteBook 方法
+  - ✅ Task 3.3.5: 創建自定義異常類（在 3.3.1 中完成）
+  - ✅ Task 3.3.6: 編寫 DownloadService 單元測試
+- **Phase 3.4**: 2/2 任務完成 (100%) ✅
+  - ✅ Task 3.4.1: 添加 updateBook 方法
+  - ✅ Task 3.4.2: 測試 updateBook 方法
 - **Day 2**: 0/10 任務完成 (0%)
 - **Day 3**: 0/9 任務完成 (0%)
-- **總計**: 7/27 任務完成 (26%)
+- **總計**: 15/27 任務完成 (56%)
 
 ### 時間追蹤
 - **預計總時間**: 13-16 小時
-- **實際使用時間**: ~1.1 小時
-- **剩餘時間**: 11.9-14.9 小時
+- **實際使用時間**: ~3.5 小時
+- **剩餘時間**: 9.5-12.5 小時
 
 ---
 

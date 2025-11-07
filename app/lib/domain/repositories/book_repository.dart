@@ -75,6 +75,20 @@ abstract class BookRepository {
   /// - [CacheException] if cache operation fails
   Future<void> clearCache();
 
+  /// Updates a single book in the local cache.
+  /// 
+  /// This method is useful for updating book metadata such as:
+  /// - Download status (downloading, downloaded, failed)
+  /// - Download progress (0.0 - 1.0)
+  /// - Local file path after download
+  /// 
+  /// Parameters:
+  /// - [book]: The Book entity to update
+  /// 
+  /// Throws:
+  /// - [CacheException] if the update operation fails
+  Future<void> updateBook(Book book);
+
   /// Checks if the cache needs to be refreshed.
   /// 
   /// Returns true if:

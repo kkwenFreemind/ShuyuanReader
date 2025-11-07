@@ -71,6 +71,16 @@ class MockBookRepository extends _i1.Mock implements _i2.BookRepository {
       ) as _i3.Future<void>);
 
   @override
+  _i3.Future<void> updateBook(_i4.Book? book) => (super.noSuchMethod(
+        Invocation.method(
+          #updateBook,
+          [book],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
+
+  @override
   _i3.Future<bool> shouldRefresh() => (super.noSuchMethod(
         Invocation.method(
           #shouldRefresh,
