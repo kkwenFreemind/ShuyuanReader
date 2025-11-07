@@ -214,8 +214,7 @@ class BookDetailPage extends GetView<BookDetailController> {
           case DownloadStatus.downloading:
             return _buildDownloadingWidget();
           case DownloadStatus.paused:
-            // TODO: 實現暫停狀態組件
-            return const Center(child: Text('已暫停'));
+            return _buildPausedWidget();
           case DownloadStatus.downloaded:
             return _buildDownloadedButtons();
           case DownloadStatus.failed:
@@ -315,6 +314,98 @@ class BookDetailPage extends GetView<BookDetailController> {
                 style: OutlinedButton.styleFrom(
                   foregroundColor: Colors.orange[700],
                   side: BorderSide(color: Colors.orange[700]!),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                ),
+              ),
+            ),
+            const SizedBox(width: 12),
+            
+            // 取消按鈕
+            Expanded(
+              child: OutlinedButton.icon(
+                onPressed: controller.cancelDownload,
+                icon: const Icon(Icons.close, size: 20),
+                label: const Text(
+                  '取消',
+                  style: TextStyle(fontSize: 14),
+                ),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: Colors.red[700],
+                  side: BorderSide(color: Colors.red[700]!),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  /// 構建暫停狀態組件
+  /// 
+  /// 顯示暫停狀態的進度條和操作按鈕（繼續、取消）
+  Widget _buildPausedWidget() {
+    final book = controller.book.value;
+    
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // 暫停狀態標題和進度
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text(
+              '已暫停',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: Colors.orange,
+              ),
+            ),
+            Text(
+              '${(book.downloadProgress * 100).toStringAsFixed(0)}%',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: Colors.grey[700],
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        
+        // 進度條（橙色）
+        LinearProgressIndicator(
+          value: book.downloadProgress,
+          minHeight: 8,
+          backgroundColor: Colors.grey[300],
+          valueColor: AlwaysStoppedAnimation<Color>(Colors.orange[400]!),
+          borderRadius: BorderRadius.circular(4),
+        ),
+        const SizedBox(height: 16),
+        
+        // 操作按鈕行
+        Row(
+          children: [
+            // 繼續按鈕
+            Expanded(
+              child: ElevatedButton.icon(
+                onPressed: controller.startDownload,
+                icon: const Icon(Icons.play_arrow, size: 20),
+                label: const Text(
+                  '繼續',
+                  style: TextStyle(fontSize: 14),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                  foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),

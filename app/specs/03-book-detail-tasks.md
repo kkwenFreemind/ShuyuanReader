@@ -1006,7 +1006,7 @@
 - **文件**: `lib/presentation/pages/book_detail_page.dart`
 - **優先級**: P1
 - **預計時間**: 20 分鐘
-- **狀態**: ⬜ 未開始
+- **狀態**: ✅ 已完成
 
 **具體步驟**:
 1. 創建 `_buildPausedWidget` 方法
@@ -1015,8 +1015,43 @@
 4. 參考規格文檔第 595-617 行
 
 **驗收標準**:
-- [ ] 暫停狀態 UI 正確
-- [ ] 繼續按鈕正常工作
+- [x] 暫停狀態 UI 正確
+- [x] 繼續按鈕正常工作
+- [x] 取消按鈕正常工作
+- [x] 進度條使用橙色主題
+
+**實現詳情**:
+- 創建了 `_buildPausedWidget()` 方法（118行）
+- **暫停狀態標題**:
+  * "已暫停" 文字（橙色，16pt，粗體 w600）
+  * 進度百分比顯示（右側對齊，灰色）
+  * 使用 Row 布局，spaceBetween 對齊
+- **進度條**（橙色主題）:
+  * LinearProgressIndicator 綁定到 book.downloadProgress
+  * 橙色進度條（Colors.orange[400]）表示暫停狀態
+  * 8px 高度，4px 圓角
+  * 灰色背景（Colors.grey[300]）
+  * 與下載中的藍色進度條形成視覺區分
+- **操作按鈕**（側邊並排）:
+  * **繼續按鈕**（綠色 ElevatedButton）:
+    - Icons.play_arrow 播放圖標
+    - "繼續" 標籤（14pt）
+    - 綠色背景表示恢復下載
+    - 調用 `controller.startDownload()` 繼續下載
+  * **取消按鈕**（紅色 OutlinedButton）:
+    - Icons.close 關閉圖標
+    - "取消" 標籤（14pt）
+    - 紅色邊框（Colors.red[700]）
+    - 調用 `controller.cancelDownload()` 取消下載
+  * Row + Expanded 布局，12px 間距
+  * 按鈕高度一致（12px padding）
+- **整體佈局**:
+  * Column 垂直排列
+  * crossAxisAlignment.start 左對齊
+  * 12px 標題與進度條間距
+  * 16px 進度條與按鈕間距
+- **總代碼**: book_detail_page.dart 從 411 行增至 529 行（+118 行）
+- 無編譯錯誤，暫停狀態完整實現
 
 ---
 
@@ -1389,7 +1424,7 @@
   - ✅ Task 3.5.5: 實現 deleteBook 方法
   - ✅ Task 3.5.6: 實現 openReader 方法
   - ✅ Task 3.5.7: Controller 單元測試
-- **Phase 3.6**: 7/10 任務完成 (70%) 🔄
+- **Phase 3.6**: 8/10 任務完成 (80%) 🔄
   - ✅ Task 3.6.1: 創建頁面骨架
   - ✅ Task 3.6.2: 實現封面圖片組件
   - ✅ Task 3.6.3: 實現書籍信息區域
@@ -1397,9 +1432,10 @@
   - ✅ Task 3.6.5: 實現下載中組件
   - ✅ Task 3.6.6: 實現已下載組件
   - ✅ Task 3.6.7: 實現狀態切換邏輯
+  - ✅ Task 3.6.8: 實現暫停狀態組件
 - **Day 2**: 10/10 任務完成 (100%) ✅
-- **Day 3**: 4/9 任務完成 (44%) 🔄
-- **總計**: 22/27 任務完成 (81%)
+- **Day 3**: 5/9 任務完成 (56%) 🔄
+- **總計**: 23/27 任務完成 (85%)
 
 ### 時間追蹤
 - **預計總時間**: 13-16 小時
