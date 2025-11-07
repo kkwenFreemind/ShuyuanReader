@@ -15,10 +15,10 @@
 | 🔧 環境配置 | 2 | 2 | 100% | 0.5h | 0.4h |
 | 🎨 UI 實現 | 6 | 6 | 100% | 2h | 1.73h |
 | 🧠 邏輯實現 | 4 | 4 | 100% | 2h | 2.00h |
-| 💾 初始化 | 2 | 0 | 0% | 1h | ___ |
+| 💾 初始化 | 2 | 1 | 50% | 1h | 0.5h |
 | 🧪 測試編寫 | 4 | 0 | 0% | 2h | ___ |
 | 📱 真機測試 | 3 | 0 | 0% | 0.5h | ___ |
-| **總計** | **21** | **12** | **57.1%** | **8h** | **4.13h** |
+| **總計** | **21** | **13** | **61.9%** | **8h** | **4.63h** |
 
 ---
 
@@ -796,42 +796,104 @@ class AppConstants {
 - **優先級**: P1
 - **預估時間**: 30 分鐘
 - **依賴**: Task 3.1
-- **狀態**: ⬜ 未開始
+- **狀態**: ✅ 已完成
+- **實際時間**: 30 分鐘
 
 **操作步驟**:
-1. 在 `app_initializer.dart` 中添加測試 Box
-2. 打開一個名為 'test' 的 Box
-3. 寫入測試數據
-4. 讀取測試數據
-5. 在控制台輸出驗證信息
+1. ✅ 在 `app_initializer.dart` 中添加測試 Box
+2. ✅ 打開一個名為 'test' 的 Box
+3. ✅ 寫入測試數據（3 條：initialized, timestamp, app_name）
+4. ✅ 讀取測試數據並驗證
+5. ✅ 在控制台輸出完整驗證信息（包含 Box 路徑和數據條目數）
 
 **代碼修改**:
 ```dart
 static Future<void> initializeHive() async {
   try {
+    // 步驟 1: 初始化 Hive
     await Hive.initFlutter();
+    print('📦 [AppInitializer] Hive Flutter 初始化完成');
     
-    // 打開測試 Box
+    // 步驟 2: 創建測試 Box 驗證功能
     final testBox = await Hive.openBox('test');
+    print('🗄️  [AppInitializer] 測試 Box 已打開');
     
     // 寫入測試數據
     await testBox.put('initialized', true);
-    await testBox.put('timestamp', DateTime.now().toString());
+    await testBox.put('timestamp', DateTime.now().toIso8601String());
+    await testBox.put('app_name', '書苑閱讀器');
+    print('✍️  [AppInitializer] 測試數據已寫入');
     
-    // 讀取並驗證
+    // 讀取並驗證測試數據
     final isInit = testBox.get('initialized', defaultValue: false);
-    print('🗄️ Hive 初始化成功: $isInit');
+    final timestamp = testBox.get('timestamp', defaultValue: 'unknown');
+    final appName = testBox.get('app_name', defaultValue: '');
+    
+    // 輸出驗證信息
+    print('✅ [AppInitializer] Hive 初始化成功驗證:');
+    print('   - 初始化狀態: $isInit');
+    print('   - 時間戳: $timestamp');
+    print('   - 應用名稱: $appName');
+    print('   - Box 路徑: ${testBox.path}');
+    print('   - 數據條目數: ${testBox.length}');
     
   } catch (e) {
+    print('❌ [AppInitializer] Hive 初始化失敗: $e');
     throw Exception('Hive 初始化失敗: $e');
   }
 }
 ```
 
 **驗收標準**:
-- [ ] 測試 Box 成功創建
-- [ ] 數據讀寫正常
-- [ ] 控制台輸出驗證信息
+- [x] 測試 Box 成功創建
+- [x] 數據讀寫正常
+- [x] 控制台輸出驗證信息
+
+**測試結果**:
+執行了 `flutter run -d emulator-5554` 並驗證了 Hive 初始化功能：
+
+**控制台日誌輸出**:
+```
+I/flutter ( 9470): 📱 [SplashController] 開始初始化應用...
+I/flutter ( 9470): ✅ [SplashController] 版本號加載完成: v1.0.0
+I/flutter ( 9470): 📦 [AppInitializer] Hive Flutter 初始化完成
+I/flutter ( 9470): 🗄️  [AppInitializer] 測試 Box 已打開
+I/flutter ( 9470): ✍️  [AppInitializer] 測試數據已寫入
+I/flutter ( 9470): ✅ [AppInitializer] Hive 初始化成功驗證:
+I/flutter ( 9470):    - 初始化狀態: true
+I/flutter ( 9470):    - 時間戳: 2025-11-07T02:36:17.502338
+I/flutter ( 9470):    - 應用名稱: 書苑閱讀器
+I/flutter ( 9470):    - Box 路徑: /data/user/0/com.shuyuan.shuyuan_reader/app_flutter/test.hive
+I/flutter ( 9470):    - 數據條目數: 3
+I/flutter ( 9470): ✅ [SplashController] Hive 初始化完成
+I/flutter ( 9470): ✅ [SplashController] 網絡檢測完成: 已連接
+I/flutter ( 9470): ✅ [SplashController] 應用初始化完成
+I/flutter ( 9470): ⏱️  [SplashController] 開始 3 秒延遲...
+I/flutter ( 9470): ⏱️  [SplashController] 3 秒延遲結束
+I/flutter ( 9470): 🚀 [SplashController] 準備跳轉到主頁（當前已註釋）
+```
+
+**驗證結果**:
+- ✅ **Hive Flutter 初始化**: 成功完成初始化
+- ✅ **測試 Box 創建**: 成功打開 'test' Box
+- ✅ **數據寫入**: 成功寫入 3 條測試數據（initialized, timestamp, app_name）
+- ✅ **數據讀取**: 成功讀取所有測試數據，值正確
+- ✅ **Box 路徑**: 顯示實際存儲路徑 `/data/user/0/com.shuyuan.shuyuan_reader/app_flutter/test.hive`
+- ✅ **數據條目數**: 確認 Box 中有 3 條數據
+- ✅ **持久化驗證**: 數據成功存儲到本地文件系統
+- ✅ **無異常**: 整個 Hive 初始化流程無錯誤
+
+**完成內容**:
+- ✅ 增強了 `initializeHive()` 方法，添加完整的測試 Box 邏輯
+- ✅ 創建並打開測試 Box ('test')
+- ✅ 寫入 3 條測試數據驗證讀寫功能
+- ✅ 實現完整的數據讀取和驗證邏輯
+- ✅ 添加了 6 條詳細的 print 日誌輸出
+- ✅ 輸出 Box 路徑和數據統計信息
+- ✅ 保留了 TODO 註釋供後續 Spec 使用
+- ✅ 添加了完整的中文文檔註釋
+- ✅ 在 Android 模擬器上成功測試
+- ✅ 驗證了 Hive 數據持久化功能正常工作
 
 ---
 
