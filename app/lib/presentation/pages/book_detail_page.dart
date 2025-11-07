@@ -212,8 +212,7 @@ class BookDetailPage extends GetView<BookDetailController> {
           case DownloadStatus.notDownloaded:
             return _buildDownloadButton();
           case DownloadStatus.downloading:
-            // TODO: 實現下載中組件
-            return const Center(child: Text('下載中...'));
+            return _buildDownloadingWidget();
           case DownloadStatus.paused:
             // TODO: 實現暫停狀態組件
             return const Center(child: Text('已暫停'));
@@ -253,6 +252,101 @@ class BookDetailPage extends GetView<BookDetailController> {
           elevation: 2,
         ),
       ),
+    );
+  }
+
+  /// 構建下載中組件
+  /// 
+  /// 顯示下載進度條、百分比和暫停/取消按鈕
+  Widget _buildDownloadingWidget() {
+    final book = controller.book.value;
+    final progress = book.downloadProgress;
+    final percentage = (progress * 100).toStringAsFixed(0);
+    
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // 進度信息行
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text(
+              '下載中',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            Text(
+              '$percentage%',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: Colors.blue[700],
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        
+        // 進度條
+        ClipRRect(
+          borderRadius: BorderRadius.circular(4),
+          child: LinearProgressIndicator(
+            value: progress,
+            minHeight: 8,
+            backgroundColor: Colors.grey[300],
+            valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+          ),
+        ),
+        const SizedBox(height: 16),
+        
+        // 操作按鈕行
+        Row(
+          children: [
+            // 暫停按鈕
+            Expanded(
+              child: OutlinedButton.icon(
+                onPressed: controller.pauseDownload,
+                icon: const Icon(Icons.pause, size: 20),
+                label: const Text(
+                  '暫停',
+                  style: TextStyle(fontSize: 14),
+                ),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: Colors.orange[700],
+                  side: BorderSide(color: Colors.orange[700]!),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                ),
+              ),
+            ),
+            const SizedBox(width: 12),
+            
+            // 取消按鈕
+            Expanded(
+              child: OutlinedButton.icon(
+                onPressed: controller.cancelDownload,
+                icon: const Icon(Icons.close, size: 20),
+                label: const Text(
+                  '取消',
+                  style: TextStyle(fontSize: 14),
+                ),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: Colors.red[700],
+                  side: BorderSide(color: Colors.red[700]!),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }
