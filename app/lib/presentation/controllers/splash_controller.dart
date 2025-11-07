@@ -2,6 +2,8 @@ import 'package:get/get.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import '../../core/init/app_initializer.dart';
+import '../pages/book_list/book_list_page.dart';
+import '../pages/book_list/bindings/book_list_binding.dart';
 
 /// 啟動畫面控制器
 /// 
@@ -72,10 +74,15 @@ class SplashController extends GetxController {
       await Future.delayed(const Duration(seconds: 3));
       print('⏱️  [SplashController] 3 秒延遲結束');
       
-      // 步驟 5: 跳轉到主頁（暫時註釋，等待主頁實現）
-      // TODO: 在 Spec 02 實現書籍列表頁面後，啟用此路由跳轉
-      // Get.offNamed('/home');
-      print('🚀 [SplashController] 準備跳轉到主頁（當前已註釋）');
+      // 步驟 5: 跳轉到書籍列表頁面（使用 Binding 初始化依賴）
+      print('🚀 [SplashController] 準備跳轉到書籍列表頁面...');
+      
+      // 初始化 Binding
+      BookListBinding().dependencies();
+      
+      // 跳轉到 BookListPage
+      Get.off(() => const BookListPage());
+      print('✅ [SplashController] 跳轉完成');
       
     } catch (e) {
       // 處理初始化過程中的任何錯誤
