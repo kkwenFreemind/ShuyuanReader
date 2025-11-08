@@ -1465,19 +1465,262 @@ flutter pub run build_runner build
 
 ---
 
-## 🐛 已知問題與限制
+## 🐛 已知問題與解決方案
+
+### 已解決的關鍵問題
+
+#### 1. disk_space 套件 Android 兼容性問題
+
+**嚴重性**: 🔴 Critical (阻止編譯)  
+**狀態**: ✅ 已解決（臨時方案）  
+**發現時間**: 2025-01-08
+
+**問題描述**:
+- disk_space 套件無法在 Android Gradle Plugin 8.0+ 版本中編譯
+- 錯誤訊息: "Namespace not specified"
+- 根本原因: disk_space 套件的 build.gradle 缺少 namespace 聲明，不符合 AGP 8.0+ 要求
+
+**影響範圍**:
+- 阻止應用在 Android 平台編譯
+- 無法進行存儲空間檢查功能
+- 影響用戶下載前的空間驗證
+
+**臨時解決方案**:
+```dart
+// 移除 disk_space 依賴
+// pubspec.yaml
+dependencies:
+  # disk_space: ^0.2.1  # 已移除
+
+// 實現自定義存儲空間檢測
+Future<int> _getFreeDiskSpace() async {
+  if (Platform.isAndroid || Platform.isIOS) {
+    return 100 * 1024 * 1024; // 假設 100MB（簡化版本）
+  } else {
+    return 1024 * 1024 * 1024; // 假設 1GB（桌面版本）
+  }
+}
+```
+
+**限制**:
+- 當前實現為簡化版本，使用固定假設值
+- 無法獲取真實的可用存儲空間
+- 可能在空間不足時仍允許下載
+
+**永久解決方案**（待實現）:
+- 實現 Android/iOS 平台通道 (Platform Channel)
+- 直接調用原生 API 獲取真實存儲空間
+- 優先級: P1（重要但不緊急）
+- 預計工作量: 4-6 小時
+
+**相關文件**:
+- `lib/presentation/controllers/book_detail_controller.dart` (lines 383-455)
+- `pubspec.yaml` (已移除 disk_space 依賴)
+
+**相關 Commit**:
+- `573b3c5` - "fix: Remove disk_space and fix Hive errors"
+
+---
+
+#### 2. Hive 數據庫對象生命週期錯誤
+
+**嚴重性**: 🔴 Critical (運行時錯誤)  
+**狀態**: ✅ 已永久修復  
+**發現時間**: 2025-01-08
+
+**問題描述**:
+- 嘗試下載書籍時拋出異常: "HiveError: This object is currently not in a box"
+- 錯誤位置: `BookRepositoryImpl.updateBook()` 方法
+- 根本原因: 使用 `copyWith` 創建新的 Book 實體，轉換為 BookModel 後直接調用 `save()`，但該對象未被 Hive 追蹤
+
+**影響範圍**:
+- 下載功能完全無法使用
+- 所有需要更新書籍狀態的操作都會失敗
+- 用戶無法正常使用核心功能
+
+**錯誤的實現**:
+```dart
+// ❌ 錯誤：創建新對象並嘗試保存
+Future<void> updateBook(Book book) async {
+  final model = BookModel.fromEntity(book);
+  await model.save();  // 💥 對象不在 Hive box 中！
+}
+```
+
+**正確的解決方案**:
+```dart
+// ✅ 正確：使用現有對象並重新緩存
+@override
+Future<void> updateBook(Book book) async {
+  final cachedBooks = await getCachedBooks();
+  final index = cachedBooks.indexWhere((b) => b.id == book.id);
+  
+  if (index != -1) {
+    // 找到現有模型
+    final cachedModels = _booksBox.values.toList();
+    final existingModel = cachedModels.firstWhere(
+      (m) => m.id == book.id,
+    );
+    
+    // 使用 copyWith 更新現有模型
+    final updatedModel = existingModel.copyWith(
+      downloadStatus: book.downloadStatus.index,
+      downloadProgress: book.downloadProgress,
+      localPath: book.localPath,
+      downloadedAt: book.downloadedAt?.millisecondsSinceEpoch,
+    );
+    
+    cachedModels[cachedModels.indexOf(existingModel)] = updatedModel;
+    
+    // 重新緩存所有書籍
+    await _booksBox.clear();
+    await _booksBox.addAll(cachedModels);
+  }
+}
+```
+
+**解決方案要點**:
+1. 從 Hive box 獲取現有的 BookModel 對象
+2. 對現有對象使用 `copyWith` 更新字段
+3. 清空 box 並重新添加所有更新後的模型
+4. 避免創建新對象並直接調用 `save()`
+
+**測試驗證**:
+- ✅ 下載功能正常工作
+- ✅ 進度更新實時反映
+- ✅ 狀態變更正確保存
+- ✅ 無 Hive 相關錯誤
+
+**經驗教訓**:
+- Hive 對象必須由 box 管理，不能隨意創建
+- 更新策略應該是「查找 → 修改 → 重新緩存」
+- 需要理解 Hive 對象的生命週期管理
+
+**相關文件**:
+- `lib/data/repositories/book_repository_impl.dart` (lines 213-243)
+
+**相關 Commit**:
+- `573b3c5` - "fix: Remove disk_space and fix Hive errors"
+
+---
+
+#### 3. 書籍封面圖片裁切問題
+
+**嚴重性**: 🟡 Medium (用戶體驗)  
+**狀態**: ✅ 已永久修復  
+**發現時間**: 2025-01-08
+
+**問題描述**:
+- 書籍詳情頁的封面圖片被裁切，無法看到完整的封面
+- 用戶反饋: 封面顯示不完整，影響閱讀體驗
+- 根本原因: 使用 `BoxFit.cover` 填充容器，導致圖片被裁切
+
+**影響範圍**:
+- 所有書籍詳情頁的封面顯示
+- 用戶無法看到完整的封面藝術
+
+**錯誤的實現**:
+```dart
+// ❌ 錯誤：使用 BoxFit.cover 導致裁切
+CachedNetworkImage(
+  imageUrl: book.coverUrl,
+  width: 180,
+  height: 270,
+  fit: BoxFit.cover,  // 💥 會裁切圖片以填充容器
+)
+```
+
+**正確的解決方案**:
+```dart
+// ✅ 正確：使用 BoxFit.contain 顯示完整圖片
+CachedNetworkImage(
+  imageUrl: book.coverUrl,
+  width: 180,
+  height: 270,
+  fit: BoxFit.contain,  // ✅ 保持長寬比，顯示完整圖片
+)
+```
+
+**BoxFit 選項說明**:
+- `BoxFit.cover`: 填充整個容器，可能裁切圖片（之前使用）
+- `BoxFit.contain`: 完整顯示圖片，保持長寬比（現在使用）
+- `BoxFit.fill`: 拉伸圖片填充容器（不推薦）
+- `BoxFit.fitWidth`: 寬度填充，高度自適應（不適合封面）
+
+**測試驗證**:
+- ✅ 封面完整顯示
+- ✅ 保持正確的長寬比
+- ✅ 無裁切或變形
+
+**相關文件**:
+- `lib/presentation/pages/book_detail_page.dart` (line 94)
+
+**相關 Commit**:
+- `573b3c5` - "fix: Remove disk_space and fix Hive errors"
+
+---
 
 ### 當前限制
 
 1. **單任務下載**: 一次只能下載一本書（多任務下載在 Spec 07 實現）
 2. **無斷點續傳**: 暫停後重新下載會從頭開始（後續優化）
 3. **無下載隊列**: 不支持排隊下載（Spec 07 實現）
+4. **存儲空間檢測不準確**: 使用簡化版本，假設固定可用空間（需實現平台通道）
 
 ### 潛在問題
 
 1. **大文件下載**: 超大 EPUB (>50MB) 可能需要優化
 2. **網絡切換**: Wi-Fi 切換到移動數據可能中斷
-3. **存儲空間**: 未檢查可用存儲空間
+
+---
+
+## 📋 待優化項目
+
+### P1: 實現真實的存儲空間檢測
+
+**描述**: 當前使用簡化版本，假設 Android/iOS 有 100MB，桌面有 1GB 可用空間。需要實現平台通道獲取真實值。
+
+**原因**: 
+- 當前實現可能在空間不足時仍允許下載
+- 用戶體驗不佳，可能導致下載失敗
+
+**解決方案**:
+1. 創建 Android/iOS 平台通道
+2. 調用原生 API:
+   - Android: `StatFs.getAvailableBytes()`
+   - iOS: `FileManager.default.attributesOfFileSystem()`
+3. 返回真實的可用空間值
+
+**優先級**: P1（重要但不緊急）  
+**預計工作量**: 4-6 小時  
+**依賴**: 無
+
+---
+
+### P2: 實現下載隊列管理
+
+**描述**: 當前一次只能下載一本書，需要實現下載隊列支持多任務。
+
+**優先級**: P2（Spec 07 實現）  
+**預計工作量**: 8-12 小時
+
+---
+
+### P3: 實現斷點續傳優化
+
+**描述**: 暫停後重新下載會從頭開始，浪費流量和時間。
+
+**優先級**: P2（後續優化）  
+**預計工作量**: 6-8 小時
+
+---
+
+### P3: 添加網絡類型檢測
+
+**描述**: 在移動數據下下載大文件應提醒用戶。
+
+**優先級**: P3（Nice to have）  
+**預計工作量**: 2-3 小時
 
 ---
 
