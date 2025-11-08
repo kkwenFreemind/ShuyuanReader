@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:disk_space/disk_space.dart';
 import '../../domain/entities/book.dart';
 import '../../data/services/download_service.dart';
 import '../../domain/repositories/book_repository.dart';
@@ -63,14 +64,16 @@ class BookDetailController extends GetxController {
   /// 
   /// 執行以下操作：
   /// 1. 檢查網絡連接狀態
-  /// 2. 更新書籍狀態為 "下載中"
-  /// 3. 調用 DownloadService 開始下載
-  /// 4. 監聽下載進度並更新 UI
-  /// 5. 下載完成後更新書籍狀態為 "已下載"
-  /// 6. 保存更新後的書籍信息到數據庫
+  /// 2. 檢查存儲空間是否足夠
+  /// 3. 更新書籍狀態為 "下載中"
+  /// 4. 調用 DownloadService 開始下載
+  /// 5. 監聽下載進度並更新 UI
+  /// 6. 下載完成後更新書籍狀態為 "已下載"
+  /// 7. 保存更新後的書籍信息到數據庫
   /// 
   /// 錯誤處理：
   /// - 無網絡連接時提示用戶檢查網絡
+  /// - 存儲空間不足時提示用戶清理空間
   /// - 下載失敗時更新狀態為 "下載失敗"
   /// - 顯示錯誤提示給用戶
   Future<void> startDownload() async {
@@ -81,26 +84,32 @@ class BookDetailController extends GetxController {
         return; // _checkNetworkConnection 已經顯示提示，直接返回
       }
 
-      // 步驟 2: 更新狀態為下載中
+      // 步驟 2: 檢查存儲空間
+      final hasEnoughSpace = await _checkStorageSpace();
+      if (!hasEnoughSpace) {
+        return; // _checkStorageSpace 已經顯示提示，直接返回
+      }
+
+      // 步驟 3: 更新狀態為下載中
       book.value = book.value.copyWith(
         downloadStatus: DownloadStatus.downloading,
         downloadProgress: 0.0,
       );
       await _bookRepository.updateBook(book.value);
 
-      // 步驟 3: 開始下載
+      // 步驟 4: 開始下載
       final localPath = await _downloadService.downloadBook(
         bookId: book.value.id,
         url: book.value.epubUrl,
         onProgress: (progress) {
-          // 步驟 4: 實時更新下載進度
+          // 步驟 5: 實時更新下載進度
           book.value = book.value.copyWith(
             downloadProgress: progress,
           );
         },
       );
 
-      // 步驟 5: 下載完成，更新狀態
+      // 步驟 6: 下載完成，更新狀態
       book.value = book.value.copyWith(
         downloadStatus: DownloadStatus.downloaded,
         downloadProgress: 1.0,
@@ -109,7 +118,7 @@ class BookDetailController extends GetxController {
       );
       await _bookRepository.updateBook(book.value);
 
-      // 步驟 6: 顯示成功提示
+      // 步驟 7: 顯示成功提示
       Get.snackbar(
         '✅ 下載完成',
         '《${book.value.title}》已成功下載，點擊「打開閱讀」即可開始閱讀',
@@ -366,6 +375,53 @@ class BookDetailController extends GetxController {
       return hasNetwork;
     } catch (e) {
       // 檢查網絡狀態時發生錯誤，假設有網絡（避免誤判）
+      return true;
+    }
+  }
+  
+  /// 檢查存儲空間是否足夠
+  /// 
+  /// 執行以下操作：
+  /// 1. 使用 disk_space 檢查可用存儲空間
+  /// 2. 判斷是否有足夠的空間下載書籍（至少需要 50MB）
+  /// 3. 空間不足時顯示友好提示
+  /// 
+  /// 返回值:
+  /// - true: 有足夠存儲空間
+  /// - false: 存儲空間不足
+  Future<bool> _checkStorageSpace() async {
+    try {
+      // 檢查可用存儲空間（單位：MB）
+      final freeDiskSpace = await DiskSpace.getFreeDiskSpace;
+      
+      // 設定最小所需空間為 50MB
+      const minimumSpaceMB = 50.0;
+      
+      // 判斷是否有足夠空間
+      final hasEnoughSpace = freeDiskSpace != null && freeDiskSpace >= minimumSpaceMB;
+      
+      // 空間不足時顯示提示
+      if (!hasEnoughSpace) {
+        final spaceText = freeDiskSpace != null 
+            ? '目前可用空間：${freeDiskSpace.toStringAsFixed(1)} MB'
+            : '無法獲取存儲空間信息';
+            
+        Get.snackbar(
+          '💾 存儲空間不足',
+          '無法下載書籍，請清理存儲空間\n\n$spaceText\n建議至少保留 50 MB 可用空間\n\n💡 建議：\n• 刪除不需要的應用或文件\n• 清理應用緩存\n• 將照片和視頻備份到雲端',
+          snackPosition: SnackPosition.BOTTOM,
+          duration: const Duration(seconds: 5),
+          backgroundColor: Colors.red.withValues(alpha: 0.9),
+          colorText: Colors.white,
+          icon: const Icon(Icons.storage, color: Colors.white),
+          margin: const EdgeInsets.all(16),
+          borderRadius: 8,
+        );
+      }
+      
+      return hasEnoughSpace;
+    } catch (e) {
+      // 檢查存儲空間時發生錯誤，假設有足夠空間（避免誤判）
       return true;
     }
   }
