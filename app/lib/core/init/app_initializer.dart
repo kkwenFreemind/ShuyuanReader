@@ -48,12 +48,20 @@ class AppInitializer {
       
       // 步驟 3: 註冊 Adapter
       // 註冊 BookModel Adapter 用於書籍列表緩存
-      Hive.registerAdapter(BookModelAdapter());
-      print('📝 [AppInitializer] BookModel Adapter 已註冊');
+      if (!Hive.isAdapterRegistered(1)) {
+        Hive.registerAdapter(BookModelAdapter());
+        print('📝 [AppInitializer] BookModel Adapter 已註冊');
+      } else {
+        print('ℹ️  [AppInitializer] BookModel Adapter 已存在，跳過註冊');
+      }
       
       // 註冊 DownloadStatus Adapter 用於下載狀態管理
-      Hive.registerAdapter(DownloadStatusAdapter());
-      print('📝 [AppInitializer] DownloadStatus Adapter 已註冊');
+      if (!Hive.isAdapterRegistered(2)) {
+        Hive.registerAdapter(DownloadStatusAdapter());
+        print('📝 [AppInitializer] DownloadStatus Adapter 已註冊');
+      } else {
+        print('ℹ️  [AppInitializer] DownloadStatus Adapter 已存在，跳過註冊');
+      }
       
       // 步驟 4: 打開應用所需的 Box
       // 打開書籍列表緩存 Box

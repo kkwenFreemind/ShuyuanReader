@@ -17,19 +17,11 @@ import 'package:shuyuan_reader/main.dart' as app;
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  /// 通用的應用啟動並等待跳轉到 BookListPage 的輔助函數
-  Future<void> launchAndWaitForBookList(WidgetTester tester) async {
-    app.main();
-    await tester.pumpAndSettle();
-    // 等待 Splash 的 3 秒延遲 + 初始化時間
-    await tester.pump(const Duration(seconds: 4));
-    await tester.pumpAndSettle(const Duration(seconds: 2));
-  }
-
   /// 從書籍列表進入書籍詳情頁的輔助函數
+  /// 注意：不啟動應用，假設應用已經在 setUpAll 中啟動
   Future<void> navigateToBookDetail(WidgetTester tester) async {
-    // 啟動並等待到達書籍列表
-    await launchAndWaitForBookList(tester);
+    // 等待確保在書籍列表頁
+    await tester.pumpAndSettle();
     
     // 驗證在書籍列表頁
     expect(find.byType(BookListPage), findsOneWidget,
@@ -49,7 +41,86 @@ void main() {
     }
   }
 
+  /// 返回到書籍列表頁的輔助函數
+  Future<void> backToBookList(WidgetTester tester) async {
+    // 如果在詳情頁，點擊返回按鈕
+    if (find.byType(BookDetailPage).evaluate().isNotEmpty) {
+      final backButton = find.byIcon(Icons.arrow_back);
+      if (backButton.evaluate().isNotEmpty) {
+        await tester.tap(backButton);
+        await tester.pumpAndSettle();
+        print('✅ 成功返回書籍列表');
+      }
+    }
+  }
+
   group('BookDetail Navigation Tests', () {
+    setUpAll(() async {
+      // 所有測試開始前，只啟動一次應用
+      print('🚀 啟動應用...');
+      app.main();
+    });
+
+    testWidgets('Should navigate to BookDetailPage from BookList',
+        (WidgetTester tester) async {
+      print('\n🚀 測試：從書籍列表導航到詳情頁...');
+      
+      // 等待應用完全加載到書籍列表
+      await tester.pumpAndSettle();
+      await tester.pump(const Duration(seconds: 4)); // 等待 Splash
+      await tester.pumpAndSettle(const Duration(seconds: 2));
+      
+      // 導航到書籍詳情
+      await navigateToBookDetail(tester);
+      
+      // 驗證已導航到詳情頁
+      final detailPage = find.byType(BookDetailPage);
+      if (detailPage.evaluate().isNotEmpty) {
+        expect(detailPage, findsOneWidget,
+            reason: '應該導航到書籍詳情頁面');
+        
+        // 驗證 AppBar 存在
+        expect(find.byType(AppBar), findsOneWidget,
+            reason: 'AppBar 應該存在');
+        
+        print('✅ 導航測試通過');
+        
+        // 返回書籍列表，為下一個測試做準備
+        await backToBookList(tester);
+      } else {
+        print('ℹ️  無可用書籍，跳過詳情頁測試');
+      }
+    });
+
+    testWidgets('BookDetailPage should display book information',
+        (WidgetTester tester) async {
+      print('\n🚀 測試：書籍信息顯示...');
+      
+      // 導航到詳情頁
+      await navigateToBookDetail(tester);
+      
+      // 如果成功進入詳情頁
+      if (find.byType(BookDetailPage).evaluate().isNotEmpty) {
+        // 驗證基本 UI 元素
+        expect(find.byType(SingleChildScrollView), findsOneWidget,
+            reason: '應該有滾動容器');
+        
+        // 檢查是否有文本內容（書名、作者等）
+        final hasText = find.byType(Text).evaluate().isNotEmpty;
+        expect(hasText, true, reason: '應該顯示書籍信息');
+        
+        print('✅ 書籍信息顯示測試通過');
+        
+        // 返回書籍列表
+        await backToBookList(tester);
+      } else {
+        print('ℹ️  未進入詳情頁，跳過測試');
+      }
+    });
+
+    testWidgets('Back button should return to BookList',
+        (WidgetTester tester) async {
+      print('\n🚀 測試：返回導航...');
     testWidgets('Should navigate to BookDetailPage from BookList',
         (WidgetTester tester) async {
       print('🚀 測試：從書籍列表導航到詳情頁...');

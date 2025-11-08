@@ -5,6 +5,7 @@ import 'package:shuyuan_reader/data/datasources/book_local_datasource.dart';
 import 'package:shuyuan_reader/data/datasources/book_remote_datasource.dart';
 import 'package:shuyuan_reader/data/models/book_model.dart';
 import 'package:shuyuan_reader/data/repositories/book_repository_impl.dart';
+import 'package:shuyuan_reader/domain/repositories/book_repository.dart';
 import 'package:shuyuan_reader/domain/usecases/get_books_usecase.dart';
 import 'package:shuyuan_reader/domain/usecases/refresh_books_usecase.dart';
 import 'package:shuyuan_reader/presentation/pages/book_list/controllers/book_list_controller.dart';
@@ -28,15 +29,19 @@ class BookListBinding implements Bindings {
     final dio = Dio();
     final remoteDataSource = BookRemoteDataSource(dio);
 
-    // 初始化倉庫
-    final repository = BookRepositoryImpl(
-      localDataSource: localDataSource,
-      remoteDataSource: remoteDataSource,
-    );
+    // 初始化倉庫並全局注冊為永久依賴（供其他頁面使用，如 BookDetailPage）
+    if (!Get.isRegistered<BookRepository>()) {
+      final repository = BookRepositoryImpl(
+        localDataSource: localDataSource,
+        remoteDataSource: remoteDataSource,
+      );
+      // permanent: true 確保在頁面切換時不會被銷毀
+      Get.put<BookRepository>(repository, permanent: true);
+    }
 
     // 初始化用例
-    final getBooksUseCase = GetBooksUseCase(repository);
-    final refreshBooksUseCase = RefreshBooksUseCase(repository);
+    final getBooksUseCase = GetBooksUseCase(Get.find<BookRepository>());
+    final refreshBooksUseCase = RefreshBooksUseCase(Get.find<BookRepository>());
 
     // 初始化 Controller
     Get.lazyPut<BookListController>(
