@@ -102,10 +102,15 @@ class BookDetailController extends GetxController {
 
       // 步驟 5: 顯示成功提示
       Get.snackbar(
-        '下載完成',
-        '《${book.value.title}》已下載完成',
+        '✅ 下載完成',
+        '《${book.value.title}》已成功下載，點擊「打開閱讀」即可開始閱讀',
         snackPosition: SnackPosition.BOTTOM,
-        duration: const Duration(seconds: 2),
+        duration: const Duration(seconds: 3),
+        backgroundColor: Colors.green.withValues(alpha: 0.9),
+        colorText: Colors.white,
+        icon: const Icon(Icons.check_circle, color: Colors.white),
+        margin: const EdgeInsets.all(16),
+        borderRadius: 8,
       );
     } on DownloadCancelledException {
       // 用戶取消下載，重置狀態
@@ -114,6 +119,18 @@ class BookDetailController extends GetxController {
         downloadProgress: 0.0,
       );
       await _bookRepository.updateBook(book.value);
+      
+      // 顯示取消提示
+      Get.snackbar(
+        'ℹ️ 下載已取消',
+        '《${book.value.title}》的下載已取消，您可以稍後再次下載',
+        snackPosition: SnackPosition.BOTTOM,
+        duration: const Duration(seconds: 2),
+        backgroundColor: Colors.grey.withValues(alpha: 0.9),
+        colorText: Colors.white,
+        margin: const EdgeInsets.all(16),
+        borderRadius: 8,
+      );
     } on DownloadFailedException catch (e) {
       // 下載失敗，更新狀態並顯示錯誤
       book.value = book.value.copyWith(
@@ -122,10 +139,15 @@ class BookDetailController extends GetxController {
       await _bookRepository.updateBook(book.value);
 
       Get.snackbar(
-        '下載失敗',
-        e.message,
+        '❌ 下載失敗',
+        '無法下載《${book.value.title}》\n原因：${e.message}\n\n💡 建議：請檢查網絡連接後重試',
         snackPosition: SnackPosition.BOTTOM,
-        duration: const Duration(seconds: 3),
+        duration: const Duration(seconds: 4),
+        backgroundColor: Colors.red.withValues(alpha: 0.9),
+        colorText: Colors.white,
+        icon: const Icon(Icons.error_outline, color: Colors.white),
+        margin: const EdgeInsets.all(16),
+        borderRadius: 8,
       );
     } catch (e) {
       // 處理其他未預期的錯誤
@@ -135,10 +157,15 @@ class BookDetailController extends GetxController {
       await _bookRepository.updateBook(book.value);
 
       Get.snackbar(
-        '下載失敗',
-        '發生未知錯誤: $e',
+        '❌ 下載異常',
+        '下載《${book.value.title}》時發生異常\n\n💡 建議：\n• 請確保網絡連接正常\n• 檢查設備存儲空間是否充足\n• 稍後再試或聯繫技術支持',
         snackPosition: SnackPosition.BOTTOM,
-        duration: const Duration(seconds: 3),
+        duration: const Duration(seconds: 5),
+        backgroundColor: Colors.red.withValues(alpha: 0.9),
+        colorText: Colors.white,
+        icon: const Icon(Icons.warning_amber, color: Colors.white),
+        margin: const EdgeInsets.all(16),
+        borderRadius: 8,
       );
     }
   }
@@ -219,16 +246,27 @@ class BookDetailController extends GetxController {
     // 步驟 1: 顯示確認對話框
     final confirmed = await Get.dialog<bool>(
       AlertDialog(
-        title: Text('確認刪除'),
-        content: Text('確定要刪除《${book.value.title}》嗎？'),
+        title: const Row(
+          children: [
+            Icon(Icons.delete_outline, color: Colors.red),
+            SizedBox(width: 8),
+            Text('確認刪除'),
+          ],
+        ),
+        content: Text(
+          '確定要刪除《${book.value.title}》嗎？\n\n刪除後需要重新下載才能閱讀。',
+        ),
         actions: [
           TextButton(
             onPressed: () => Get.back(result: false),
-            child: Text('取消'),
+            child: const Text('取消'),
           ),
           TextButton(
             onPressed: () => Get.back(result: true),
-            child: Text('刪除', style: TextStyle(color: Colors.red)),
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.red,
+            ),
+            child: const Text('確認刪除'),
           ),
         ],
       ),
@@ -254,16 +292,28 @@ class BookDetailController extends GetxController {
 
       // 步驟 6: 顯示成功提示
       Get.snackbar(
-        '刪除成功',
-        '《${book.value.title}》已刪除',
+        '✅ 刪除成功',
+        '《${book.value.title}》已從本地刪除，需要時可以重新下載',
         snackPosition: SnackPosition.BOTTOM,
+        duration: const Duration(seconds: 2),
+        backgroundColor: Colors.green.withValues(alpha: 0.9),
+        colorText: Colors.white,
+        icon: const Icon(Icons.check_circle, color: Colors.white),
+        margin: const EdgeInsets.all(16),
+        borderRadius: 8,
       );
     } on DeletionFailedException catch (e) {
       // 錯誤處理：刪除失敗
       Get.snackbar(
-        '刪除失敗',
-        e.message,
+        '❌ 刪除失敗',
+        '無法刪除《${book.value.title}》\n原因：${e.message}\n\n💡 建議：請檢查文件權限或稍後重試',
         snackPosition: SnackPosition.BOTTOM,
+        duration: const Duration(seconds: 4),
+        backgroundColor: Colors.red.withValues(alpha: 0.9),
+        colorText: Colors.white,
+        icon: const Icon(Icons.error_outline, color: Colors.white),
+        margin: const EdgeInsets.all(16),
+        borderRadius: 8,
       );
     }
   }
@@ -283,9 +333,15 @@ class BookDetailController extends GetxController {
     // 步驟 1-2: 檢查本地文件路徑是否存在
     if (book.value.localPath == null) {
       Get.snackbar(
-        '錯誤',
-        '書籍文件不存在',
+        '⚠️ 無法打開',
+        '《${book.value.title}》尚未下載\n\n💡 建議：請先下載書籍後再打開閱讀',
         snackPosition: SnackPosition.BOTTOM,
+        duration: const Duration(seconds: 3),
+        backgroundColor: Colors.orange.withValues(alpha: 0.9),
+        colorText: Colors.white,
+        icon: const Icon(Icons.warning_amber, color: Colors.white),
+        margin: const EdgeInsets.all(16),
+        borderRadius: 8,
       );
       return;
     }
