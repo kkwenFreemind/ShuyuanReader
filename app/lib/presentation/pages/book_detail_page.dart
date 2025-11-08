@@ -52,6 +52,19 @@ class BookDetailPage extends GetView<BookDetailController> {
     
     return Hero(
       tag: 'book-cover-${book.id}',
+      transitionOnUserGestures: true,
+      flightShuttleBuilder: (
+        BuildContext flightContext,
+        Animation<double> animation,
+        HeroFlightDirection flightDirection,
+        BuildContext fromHeroContext,
+        BuildContext toHeroContext,
+      ) {
+        return DefaultTextStyle(
+          style: DefaultTextStyle.of(toHeroContext).style,
+          child: toHeroContext.widget,
+        );
+      },
       child: Container(
         width: double.infinity,
         height: 400,
@@ -207,20 +220,41 @@ class BookDetailPage extends GetView<BookDetailController> {
     
     return Padding(
       padding: const EdgeInsets.all(16.0),
-      child: () {
-        switch (book.downloadStatus) {
-          case DownloadStatus.notDownloaded:
-            return _buildDownloadButton();
-          case DownloadStatus.downloading:
-            return _buildDownloadingWidget();
-          case DownloadStatus.paused:
-            return _buildPausedWidget();
-          case DownloadStatus.downloaded:
-            return _buildDownloadedButtons();
-          case DownloadStatus.failed:
-            return _buildDownloadButton();
-        }
-      }(),
+      child: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 300),
+        transitionBuilder: (Widget child, Animation<double> animation) {
+          return FadeTransition(
+            opacity: animation,
+            child: SlideTransition(
+              position: Tween<Offset>(
+                begin: const Offset(0.0, 0.1),
+                end: Offset.zero,
+              ).animate(CurvedAnimation(
+                parent: animation,
+                curve: Curves.easeOut,
+              )),
+              child: child,
+            ),
+          );
+        },
+        child: KeyedSubtree(
+          key: ValueKey<DownloadStatus>(book.downloadStatus),
+          child: () {
+            switch (book.downloadStatus) {
+              case DownloadStatus.notDownloaded:
+                return _buildDownloadButton();
+              case DownloadStatus.downloading:
+                return _buildDownloadingWidget();
+              case DownloadStatus.paused:
+                return _buildPausedWidget();
+              case DownloadStatus.downloaded:
+                return _buildDownloadedButtons();
+              case DownloadStatus.failed:
+                return _buildDownloadButton();
+            }
+          }(),
+        ),
+      ),
     );
   }
 
@@ -288,14 +322,24 @@ class BookDetailPage extends GetView<BookDetailController> {
         const SizedBox(height: 12),
         
         // 進度條
-        ClipRRect(
-          borderRadius: BorderRadius.circular(4),
-          child: LinearProgressIndicator(
-            value: progress,
-            minHeight: 8,
-            backgroundColor: Colors.grey[300],
-            valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+        TweenAnimationBuilder<double>(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+          tween: Tween<double>(
+            begin: 0,
+            end: progress,
           ),
+          builder: (context, value, child) {
+            return ClipRRect(
+              borderRadius: BorderRadius.circular(4),
+              child: LinearProgressIndicator(
+                value: value,
+                minHeight: 8,
+                backgroundColor: Colors.grey[300],
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+              ),
+            );
+          },
         ),
         const SizedBox(height: 16),
         
@@ -382,12 +426,22 @@ class BookDetailPage extends GetView<BookDetailController> {
         const SizedBox(height: 12),
         
         // 進度條（橙色）
-        LinearProgressIndicator(
-          value: book.downloadProgress,
-          minHeight: 8,
-          backgroundColor: Colors.grey[300],
-          valueColor: AlwaysStoppedAnimation<Color>(Colors.orange[400]!),
-          borderRadius: BorderRadius.circular(4),
+        TweenAnimationBuilder<double>(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+          tween: Tween<double>(
+            begin: 0,
+            end: book.downloadProgress,
+          ),
+          builder: (context, value, child) {
+            return LinearProgressIndicator(
+              value: value,
+              minHeight: 8,
+              backgroundColor: Colors.grey[300],
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.orange[400]!),
+              borderRadius: BorderRadius.circular(4),
+            );
+          },
         ),
         const SizedBox(height: 16),
         
