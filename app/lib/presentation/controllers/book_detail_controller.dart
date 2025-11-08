@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import '../../domain/entities/book.dart';
 import '../../data/services/download_service.dart';
 import '../../domain/repositories/book_repository.dart';
@@ -61,37 +62,45 @@ class BookDetailController extends GetxController {
   /// 開始下載書籍
   /// 
   /// 執行以下操作：
-  /// 1. 更新書籍狀態為 "下載中"
-  /// 2. 調用 DownloadService 開始下載
-  /// 3. 監聽下載進度並更新 UI
-  /// 4. 下載完成後更新書籍狀態為 "已下載"
-  /// 5. 保存更新後的書籍信息到數據庫
+  /// 1. 檢查網絡連接狀態
+  /// 2. 更新書籍狀態為 "下載中"
+  /// 3. 調用 DownloadService 開始下載
+  /// 4. 監聽下載進度並更新 UI
+  /// 5. 下載完成後更新書籍狀態為 "已下載"
+  /// 6. 保存更新後的書籍信息到數據庫
   /// 
   /// 錯誤處理：
+  /// - 無網絡連接時提示用戶檢查網絡
   /// - 下載失敗時更新狀態為 "下載失敗"
   /// - 顯示錯誤提示給用戶
   Future<void> startDownload() async {
     try {
-      // 步驟 1: 更新狀態為下載中
+      // 步驟 1: 檢查網絡連接
+      final hasNetwork = await _checkNetworkConnection();
+      if (!hasNetwork) {
+        return; // _checkNetworkConnection 已經顯示提示，直接返回
+      }
+
+      // 步驟 2: 更新狀態為下載中
       book.value = book.value.copyWith(
         downloadStatus: DownloadStatus.downloading,
         downloadProgress: 0.0,
       );
       await _bookRepository.updateBook(book.value);
 
-      // 步驟 2: 開始下載
+      // 步驟 3: 開始下載
       final localPath = await _downloadService.downloadBook(
         bookId: book.value.id,
         url: book.value.epubUrl,
         onProgress: (progress) {
-          // 步驟 3: 實時更新下載進度
+          // 步驟 4: 實時更新下載進度
           book.value = book.value.copyWith(
             downloadProgress: progress,
           );
         },
       );
 
-      // 步驟 4: 下載完成，更新狀態
+      // 步驟 5: 下載完成，更新狀態
       book.value = book.value.copyWith(
         downloadStatus: DownloadStatus.downloaded,
         downloadProgress: 1.0,
@@ -100,7 +109,7 @@ class BookDetailController extends GetxController {
       );
       await _bookRepository.updateBook(book.value);
 
-      // 步驟 5: 顯示成功提示
+      // 步驟 6: 顯示成功提示
       Get.snackbar(
         '✅ 下載完成',
         '《${book.value.title}》已成功下載，點擊「打開閱讀」即可開始閱讀',
@@ -315,6 +324,49 @@ class BookDetailController extends GetxController {
         margin: const EdgeInsets.all(16),
         borderRadius: 8,
       );
+    }
+  }
+  
+  // ==================== 私有方法 ====================
+  
+  /// 檢查網絡連接狀態
+  /// 
+  /// 執行以下操作：
+  /// 1. 使用 connectivity_plus 檢查網絡狀態
+  /// 2. 判斷是否有可用的網絡連接（WiFi 或移動數據）
+  /// 3. 無網絡時顯示友好提示
+  /// 
+  /// 返回值:
+  /// - true: 有網絡連接
+  /// - false: 無網絡連接
+  Future<bool> _checkNetworkConnection() async {
+    try {
+      // 檢查網絡連接狀態
+      final connectivityResult = await Connectivity().checkConnectivity();
+      
+      // 判斷是否有可用網絡（WiFi 或移動數據）
+      final hasNetwork = connectivityResult == ConnectivityResult.wifi ||
+                        connectivityResult == ConnectivityResult.mobile;
+      
+      // 無網絡時顯示提示
+      if (!hasNetwork) {
+        Get.snackbar(
+          '📡 無網絡連接',
+          '無法下載書籍，請檢查網絡連接\n\n💡 建議：\n• 請確認 WiFi 或移動數據已開啟\n• 檢查網絡設置是否正常\n• 嘗試切換網絡後重試',
+          snackPosition: SnackPosition.BOTTOM,
+          duration: const Duration(seconds: 4),
+          backgroundColor: Colors.orange.withValues(alpha: 0.9),
+          colorText: Colors.white,
+          icon: const Icon(Icons.wifi_off, color: Colors.white),
+          margin: const EdgeInsets.all(16),
+          borderRadius: 8,
+        );
+      }
+      
+      return hasNetwork;
+    } catch (e) {
+      // 檢查網絡狀態時發生錯誤，假設有網絡（避免誤判）
+      return true;
     }
   }
   
