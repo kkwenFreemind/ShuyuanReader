@@ -92,7 +92,7 @@ class BookDetailPage extends GetView<BookDetailController> {
         color: theme.colorScheme.surfaceContainerHighest,
         child: CachedNetworkImage(
           imageUrl: book.coverUrl,
-          fit: BoxFit.cover,
+          fit: BoxFit.contain, // 完整顯示圖片，不裁切
           placeholder: (context, url) => Container(
             color: theme.colorScheme.surfaceContainerHighest,
             child: Center(

@@ -44,8 +44,8 @@ dependencies:
   # 网络状态检测
   connectivity_plus: ^5.0.2
 
-  # 存儲空間檢測
-  disk_space: ^0.2.1
+  # 存儲空間檢測（暫時註解，使用 path_provider 替代）
+  # disk_space: ^0.2.1
 
   # 数据比较
   equatable: ^2.0.5

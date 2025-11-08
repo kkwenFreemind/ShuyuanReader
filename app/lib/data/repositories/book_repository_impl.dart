@@ -210,15 +210,34 @@ class BookRepositoryImpl implements BookRepository {
   /// 
   /// Throws:
   /// - [CacheException] if the update operation fails
+  @override
   Future<void> updateBook(Book book) async {
     try {
       debugPrint('[BookRepository] Updating book ${book.id}');
       
-      // Convert entity to model
-      final model = book.toModel();
+      // Get the cached books to find the original model
+      final cachedBooks = await _localDataSource.getCachedBooks();
       
-      // Use HiveObject's save method to update the book
-      await model.save();
+      // Find the existing book model by ID
+      final existingModel = cachedBooks.firstWhere(
+        (b) => b.id == book.id,
+        orElse: () => throw CacheException('Book ${book.id} not found in cache'),
+      );
+      
+      // Create a new model with updated fields
+      final updatedModel = existingModel.copyWith(
+        downloadStatus: book.downloadStatus,
+        downloadProgress: book.downloadProgress,
+        localPath: book.localPath,
+        downloadedAt: book.downloadedAt,
+      );
+      
+      // Re-cache the updated model using the original caching method
+      // This ensures the model is properly stored in the Hive box
+      await _localDataSource.cacheBooks([
+        ...cachedBooks.where((b) => b.id != book.id),
+        updatedModel,
+      ]);
       
       debugPrint('[BookRepository] Successfully updated book ${book.id}');
     } catch (e) {
