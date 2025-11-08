@@ -56,8 +56,10 @@ class BookDetailPage extends GetView<BookDetailController> {
   /// 響應式高度：根據屏幕大小調整封面高度
   Widget _buildCoverImage() {
     final book = controller.book.value;
-    final screenHeight = MediaQuery.of(Get.context!).size.height;
-    final screenWidth = MediaQuery.of(Get.context!).size.width;
+    final context = Get.context!;
+    final theme = Theme.of(context);
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
     
     // 響應式高度計算：
     // - 小屏幕（< 600）：屏幕高度的 40%
@@ -87,31 +89,33 @@ class BookDetailPage extends GetView<BookDetailController> {
       child: Container(
         width: double.infinity,
         height: coverHeight,
-        color: Colors.grey[200],
+        color: theme.colorScheme.surfaceContainerHighest,
         child: CachedNetworkImage(
           imageUrl: book.coverUrl,
           fit: BoxFit.cover,
           placeholder: (context, url) => Container(
-            color: Colors.grey[200],
-            child: const Center(
-              child: CircularProgressIndicator(),
+            color: theme.colorScheme.surfaceContainerHighest,
+            child: Center(
+              child: CircularProgressIndicator(
+                color: theme.colorScheme.primary,
+              ),
             ),
           ),
           errorWidget: (context, url, error) => Container(
-            color: Colors.grey[300],
+            color: theme.colorScheme.surfaceContainerHigh,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
                   Icons.book,
                   size: 80,
-                  color: Colors.grey[400],
+                  color: theme.colorScheme.onSurfaceVariant,
                 ),
                 const SizedBox(height: 16),
                 Text(
                   '封面加載失敗',
                   style: TextStyle(
-                    color: Colors.grey[600],
+                    color: theme.colorScheme.onSurfaceVariant,
                     fontSize: 14,
                   ),
                 ),
@@ -129,7 +133,11 @@ class BookDetailPage extends GetView<BookDetailController> {
   /// 優化間距和視覺層次
   Widget _buildBookInfo() {
     final book = controller.book.value;
-    final screenWidth = MediaQuery.of(Get.context!).size.width;
+    final context = Get.context!;
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
+    final colorScheme = theme.colorScheme;
+    final screenWidth = MediaQuery.of(context).size.width;
     
     // 響應式水平 padding
     final horizontalPadding = screenWidth < 600 ? 16.0 : 24.0;
@@ -142,34 +150,33 @@ class BookDetailPage extends GetView<BookDetailController> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 書名
+          // 書名 - 使用 headlineSmall 樣式
           Text(
             book.title,
-            style: const TextStyle(
-              fontSize: 26,
+            style: textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.bold,
               height: 1.3,
               letterSpacing: 0.5,
+              color: colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: 16),
           
-          // 作者
+          // 作者 - 使用 bodyLarge 樣式
           Row(
             children: [
               Icon(
                 Icons.person_outline,
                 size: 20,
-                color: Colors.grey[600],
+                color: colorScheme.onSurfaceVariant,
               ),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
                   book.author,
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey[700],
+                  style: textTheme.bodyLarge?.copyWith(
                     height: 1.4,
+                    color: colorScheme.onSurface,
                   ),
                 ),
               ),
@@ -177,20 +184,19 @@ class BookDetailPage extends GetView<BookDetailController> {
           ),
           const SizedBox(height: 12),
           
-          // 語言和文件大小
+          // 語言和文件大小 - 使用 bodyMedium 樣式
           Row(
             children: [
               Icon(
                 Icons.language,
                 size: 20,
-                color: Colors.grey[600],
+                color: colorScheme.onSurfaceVariant,
               ),
               const SizedBox(width: 8),
               Text(
                 book.language,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey[600],
+                style: textTheme.bodyMedium?.copyWith(
+                  color: colorScheme.onSurfaceVariant,
                 ),
               ),
               const SizedBox(width: 24),
@@ -199,14 +205,13 @@ class BookDetailPage extends GetView<BookDetailController> {
               Icon(
                 Icons.insert_drive_file_outlined,
                 size: 20,
-                color: Colors.grey[600],
+                color: colorScheme.onSurfaceVariant,
               ),
               const SizedBox(width: 8),
               Text(
                 book.fileSizeFormatted,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey[600],
+                style: textTheme.bodyMedium?.copyWith(
+                  color: colorScheme.onSurfaceVariant,
                 ),
               ),
             ],
@@ -217,26 +222,24 @@ class BookDetailPage extends GetView<BookDetailController> {
             const SizedBox(height: 24),
             Divider(
               thickness: 1,
-              color: Colors.grey[300],
+              color: colorScheme.outlineVariant,
             ),
             const SizedBox(height: 16),
             Text(
               '簡介',
-              style: TextStyle(
-                fontSize: 18,
+              style: textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.w600,
-                color: Colors.grey[800],
                 letterSpacing: 0.3,
+                color: colorScheme.onSurface,
               ),
             ),
             const SizedBox(height: 12),
             Text(
               book.description,
-              style: TextStyle(
-                fontSize: 15,
-                color: Colors.grey[700],
+              style: textTheme.bodyMedium?.copyWith(
                 height: 1.6,
                 letterSpacing: 0.2,
+                color: colorScheme.onSurfaceVariant,
               ),
             ),
           ],
@@ -305,23 +308,27 @@ class BookDetailPage extends GetView<BookDetailController> {
   /// 
   /// 顯示主要的下載按鈕，點擊後開始下載書籍
   Widget _buildDownloadButton() {
+    final context = Get.context!;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    
     return SizedBox(
       width: double.infinity,
       height: 52,
       child: ElevatedButton.icon(
         onPressed: controller.startDownload,
         icon: const Icon(Icons.download, size: 24),
-        label: const Text(
+        label: Text(
           '下載書籍',
-          style: TextStyle(
-            fontSize: 17,
+          style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.w600,
             letterSpacing: 0.5,
+            color: colorScheme.onPrimary,
           ),
         ),
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.blue,
-          foregroundColor: Colors.white,
+          backgroundColor: colorScheme.primary,
+          foregroundColor: colorScheme.onPrimary,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
@@ -338,6 +345,10 @@ class BookDetailPage extends GetView<BookDetailController> {
     final book = controller.book.value;
     final progress = book.downloadProgress;
     final percentage = (progress * 100).toStringAsFixed(0);
+    final context = Get.context!;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
     
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -346,19 +357,18 @@ class BookDetailPage extends GetView<BookDetailController> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
+            Text(
               '下載中',
-              style: TextStyle(
-                fontSize: 16,
+              style: textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.w600,
+                color: colorScheme.onSurface,
               ),
             ),
             Text(
               '$percentage%',
-              style: TextStyle(
-                fontSize: 16,
+              style: textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.w600,
-                color: Colors.blue[700],
+                color: colorScheme.primary,
               ),
             ),
           ],
@@ -379,8 +389,8 @@ class BookDetailPage extends GetView<BookDetailController> {
               child: LinearProgressIndicator(
                 value: value,
                 minHeight: 8,
-                backgroundColor: Colors.grey[300],
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+                backgroundColor: colorScheme.surfaceContainerHighest,
+                valueColor: AlwaysStoppedAnimation<Color>(colorScheme.primary),
               ),
             );
           },
@@ -395,13 +405,13 @@ class BookDetailPage extends GetView<BookDetailController> {
               child: OutlinedButton.icon(
                 onPressed: controller.pauseDownload,
                 icon: const Icon(Icons.pause, size: 20),
-                label: const Text(
+                label: Text(
                   '暫停',
-                  style: TextStyle(fontSize: 14),
+                  style: textTheme.labelLarge,
                 ),
                 style: OutlinedButton.styleFrom(
-                  foregroundColor: Colors.orange[700],
-                  side: BorderSide(color: Colors.orange[700]!),
+                  foregroundColor: colorScheme.tertiary,
+                  side: BorderSide(color: colorScheme.tertiary),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -416,13 +426,13 @@ class BookDetailPage extends GetView<BookDetailController> {
               child: OutlinedButton.icon(
                 onPressed: controller.cancelDownload,
                 icon: const Icon(Icons.close, size: 20),
-                label: const Text(
+                label: Text(
                   '取消',
-                  style: TextStyle(fontSize: 14),
+                  style: textTheme.labelLarge,
                 ),
                 style: OutlinedButton.styleFrom(
-                  foregroundColor: Colors.red[700],
-                  side: BorderSide(color: Colors.red[700]!),
+                  foregroundColor: colorScheme.error,
+                  side: BorderSide(color: colorScheme.error),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -441,6 +451,10 @@ class BookDetailPage extends GetView<BookDetailController> {
   /// 顯示暫停狀態的進度條和操作按鈕（繼續、取消）
   Widget _buildPausedWidget() {
     final book = controller.book.value;
+    final context = Get.context!;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
     
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -449,20 +463,18 @@ class BookDetailPage extends GetView<BookDetailController> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
+            Text(
               '已暫停',
-              style: TextStyle(
-                fontSize: 16,
+              style: textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.w600,
-                color: Colors.orange,
+                color: colorScheme.tertiary,
               ),
             ),
             Text(
               '${(book.downloadProgress * 100).toStringAsFixed(0)}%',
-              style: TextStyle(
-                fontSize: 14,
+              style: textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.w500,
-                color: Colors.grey[700],
+                color: colorScheme.onSurfaceVariant,
               ),
             ),
           ],
@@ -481,8 +493,8 @@ class BookDetailPage extends GetView<BookDetailController> {
             return LinearProgressIndicator(
               value: value,
               minHeight: 8,
-              backgroundColor: Colors.grey[300],
-              valueColor: AlwaysStoppedAnimation<Color>(Colors.orange[400]!),
+              backgroundColor: colorScheme.surfaceContainerHighest,
+              valueColor: AlwaysStoppedAnimation<Color>(colorScheme.tertiary),
               borderRadius: BorderRadius.circular(4),
             );
           },
@@ -497,13 +509,15 @@ class BookDetailPage extends GetView<BookDetailController> {
               child: ElevatedButton.icon(
                 onPressed: controller.startDownload,
                 icon: const Icon(Icons.play_arrow, size: 20),
-                label: const Text(
+                label: Text(
                   '繼續',
-                  style: TextStyle(fontSize: 14),
+                  style: textTheme.labelLarge?.copyWith(
+                    color: colorScheme.onSecondary,
+                  ),
                 ),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
-                  foregroundColor: Colors.white,
+                  backgroundColor: colorScheme.secondary,
+                  foregroundColor: colorScheme.onSecondary,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -518,13 +532,13 @@ class BookDetailPage extends GetView<BookDetailController> {
               child: OutlinedButton.icon(
                 onPressed: controller.cancelDownload,
                 icon: const Icon(Icons.close, size: 20),
-                label: const Text(
+                label: Text(
                   '取消',
-                  style: TextStyle(fontSize: 14),
+                  style: textTheme.labelLarge,
                 ),
                 style: OutlinedButton.styleFrom(
-                  foregroundColor: Colors.red[700],
-                  side: BorderSide(color: Colors.red[700]!),
+                  foregroundColor: colorScheme.error,
+                  side: BorderSide(color: colorScheme.error),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -542,6 +556,11 @@ class BookDetailPage extends GetView<BookDetailController> {
   /// 
   /// 顯示打開閱讀和刪除書籍按鈕
   Widget _buildDownloadedButtons() {
+    final context = Get.context!;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
+    
     return Column(
       children: [
         // 打開閱讀按鈕
@@ -551,17 +570,17 @@ class BookDetailPage extends GetView<BookDetailController> {
           child: ElevatedButton.icon(
             onPressed: controller.openReader,
             icon: const Icon(Icons.menu_book, size: 24),
-            label: const Text(
+            label: Text(
               '打開閱讀',
-              style: TextStyle(
-                fontSize: 17,
+              style: textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.w600,
                 letterSpacing: 0.5,
+                color: colorScheme.onSecondary,
               ),
             ),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.green,
-              foregroundColor: Colors.white,
+              backgroundColor: colorScheme.secondary,
+              foregroundColor: colorScheme.onSecondary,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -578,17 +597,16 @@ class BookDetailPage extends GetView<BookDetailController> {
           child: OutlinedButton.icon(
             onPressed: controller.deleteBook,
             icon: const Icon(Icons.delete_outline, size: 24),
-            label: const Text(
+            label: Text(
               '刪除書籍',
-              style: TextStyle(
-                fontSize: 17,
+              style: textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.w600,
                 letterSpacing: 0.5,
               ),
             ),
             style: OutlinedButton.styleFrom(
-              foregroundColor: Colors.red[700],
-              side: BorderSide(color: Colors.red[700]!, width: 1.5),
+              foregroundColor: colorScheme.error,
+              side: BorderSide(color: colorScheme.error, width: 1.5),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),

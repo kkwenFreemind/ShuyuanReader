@@ -1680,17 +1680,86 @@ final horizontalPadding = screenWidth < 600 ? 16.0 : 24.0;
 - **文件**: `lib/presentation/pages/book_detail_page.dart`
 - **優先級**: P2
 - **預計時間**: 20 分鐘
-- **狀態**: ⬜ 未開始
+- **狀態**: ✅ **完成** (2025-11-08)
 
-**具體步驟**:
-1. 確保顏色符合設計規範
-2. 調整字體大小
-3. 測試深色模式（可選）
+**實現內容**:
+
+1. **Theme 整合**:
+   - 移除所有硬編碼顏色（`Colors.grey[xxx]`, `Colors.blue` 等）
+   - 使用 `Theme.of(context)` 和 `colorScheme` 系統
+   - 確保所有顏色都從主題系統獲取
+   - 支持亮色和暗色模式自動切換
+
+2. **顏色語義化**:
+   - `colorScheme.primary` - 主要操作（下載按鈕）
+   - `colorScheme.secondary` - 次要操作（打開閱讀、繼續下載）
+   - `colorScheme.tertiary` - 警告操作（暫停）
+   - `colorScheme.error` - 危險操作（取消、刪除）
+   - `colorScheme.onSurface` - 主要文本
+   - `colorScheme.onSurfaceVariant` - 次要文本和圖標
+   - `colorScheme.surfaceContainerHighest` - 背景和進度條底色
+   - `colorScheme.outlineVariant` - 分隔線
+
+3. **Typography 系統**:
+   - 使用 `textTheme` 標準字體樣式
+   - `headlineSmall` - 書名（主標題）
+   - `titleMedium` - 章節標題和按鈕文本
+   - `bodyLarge` - 作者信息
+   - `bodyMedium` - 描述文本和元數據
+   - `labelLarge` - 按鈕標籤
+   - 保持一致的 `fontWeight` 和 `letterSpacing`
+
+4. **深色模式支援**:
+   - 所有顏色自動適配深色主題
+   - 進度條、圖標、文本自動調整對比度
+   - 背景色使用 Material 3 surface 層級系統
+   - 確保在深色模式下可讀性良好
+
+**顏色對應表**:
+```dart
+// Material Design 3 Color System
+primary         → 主操作按鈕（藍色系）
+secondary       → 次要操作按鈕（綠色系）
+tertiary        → 警告操作（橙色系）
+error           → 危險操作（紅色系）
+onPrimary       → 主按鈕文字
+onSecondary     → 次按鈕文字
+onSurface       → 主要文本
+onSurfaceVariant → 次要文本
+surfaceContainerHighest → 背景和分隔
+outlineVariant  → 細分隔線
+```
+
+**Typography 映射**:
+```dart
+// Material Design 3 Typography
+headlineSmall   → 26px, Bold (書名)
+titleMedium     → 18px, SemiBold (標題)
+bodyLarge       → 16px, Regular (作者)
+bodyMedium      → 14px, Regular (描述)
+labelLarge      → 14px, Medium (按鈕)
+```
 
 **驗收標準**:
-- [ ] 顏色正確
-- [ ] 字體大小合適
-- [ ] 深色模式正常（如支持）
+- [x] 所有硬編碼顏色已移除
+- [x] 使用 Theme 和 ColorScheme 系統
+- [x] 使用標準 TextTheme 樣式
+- [x] 支持深色模式（自動適配）
+- [x] 顏色語義化且一致
+- [x] 代碼通過靜態分析
+
+**測試結果**:
+- ✅ 代碼編譯通過
+- ✅ Flutter analyze 無嚴重問題
+- ✅ 所有顏色使用 ColorScheme
+- ✅ 所有文本使用 TextTheme
+- ✅ 深色模式自動支援
+
+**技術改進**:
+- Material Design 3 設計規範
+- 語義化顏色命名
+- 標準化文字層級
+- 自動深色模式適配
 
 ---
 
