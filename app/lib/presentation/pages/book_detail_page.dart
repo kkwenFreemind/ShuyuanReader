@@ -30,15 +30,21 @@ class BookDetailPage extends GetView<BookDetailController> {
   /// 
   /// 使用 SingleChildScrollView 支持滾動
   /// 內容包括封面、書籍信息和操作按鈕
+  /// 添加 SafeArea 確保內容不被系統 UI 遮擋
   Widget _buildBody() {
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildCoverImage(),
-          _buildBookInfo(),
-          _buildActionButtons(),
-        ],
+    return SafeArea(
+      bottom: false, // 按鈕區域會單獨處理底部安全區域
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildCoverImage(),
+            _buildBookInfo(),
+            _buildActionButtons(),
+            // 添加底部安全區域間距
+            SizedBox(height: MediaQuery.of(Get.context!).padding.bottom),
+          ],
+        ),
       ),
     );
   }
@@ -47,8 +53,21 @@ class BookDetailPage extends GetView<BookDetailController> {
   /// 
   /// 使用 Hero 動畫實現從列表頁到詳情頁的平滑過渡
   /// 使用 CachedNetworkImage 加載網絡圖片並提供緩存
+  /// 響應式高度：根據屏幕大小調整封面高度
   Widget _buildCoverImage() {
     final book = controller.book.value;
+    final screenHeight = MediaQuery.of(Get.context!).size.height;
+    final screenWidth = MediaQuery.of(Get.context!).size.width;
+    
+    // 響應式高度計算：
+    // - 小屏幕（< 600）：屏幕高度的 40%
+    // - 中等屏幕（600-900）：屏幕高度的 45%
+    // - 大屏幕（> 900）：固定 500，但不超過屏幕高度的 50%
+    final coverHeight = screenWidth < 600
+        ? screenHeight * 0.4
+        : screenWidth < 900
+            ? screenHeight * 0.45
+            : (screenHeight * 0.5).clamp(400.0, 500.0);
     
     return Hero(
       tag: 'book-cover-${book.id}',
@@ -67,7 +86,7 @@ class BookDetailPage extends GetView<BookDetailController> {
       },
       child: Container(
         width: double.infinity,
-        height: 400,
+        height: coverHeight,
         color: Colors.grey[200],
         child: CachedNetworkImage(
           imageUrl: book.coverUrl,
@@ -107,11 +126,19 @@ class BookDetailPage extends GetView<BookDetailController> {
   /// 構建書籍信息區域
   /// 
   /// 顯示書名、作者、語言、文件大小和描述信息
+  /// 優化間距和視覺層次
   Widget _buildBookInfo() {
     final book = controller.book.value;
+    final screenWidth = MediaQuery.of(Get.context!).size.width;
+    
+    // 響應式水平 padding
+    final horizontalPadding = screenWidth < 600 ? 16.0 : 24.0;
     
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: EdgeInsets.symmetric(
+        horizontal: horizontalPadding,
+        vertical: 20.0,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -119,12 +146,13 @@ class BookDetailPage extends GetView<BookDetailController> {
           Text(
             book.title,
             style: const TextStyle(
-              fontSize: 24,
+              fontSize: 26,
               fontWeight: FontWeight.bold,
               height: 1.3,
+              letterSpacing: 0.5,
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 16),
           
           // 作者
           Row(
@@ -147,9 +175,9 @@ class BookDetailPage extends GetView<BookDetailController> {
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
           
-          // 語言
+          // 語言和文件大小
           Row(
             children: [
               Icon(
@@ -186,24 +214,29 @@ class BookDetailPage extends GetView<BookDetailController> {
           
           // 描述（如果有）
           if (book.description.isNotEmpty) ...[
-            const SizedBox(height: 20),
-            const Divider(),
-            const SizedBox(height: 12),
+            const SizedBox(height: 24),
+            Divider(
+              thickness: 1,
+              color: Colors.grey[300],
+            ),
+            const SizedBox(height: 16),
             Text(
               '簡介',
               style: TextStyle(
-                fontSize: 16,
+                fontSize: 18,
                 fontWeight: FontWeight.w600,
                 color: Colors.grey[800],
+                letterSpacing: 0.3,
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 12),
             Text(
               book.description,
               style: TextStyle(
-                fontSize: 14,
+                fontSize: 15,
                 color: Colors.grey[700],
                 height: 1.6,
+                letterSpacing: 0.2,
               ),
             ),
           ],
@@ -215,11 +248,21 @@ class BookDetailPage extends GetView<BookDetailController> {
   /// 構建操作按鈕區域
   /// 
   /// 根據書籍的下載狀態顯示不同的操作按鈕
+  /// 添加響應式間距和安全區域處理
   Widget _buildActionButtons() {
     final book = controller.book.value;
+    final screenWidth = MediaQuery.of(Get.context!).size.width;
+    
+    // 響應式水平 padding
+    final horizontalPadding = screenWidth < 600 ? 16.0 : 24.0;
     
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: EdgeInsets.fromLTRB(
+        horizontalPadding,
+        16.0,
+        horizontalPadding,
+        24.0, // 增加底部間距
+      ),
       child: AnimatedSwitcher(
         duration: const Duration(milliseconds: 300),
         transitionBuilder: (Widget child, Animation<double> animation) {
@@ -264,22 +307,23 @@ class BookDetailPage extends GetView<BookDetailController> {
   Widget _buildDownloadButton() {
     return SizedBox(
       width: double.infinity,
-      height: 50,
+      height: 52,
       child: ElevatedButton.icon(
         onPressed: controller.startDownload,
         icon: const Icon(Icons.download, size: 24),
         label: const Text(
           '下載書籍',
           style: TextStyle(
-            fontSize: 16,
+            fontSize: 17,
             fontWeight: FontWeight.w600,
+            letterSpacing: 0.5,
           ),
         ),
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.blue,
           foregroundColor: Colors.white,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(12),
           ),
           elevation: 2,
         ),
@@ -359,9 +403,9 @@ class BookDetailPage extends GetView<BookDetailController> {
                   foregroundColor: Colors.orange[700],
                   side: BorderSide(color: Colors.orange[700]!),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  padding: const EdgeInsets.symmetric(vertical: 14),
                 ),
               ),
             ),
@@ -380,9 +424,9 @@ class BookDetailPage extends GetView<BookDetailController> {
                   foregroundColor: Colors.red[700],
                   side: BorderSide(color: Colors.red[700]!),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  padding: const EdgeInsets.symmetric(vertical: 14),
                 ),
               ),
             ),
@@ -461,9 +505,9 @@ class BookDetailPage extends GetView<BookDetailController> {
                   backgroundColor: Colors.green,
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  padding: const EdgeInsets.symmetric(vertical: 14),
                 ),
               ),
             ),
@@ -482,9 +526,9 @@ class BookDetailPage extends GetView<BookDetailController> {
                   foregroundColor: Colors.red[700],
                   side: BorderSide(color: Colors.red[700]!),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  padding: const EdgeInsets.symmetric(vertical: 14),
                 ),
               ),
             ),
@@ -503,22 +547,23 @@ class BookDetailPage extends GetView<BookDetailController> {
         // 打開閱讀按鈕
         SizedBox(
           width: double.infinity,
-          height: 50,
+          height: 52,
           child: ElevatedButton.icon(
             onPressed: controller.openReader,
             icon: const Icon(Icons.menu_book, size: 24),
             label: const Text(
               '打開閱讀',
               style: TextStyle(
-                fontSize: 16,
+                fontSize: 17,
                 fontWeight: FontWeight.w600,
+                letterSpacing: 0.5,
               ),
             ),
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.green,
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(12),
               ),
               elevation: 2,
             ),
@@ -529,22 +574,23 @@ class BookDetailPage extends GetView<BookDetailController> {
         // 刪除書籍按鈕
         SizedBox(
           width: double.infinity,
-          height: 50,
+          height: 52,
           child: OutlinedButton.icon(
             onPressed: controller.deleteBook,
             icon: const Icon(Icons.delete_outline, size: 24),
             label: const Text(
               '刪除書籍',
               style: TextStyle(
-                fontSize: 16,
+                fontSize: 17,
                 fontWeight: FontWeight.w600,
+                letterSpacing: 0.5,
               ),
             ),
             style: OutlinedButton.styleFrom(
               foregroundColor: Colors.red[700],
               side: BorderSide(color: Colors.red[700]!, width: 1.5),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(12),
               ),
             ),
           ),
