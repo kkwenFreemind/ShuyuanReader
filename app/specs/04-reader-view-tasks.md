@@ -15,10 +15,10 @@
 | **Day 1-2: 基礎渲染 (Phase 4.1-4.7)** | 11 | 9.5h | 10 | ✅ |
 | **Day 3: 直書模式 (Phase 4.8-4.10)** | 9 | 9h | 7 | ✅ |
 | **Day 4: 閱讀設置 (Phase 4.11-4.14)** | 6 | 5.2h | 6 | ✅ |
-| **Day 4-5: 書籤功能 (Phase 4.15)** | 7 | 4.5h | 2 | 🚧 |
+| **Day 4-5: 書籤功能 (Phase 4.15)** | 7 | 4.5h | 3 | 🚧 |
 | **Day 5: 整合測試 (Phase 4.16-4.17)** | 7 | 9h | 0 | ⬜ |
 | **Day 6: 文檔發布 (Phase 4.18)** | 7 | 6h | 0 | ⬜ |
-| **總計** | **43** | **38-42h** | **24** | **55.8%** |
+| **總計** | **43** | **38-42h** | **25** | **58.1%** |
 
 ---
 
@@ -1718,25 +1718,107 @@ ReaderSettings getDefaultSettings()
 
 ### Phase 4.15: 數據模型更新 (1 小時)
 
-#### ⬜ Task 4.15.1: 更新 ReadingProgress 模型
-- **文件**: `lib/domain/entities/reading_progress.dart`
+#### ✅ Task 4.15.1: 更新 ReadingProgress 模型
+- **文件**: `lib/domain/entities/reader/reading_progress.dart`
 - **優先級**: P0
 - **預計時間**: 30 分鐘
-- **狀態**: ⬜ 未開始
+- **狀態**: ✅ 已完成
+- **完成時間**: 2024-11-09
+- **實際用時**: 0 分鐘（已在初始設計中實現）
 
 **具體步驟**:
-1. 添加書籤相關欄位和方法:
-   ```dart
-   class ReadingProgress {
-     List<int> bookmarkedPages;
-     bool isBookmarked(int page);
-     void toggleBookmark(int page);
-   }
-   ```
+1. ✅ 添加書籤相關欄位和方法
 
 **驗收標準**:
-- [ ] 書籤欄位已添加
-- [ ] 方法實現正確
+- [x] 書籤欄位已添加
+- [x] 方法實現正確
+
+**實現細節**:
+
+**1. 核心欄位**：
+```dart
+class ReadingProgress {
+  final List<int> bookmarkedPages;  // 書籤頁碼列表（有序）
+  final int currentPage;             // 當前頁碼
+  final String bookId;               // 書籍 ID
+  final DateTime lastReadTime;       // 最後閱讀時間
+  final String? epubCfi;             // EPUB CFI 位置（可選）
+  final int? totalPages;             // 總頁數（可選）
+}
+```
+
+**2. 書籤檢查方法**：
+```dart
+// 檢查指定頁碼是否已添加書籤
+bool isBookmarked(int page) => bookmarkedPages.contains(page);
+```
+
+**3. 書籤切換方法**：
+```dart
+// 切換書籤狀態（已有則移除，無則添加）
+ReadingProgress toggleBookmark(int page) {
+  final newBookmarks = List<int>.from(bookmarkedPages);
+  if (isBookmarked(page)) {
+    newBookmarks.remove(page);
+  } else {
+    newBookmarks.add(page);
+    newBookmarks.sort(); // 保持有序
+  }
+  return copyWith(bookmarkedPages: newBookmarks);
+}
+```
+
+**4. 書籤添加方法**：
+```dart
+// 添加書籤（如果已存在則不改變）
+ReadingProgress addBookmark(int page) {
+  if (isBookmarked(page)) return this;
+  final newBookmarks = [...bookmarkedPages, page]..sort();
+  return copyWith(bookmarkedPages: newBookmarks);
+}
+```
+
+**5. 書籤移除方法**：
+```dart
+// 移除書籤（如果不存在則不改變）
+ReadingProgress removeBookmark(int page) {
+  if (!isBookmarked(page)) return this;
+  final newBookmarks = List<int>.from(bookmarkedPages)..remove(page);
+  return copyWith(bookmarkedPages: newBookmarks);
+}
+```
+
+**6. 實用屬性**：
+```dart
+int get bookmarkCount => bookmarkedPages.length;  // 書籤數量
+```
+
+**7. 設計特點**：
+- **不可變對象**：所有修改操作返回新實例
+- **有序列表**：書籤列表自動排序
+- **時間戳更新**：每次修改自動更新 lastReadTime
+- **防重複**：添加已存在的書籤不會重複
+- **防錯誤**：移除不存在的書籤不會報錯
+
+**8. 使用示例**：
+```dart
+// 檢查書籤
+if (progress.isBookmarked(5)) {
+  print('第 5 頁已添加書籤');
+}
+
+// 切換書籤
+final newProgress = progress.toggleBookmark(5);
+
+// 添加書籤
+final withBookmark = progress.addBookmark(10);
+
+// 移除書籤
+final withoutBookmark = progress.removeBookmark(10);
+
+// 獲取書籤數量
+print('共有 ${progress.bookmarkCount} 個書籤');
+```
 
 ---
 
