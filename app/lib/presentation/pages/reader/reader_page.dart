@@ -60,6 +60,7 @@ import '../../controllers/reader/reader_controller.dart';
 import '../../widgets/reader/epub_viewer_widget.dart';
 import '../../widgets/reader/reading_progress_bar.dart';
 import '../../widgets/reader/reading_settings_panel.dart';
+import '../../widgets/reader/animated_bookmark_button.dart';
 
 /// EPUB 閱讀器頁面
 ///
@@ -157,13 +158,9 @@ class ReaderPage extends StatelessWidget {
         // 書籤按鈕
         Obx(() {
           final isBookmarked = controller.isCurrentPageBookmarked;
-          return IconButton(
-            icon: Icon(
-              isBookmarked ? Icons.bookmark : Icons.bookmark_border,
-              color: isBookmarked ? Colors.amber : null,
-            ),
+          return AnimatedBookmarkButton(
+            isBookmarked: isBookmarked,
             onPressed: controller.toggleCurrentBookmark,
-            tooltip: isBookmarked ? '移除書籤' : '添加書籤',
           );
         }),
 
