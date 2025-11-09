@@ -1,3 +1,8 @@
+// Readium Kotlin Toolkit version
+ext {
+    set("readiumVersion", "3.1.2")
+}
+
 allprojects {
     repositories {
         google()

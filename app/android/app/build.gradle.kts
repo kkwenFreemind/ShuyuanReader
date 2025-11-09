@@ -13,6 +13,7 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+        isCoreLibraryDesugaringEnabled = true
     }
 
     kotlinOptions {
@@ -41,4 +42,23 @@ android {
 
 flutter {
     source = "../.."
+}
+
+dependencies {
+    val readiumVersion = rootProject.extra["readiumVersion"] as String
+    
+    // Readium Kotlin Toolkit
+    implementation("org.readium.kotlin-toolkit:readium-shared:$readiumVersion")
+    implementation("org.readium.kotlin-toolkit:readium-streamer:$readiumVersion")
+    implementation("org.readium.kotlin-toolkit:readium-navigator:$readiumVersion")
+    
+    // Kotlin Coroutines
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+    
+    // AndroidX Core
+    implementation("androidx.core:core-ktx:1.12.0")
+    implementation("androidx.appcompat:appcompat:1.6.1")
+    
+    // Core library desugaring (required by Readium)
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
 }
