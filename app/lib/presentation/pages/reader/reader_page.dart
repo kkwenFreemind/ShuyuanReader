@@ -59,6 +59,7 @@ import 'package:get/get.dart';
 import '../../controllers/reader/reader_controller.dart';
 import '../../widgets/reader/epub_viewer_widget.dart';
 import '../../widgets/reader/reading_progress_bar.dart';
+import '../../widgets/reader/reading_settings_panel.dart';
 
 /// EPUB 閱讀器頁面
 ///
@@ -78,7 +79,7 @@ class ReaderPage extends StatelessWidget {
       // 適用於兩種閱讀模式：
       // - 直書模式：AppBar 在頂部，不影響文字從右到左排列
       // - 橫書模式：AppBar 在頂部，標準佈局
-      appBar: _buildAppBar(controller),
+      appBar: _buildAppBar(context, controller),
 
       // Body：主要內容區域
       // 使用 SafeArea 確保內容不被系統 UI（如劉海屏）遮擋
@@ -102,7 +103,10 @@ class ReaderPage extends StatelessWidget {
   /// **響應式**：
   /// - 工具欄可通過點擊螢幕中央顯示/隱藏
   /// - 書籤按鈕根據當前頁是否有書籤顯示不同圖標
-  PreferredSizeWidget? _buildAppBar(ReaderController controller) {
+  PreferredSizeWidget? _buildAppBar(
+    BuildContext context,
+    ReaderController controller,
+  ) {
     // 如果工具欄被隱藏，返回 null（無 AppBar）
     if (!controller.isToolbarVisible.value) {
       return null;
@@ -163,18 +167,10 @@ class ReaderPage extends StatelessWidget {
           );
         }),
 
-        // 設置按鈕（未來實現）
+        // 設置按鈕
         IconButton(
           icon: const Icon(Icons.settings),
-          onPressed: () {
-            // TODO: 打開設置面板 (Task 4.8.1)
-            Get.snackbar(
-              '功能開發中',
-              '設置面板將在後續版本實現',
-              snackPosition: SnackPosition.BOTTOM,
-              duration: const Duration(seconds: 2),
-            );
-          },
+          onPressed: () => _showSettingsPanel(context, controller),
           tooltip: '設置',
         ),
       ],
@@ -291,6 +287,41 @@ class ReaderPage extends StatelessWidget {
         isNightMode: controller.isNightMode.value,
       );
     });
+  }
+
+  /// 顯示設置面板
+  ///
+  /// 從底部彈出設置面板，包含以下設置項：
+  /// - 字體大小調整（5 檔：12/14/16/18/20sp）
+  /// - 亮度調整（0-100%）
+  /// - 夜間模式切換
+  /// - 自動隱藏工具欄切換
+  ///
+  /// **使用 ModalBottomSheet**：
+  /// - 圓角頂部設計
+  /// - 拖動關閉支持
+  /// - 半透明背景遮罩
+  void _showSettingsPanel(BuildContext context, ReaderController controller) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent, // 透明背景讓圓角可見
+      isScrollControlled: true, // 允許自定義高度
+      builder: (context) => Obx(() {
+        return ReadingSettingsPanel(
+          // 當前設置值
+          fontSize: controller.fontSize.value,
+          brightness: controller.brightness.value,
+          isNightMode: controller.isNightMode.value,
+          autoHideToolbar: controller.autoHideToolbar.value,
+          
+          // 回調函數
+          onFontSizeChanged: controller.setFontSize,
+          onBrightnessChanged: controller.setBrightness,
+          onNightModeChanged: (_) => controller.toggleNightMode(),
+          onAutoHideToolbarChanged: (_) => controller.toggleAutoHideToolbar(),
+        );
+      }),
+    );
   }
 }
 

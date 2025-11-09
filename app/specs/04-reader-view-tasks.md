@@ -14,11 +14,11 @@
 |------|--------|----------|--------|------|
 | **Day 1-2: 基礎渲染 (Phase 4.1-4.7)** | 11 | 9.5h | 10 | ✅ |
 | **Day 3: 直書模式 (Phase 4.8-4.10)** | 9 | 9h | 7 | ✅ |
-| **Day 4: 閱讀設置 (Phase 4.11)** | 5 | 4.2h | 1 | 🚧 |
+| **Day 4: 閱讀設置 (Phase 4.11)** | 5 | 4.2h | 3 | 🚧 |
 | **Day 4-5: 書籤功能 (Phase 4.12)** | 7 | 4.5h | 0 | ⬜ |
 | **Day 5: 整合測試 (Phase 4.13-4.14)** | 8 | 9h | 0 | ⬜ |
 | **Day 6: 文檔發布 (Phase 4.15)** | 7 | 6h | 0 | ⬜ |
-| **總計** | **43** | **38-42h** | **18** | **41.9%** |
+| **總計** | **43** | **38-42h** | **19** | **44.2%** |
 
 ---
 
@@ -1215,19 +1215,70 @@ showModalBottomSheet(
 
 ---
 
-#### ⬜ Task 4.11.2: 添加設置按鈕
+#### ✅ Task 4.11.2: 添加設置按鈕
 - **文件**: `lib/presentation/pages/reader_page.dart`
 - **優先級**: P0
 - **預計時間**: 12 分鐘
-- **狀態**: ⬜ 未開始
+- **狀態**: ✅ 已完成
 
 **具體步驟**:
-1. 在工具欄添加設置按鈕（⚙️）
-2. 點擊顯示設置面板
+1. ✅ 在工具欄添加設置按鈕（⚙️）
+2. ✅ 點擊顯示設置面板
 
 **驗收標準**:
-- [ ] 點擊顯示設置面板
-- [ ] 圖標清晰
+- [x] 點擊顯示設置面板 ✅
+- [x] 圖標清晰 ✅
+
+**實際實現**:
+- 更新 AppBar actions 中的設置按鈕
+- 移除 TODO 注釋和臨時 Snackbar
+- 添加 `_showSettingsPanel()` 方法
+- 使用 `showModalBottomSheet` 顯示設置面板
+
+**技術細節**:
+```dart
+// AppBar 設置按鈕
+IconButton(
+  icon: const Icon(Icons.settings),
+  onPressed: () => _showSettingsPanel(context, controller),
+  tooltip: '設置',
+),
+
+// _showSettingsPanel 方法
+void _showSettingsPanel(BuildContext context, ReaderController controller) {
+  showModalBottomSheet(
+    context: context,
+    backgroundColor: Colors.transparent, // 透明背景讓圓角可見
+    isScrollControlled: true, // 允許自定義高度
+    builder: (context) => Obx(() {
+      return ReadingSettingsPanel(
+        fontSize: controller.fontSize.value,
+        brightness: controller.brightness.value,
+        isNightMode: controller.isNightMode.value,
+        autoHideToolbar: controller.autoHideToolbar.value,
+        onFontSizeChanged: controller.setFontSize,
+        onBrightnessChanged: controller.setBrightness,
+        onNightModeChanged: (_) => controller.toggleNightMode(),
+        onAutoHideToolbarChanged: (_) => controller.toggleAutoHideToolbar(),
+      );
+    }),
+  );
+}
+```
+
+**整合內容**:
+- 導入 `reading_settings_panel.dart`
+- 更新 `_buildAppBar` 簽名（添加 BuildContext 參數）
+- 設置按鈕連接到面板顯示方法
+- Obx wrapper 確保響應式更新
+- 回調連接到 ReaderController 方法
+
+**UI 效果**:
+- 點擊設置按鈕（⚙️）
+- 從底部彈出圓角設置面板
+- 半透明遮罩背景
+- 支持拖動關閉
+- 即時預覽設置變化
 
 ---
 
