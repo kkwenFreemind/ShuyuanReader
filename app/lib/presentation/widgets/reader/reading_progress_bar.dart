@@ -73,62 +73,66 @@ class ReadingProgressBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: padding,
-      decoration: BoxDecoration(
-        // 半透明背景
-        color: isNightMode
-            ? Colors.grey[900]?.withValues(alpha: 0.9)
-            : Colors.white.withValues(alpha: 0.9),
-        // 頂部陰影
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
-            blurRadius: 8,
-            offset: const Offset(0, -2),
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // 視覺化進度條
-          LinearProgressIndicator(
-            value: progressPercentage.clamp(0.0, 1.0),
-            backgroundColor: Colors.grey[300],
-            valueColor: AlwaysStoppedAnimation<Color>(
-              isNightMode ? Colors.amber[700]! : Colors.blue,
+    // 性能優化：使用 RepaintBoundary 隔離進度條的重繪
+    // 當進度更新時，只重繪此組件，不影響其他 UI 元素
+    return RepaintBoundary(
+      child: Container(
+        padding: padding,
+        decoration: BoxDecoration(
+          // 半透明背景
+          color: isNightMode
+              ? Colors.grey[900]?.withValues(alpha: 0.9)
+              : Colors.white.withValues(alpha: 0.9),
+          // 頂部陰影
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.1),
+              blurRadius: 8,
+              offset: const Offset(0, -2),
             ),
-            minHeight: progressBarHeight,
-          ),
-
-          const SizedBox(height: 8),
-
-          // 頁碼和百分比信息
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              // 左側：當前頁 / 總頁數
-              Text(
-                '第 $currentPage 頁 / 共 $totalPages 頁',
-                style: TextStyle(
-                  fontSize: textSize,
-                  color: isNightMode ? Colors.grey[400] : Colors.grey[700],
-                ),
+          ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // 視覺化進度條
+            LinearProgressIndicator(
+              value: progressPercentage.clamp(0.0, 1.0),
+              backgroundColor: Colors.grey[300],
+              valueColor: AlwaysStoppedAnimation<Color>(
+                isNightMode ? Colors.amber[700]! : Colors.blue,
               ),
+              minHeight: progressBarHeight,
+            ),
 
-              // 右側：閱讀百分比
-              Text(
-                _formatPercentage(),
-                style: TextStyle(
-                  fontSize: textSize,
-                  fontWeight: FontWeight.bold,
-                  color: isNightMode ? Colors.amber[700] : Colors.blue,
+            const SizedBox(height: 8),
+
+            // 頁碼和百分比信息
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                // 左側：當前頁 / 總頁數
+                Text(
+                  '第 $currentPage 頁 / 共 $totalPages 頁',
+                  style: TextStyle(
+                    fontSize: textSize,
+                    color: isNightMode ? Colors.grey[400] : Colors.grey[700],
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ],
+
+                // 右側：閱讀百分比
+                Text(
+                  _formatPercentage(),
+                  style: TextStyle(
+                    fontSize: textSize,
+                    fontWeight: FontWeight.bold,
+                    color: isNightMode ? Colors.amber[700] : Colors.blue,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

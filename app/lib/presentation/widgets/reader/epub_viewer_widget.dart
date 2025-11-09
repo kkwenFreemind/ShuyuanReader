@@ -122,57 +122,62 @@ class EpubViewerWidget extends StatelessWidget {
       );
     }
 
-    return GestureDetector(
-      // 點擊螢幕中央：切換工具欄
-      onTap: onPageTap,
+    // 性能優化：使用 RepaintBoundary 隔離重繪區域
+    // 當工具欄顯示/隱藏時，避免重繪整個 EPUB 內容
+    // 這可以顯著提升 UI 響應速度和流暢度
+    return RepaintBoundary(
+      child: GestureDetector(
+        // 點擊螢幕中央：切換工具欄
+        onTap: onPageTap,
 
-      // 水平滑動手勢：翻頁
-      onHorizontalDragEnd: (details) {
-        _handleSwipeGesture(details);
-      },
+        // 水平滑動手勢：翻頁
+        onHorizontalDragEnd: (details) {
+          _handleSwipeGesture(details);
+        },
 
-      // EPUB 內容視圖
-      child: Container(
-        color: backgroundColor ?? Colors.white,
-        child: EpubView(
-          controller: controller!,
+        // EPUB 內容視圖
+        child: Container(
+          color: backgroundColor ?? Colors.white,
+          child: EpubView(
+            controller: controller!,
 
-          // 自定義構建器
-          builders: EpubViewBuilders<DefaultBuilderOptions>(
-            // 章節分隔符
-            chapterDividerBuilder: (_) => Container(
-              height: 1,
-              color: Colors.grey[300],
-              margin: const EdgeInsets.symmetric(vertical: 16),
-            ),
-
-            // 加載動畫
-            loaderBuilder: (_) => Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const CircularProgressIndicator(),
-                  const SizedBox(height: 16),
-                  Text(
-                    '正在加載 EPUB 內容...',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: textColor ?? Colors.black87,
-                    ),
-                  ),
-                ],
+            // 自定義構建器
+            builders: EpubViewBuilders<DefaultBuilderOptions>(
+              // 章節分隔符
+              chapterDividerBuilder: (_) => Container(
+                height: 1,
+                color: Colors.grey[300],
+                margin: const EdgeInsets.symmetric(vertical: 16),
               ),
+
+              // 加載動畫
+              loaderBuilder: (_) => Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const CircularProgressIndicator(),
+                    const SizedBox(height: 16),
+                    Text(
+                      '正在加載 EPUB 內容...',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: textColor ?? Colors.black87,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              // 選項構建器（可選）
+              options: const DefaultBuilderOptions(),
             ),
 
-            // 選項構建器（可選）
-            options: const DefaultBuilderOptions(),
+            // EPUB 載入錯誤處理
+            onExternalLinkPressed: (href) {
+              // 處理外部鏈接（暫不處理）
+              debugPrint('External link pressed: $href');
+            },
           ),
-
-          // EPUB 載入錯誤處理
-          onExternalLinkPressed: (href) {
-            // 處理外部鏈接（暫不處理）
-            debugPrint('External link pressed: $href');
-          },
         ),
       ),
     );

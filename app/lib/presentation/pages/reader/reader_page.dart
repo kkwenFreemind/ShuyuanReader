@@ -233,11 +233,20 @@ class ReaderPage extends StatelessWidget {
       }
 
       // 3. 正常狀態：顯示 EPUB 內容
+      // 性能優化：提取夜間模式顏色到外層 Obx，避免內層 EpubViewerWidget 不必要的重建
+      final backgroundColor = controller.isNightMode.value
+          ? Colors.black
+          : Colors.white;
+      final textColor = controller.isNightMode.value
+          ? Colors.white
+          : Colors.black;
+
       return Stack(
         children: [
           // EPUB 內容顯示區域
           // 直書模式：文字從右到左、從上到下排列（由 CSS 控制）
           // 橫書模式：文字從左到右、從上到下排列（預設）
+          // 性能優化：使用單一 Obx 監聽 readingDirection，減少重複監聽
           Obx(() {
             return EpubViewerWidget(
               controller: controller.epubController,
@@ -245,12 +254,8 @@ class ReaderPage extends StatelessWidget {
               onPageTap: controller.toggleToolbar,
               onNextPage: controller.nextPage,
               onPreviousPage: controller.previousPage,
-              backgroundColor: controller.isNightMode.value
-                  ? Colors.black
-                  : Colors.white,
-              textColor: controller.isNightMode.value
-                  ? Colors.white
-                  : Colors.black,
+              backgroundColor: backgroundColor,
+              textColor: textColor,
             );
           }),
 
