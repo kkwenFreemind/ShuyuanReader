@@ -3,6 +3,11 @@ import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'routes/app_pages.dart';
 import 'data/datasources/reader/reading_local_data_source.dart';
+import 'data/repositories/reader/reading_repository_impl.dart';
+import 'domain/repositories/reading_repository.dart';
+import 'domain/usecases/reader/get_reading_progress.dart';
+import 'domain/usecases/reader/save_reading_progress.dart';
+import 'domain/usecases/reader/toggle_bookmark.dart';
 
 /// 應用程序入口
 /// 
@@ -18,6 +23,22 @@ void main() async {
   Get.put<SharedPreferences>(prefs, permanent: true);
   Get.put<ReadingLocalDataSource>(
     ReadingLocalDataSource(prefs),
+    permanent: true,
+  );
+  
+  // 注冊 Reading Repository 和 Use Cases
+  final readingRepository = ReadingRepositoryImpl();
+  Get.put<ReadingRepository>(readingRepository, permanent: true);
+  Get.put<GetReadingProgress>(
+    GetReadingProgress(readingRepository),
+    permanent: true,
+  );
+  Get.put<SaveReadingProgress>(
+    SaveReadingProgress(readingRepository),
+    permanent: true,
+  );
+  Get.put<ToggleBookmark>(
+    ToggleBookmark(readingRepository),
     permanent: true,
   );
   

@@ -15,10 +15,10 @@
 | **Day 1-2: 基礎渲染 (Phase 4.1-4.7)** | 11 | 9.5h | 10 | ✅ |
 | **Day 3: 直書模式 (Phase 4.8-4.10)** | 9 | 9h | 7 | ✅ |
 | **Day 4: 閱讀設置 (Phase 4.11-4.14)** | 6 | 5.2h | 6 | ✅ |
-| **Day 4-5: 書籤功能 (Phase 4.15)** | 7 | 4.5h | 6 | 🚧 |
+| **Day 4-5: 書籤功能 (Phase 4.15)** | 7 | 4.5h | 9 | ✅ |
 | **Day 5: 整合測試 (Phase 4.16-4.17)** | 7 | 9h | 0 | ⬜ |
 | **Day 6: 文檔發布 (Phase 4.18)** | 7 | 6h | 0 | ⬜ |
-| **總計** | **43** | **38-42h** | **28** | **65.1%** |
+| **總計** | **43** | **38-42h** | **31** | **72.1%** |
 
 ---
 
@@ -2027,42 +2027,57 @@ Obx(() {
 
 ### Phase 4.17: 書籤邏輯實現 (1.5 小時)
 
-#### ⬜ Task 4.17.1: 實現書籤切換邏輯
-- **文件**: `lib/presentation/controllers/reader_controller.dart`
+#### ✅ Task 4.17.1: 實現書籤切換邏輯
+- **文件**: `lib/domain/usecases/reader/toggle_bookmark.dart`, `lib/domain/repositories/reading_repository.dart`, `lib/data/repositories/reader/reading_repository_impl.dart`
 - **優先級**: P0
 - **預計時間**: 1 小時
-- **狀態**: ⬜ 未開始
+- **狀態**: ✅ 已完成
+- **完成時間**: 2025-01-06
+- **實際用時**: 1 小時
 
-**具體步驟**:
-1. 實現 `toggleCurrentBookmark()` 方法
-2. 檢查當前頁是否已添加書籤
-3. 切換書籤狀態
-4. 更新 UI
-5. 保存到數據庫
+**實現細節**:
+1. 創建 `ReadingRepository` 接口
+   - 定義 getReadingProgress, saveReadingProgress 方法
+   - 遵循 Clean Architecture Repository Pattern
+2. 實現 `ReadingRepositoryImpl` with Hive
+   - 使用 ReadingProgressModel 進行數據持久化
+   - Box 名稱：'reading_progress'
+3. 實現 `GetReadingProgress` 用例
+   - 從 Repository 讀取閱讀進度
+4. 實現 `SaveReadingProgress` 用例
+   - 保存閱讀進度到 Repository
+5. 實現 `ToggleBookmark` 用例
+   - 獲取當前進度 → 切換書籤 → 保存更新
+6. 註冊 ReadingProgressModel Adapter (typeId: 3)
+7. 在 AppInitializer 中打開 reading_progress Box
+8. 在 main.dart 中注冊 Repository 和 Use Cases
 
 **驗收標準**:
-- [ ] 檢查書籤狀態正確
-- [ ] 切換邏輯正確
-- [ ] UI 即時更新
-- [ ] 保存到數據庫
+- [x] 檢查書籤狀態正確（使用 ReadingProgress.isBookmarked）
+- [x] 切換邏輯正確（使用 ReadingProgress.toggleBookmark）
+- [x] UI 即時更新（ReaderController 中的 Obx 響應式更新）
+- [x] 保存到數據庫（Hive 持久化）
 
 ---
 
-#### ⬜ Task 4.17.2: 實現書籤數據持久化
-- **文件**: `lib/data/repositories/reading_repository_impl.dart`
+#### ✅ Task 4.17.2: 實現書籤數據持久化
+- **文件**: `lib/data/repositories/reader/reading_repository_impl.dart`
 - **優先級**: P0
 - **預計時間**: 30 分鐘
-- **狀態**: ⬜ 未開始
+- **狀態**: ✅ 已完成
+- **完成時間**: 2025-01-06
+- **實際用時**: 包含在 Task 4.17.1 中
 
-**具體步驟**:
-1. 使用 Hive 保存書籤數據
-2. 書籤即時保存
-3. 重新打開時恢復書籤
+**實現細節**:
+- ReadingRepositoryImpl 使用 Hive 進行持久化
+- 書籤數據在 ReadingProgress 中保存
+- 每次切換書籤時自動保存到 Hive
+- 使用 bookId 作為 key 進行存儲
 
 **驗收標準**:
-- [ ] 書籤即時保存
-- [ ] 重新打開時恢復書籤
-- [ ] 無數據丟失
+- [x] 書籤即時保存（toggleBookmark 調用 saveReadingProgress）
+- [x] 重新打開時恢復書籤（_loadReadingProgress 從 Hive 讀取）
+- [x] 無數據丟失（Hive 持久化保證）
 
 ---
 

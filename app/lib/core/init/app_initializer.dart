@@ -1,6 +1,7 @@
 import 'package:hive_flutter/hive_flutter.dart';
 import '../../data/models/book_model.dart';
 import '../../data/models/download_status.dart';
+import '../../data/models/reader/reading_progress_model.dart';
 
 /// 應用初始化器
 /// 
@@ -63,6 +64,14 @@ class AppInitializer {
         print('ℹ️  [AppInitializer] DownloadStatus Adapter 已存在，跳過註冊');
       }
       
+      // 註冊 ReadingProgressModel Adapter 用於閱讀進度管理
+      if (!Hive.isAdapterRegistered(3)) {
+        Hive.registerAdapter(ReadingProgressModelAdapter());
+        print('📝 [AppInitializer] ReadingProgressModel Adapter 已註冊');
+      } else {
+        print('ℹ️  [AppInitializer] ReadingProgressModel Adapter 已存在，跳過註冊');
+      }
+      
       // 步驟 4: 打開應用所需的 Box
       // 打開書籍列表緩存 Box
       await Hive.openBox<BookModel>('books');
@@ -72,10 +81,13 @@ class AppInitializer {
       await Hive.openBox('metadata');
       print('🔖 [AppInitializer] Metadata Box 已打開');
       
+      // 打開閱讀進度 Box
+      await Hive.openBox<ReadingProgressModel>('reading_progress');
+      print('📖 [AppInitializer] Reading Progress Box 已打開');
+      
       // TODO: 打開其他 Box (預留給後續 Spec)
       // 例如：
       // await Hive.openBox('settings');
-      // await Hive.openBox('reading_progress');
       // await Hive.openBox('user_preferences');
       
     } catch (e) {
