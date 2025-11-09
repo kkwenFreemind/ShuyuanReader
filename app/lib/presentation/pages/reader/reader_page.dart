@@ -58,6 +58,7 @@ import 'package:get/get.dart';
 
 import '../../controllers/reader/reader_controller.dart';
 import '../../widgets/reader/epub_viewer_widget.dart';
+import '../../widgets/reader/reading_progress_bar.dart';
 
 /// EPUB 閱讀器頁面
 ///
@@ -73,14 +74,19 @@ class ReaderPage extends StatelessWidget {
     final controller = Get.find<ReaderController>();
 
     return Scaffold(
-      // AppBar：工具欄
+      // AppBar：工具欄（可隱藏）
+      // 適用於兩種閱讀模式：
+      // - 直書模式：AppBar 在頂部，不影響文字從右到左排列
+      // - 橫書模式：AppBar 在頂部，標準佈局
       appBar: _buildAppBar(controller),
 
       // Body：主要內容區域
-      body: _buildBody(controller),
-
-      // 使用 SafeArea 避免被系統 UI 遮擋
-      // bottomNavigationBar: _buildBottomBar(controller),
+      // 使用 SafeArea 確保內容不被系統 UI（如劉海屏）遮擋
+      body: SafeArea(
+        // 在直書模式下，保留左右邊距以避免文字貼邊
+        // 在橫書模式下，保留上下邊距
+        child: _buildBody(controller),
+      ),
     );
   }
 
@@ -130,6 +136,7 @@ class ReaderPage extends StatelessWidget {
       // 工具欄按鈕
       actions: [
         // 直書/橫書切換按鈕
+        // 點擊後會重新加載 EPUB（注入或移除 CSS）
         Obx(() {
           final direction = controller.readingDirection.value;
           return IconButton(
@@ -139,7 +146,7 @@ class ReaderPage extends StatelessWidget {
               style: const TextStyle(fontSize: 24),
             ),
             onPressed: controller.toggleReadingDirection,
-            tooltip: direction.displayName,
+            tooltip: '${direction.displayName} - 點擊切換',
           );
         }),
 
@@ -236,6 +243,8 @@ class ReaderPage extends StatelessWidget {
       return Stack(
         children: [
           // EPUB 內容顯示區域
+          // 直書模式：文字從右到左、從上到下排列（由 CSS 控制）
+          // 橫書模式：文字從左到右、從上到下排列（預設）
           Obx(() {
             return EpubViewerWidget(
               controller: controller.epubController,
@@ -252,7 +261,9 @@ class ReaderPage extends StatelessWidget {
             );
           }),
 
-          // 底部進度條（可選顯示）
+          // 底部進度條（固定在底部，適用於兩種模式）
+          // 直書模式：進度條仍在底部，不干擾文字閱讀
+          // 橫書模式：進度條在底部，符合閱讀習慣
           if (controller.isToolbarVisible.value)
             Positioned(
               left: 0,
@@ -272,72 +283,14 @@ class ReaderPage extends StatelessWidget {
   /// - 當前頁碼 / 總頁數
   /// - 閱讀百分比
   Widget _buildProgressBar(ReaderController controller) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: controller.isNightMode.value
-            ? Colors.grey[900]?.withValues(alpha: 0.9)
-            : Colors.white.withValues(alpha: 0.9),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
-            blurRadius: 8,
-            offset: const Offset(0, -2),
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // 進度條
-          Obx(() {
-            return LinearProgressIndicator(
-              value: controller.progressPercentage,
-              backgroundColor: Colors.grey[300],
-              valueColor: AlwaysStoppedAnimation<Color>(
-                controller.isNightMode.value
-                    ? Colors.amber[700]!
-                    : Colors.blue,
-              ),
-              minHeight: 4,
-            );
-          }),
-
-          const SizedBox(height: 8),
-
-          // 頁碼和百分比
-          Obx(() {
-            return Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                // 當前頁 / 總頁數
-                Text(
-                  '第 ${controller.currentPage.value} 頁 / 共 ${controller.totalPages.value} 頁',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: controller.isNightMode.value
-                        ? Colors.grey[400]
-                        : Colors.grey[700],
-                  ),
-                ),
-
-                // 閱讀百分比
-                Text(
-                  '${controller.progressPercent}',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: controller.isNightMode.value
-                        ? Colors.amber[700]
-                        : Colors.blue,
-                  ),
-                ),
-              ],
-            );
-          }),
-        ],
-      ),
-    );
+    return Obx(() {
+      return ReadingProgressBar(
+        currentPage: controller.currentPage.value,
+        totalPages: controller.totalPages.value,
+        progressPercentage: controller.progressPercentage,
+        isNightMode: controller.isNightMode.value,
+      );
+    });
   }
 }
 

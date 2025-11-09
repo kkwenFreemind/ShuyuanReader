@@ -43,6 +43,7 @@ import '../../../domain/entities/reader/reading_progress.dart';
 import '../../../domain/entities/reader/reader_settings.dart';
 import '../../../domain/entities/reader/reading_direction.dart';
 import '../../../domain/repositories/book_repository.dart';
+import '../../../domain/services/epub_preprocessor.dart';
 import '../../../domain/usecases/reader/get_reading_progress.dart';
 import '../../../domain/usecases/reader/save_reading_progress.dart';
 import '../../../domain/usecases/reader/toggle_bookmark.dart';
@@ -154,6 +155,11 @@ class ReaderController extends GetxController {
   ///
   /// 用於調整屏幕亮度。
   final ScreenBrightness _screenBrightness = ScreenBrightness();
+
+  /// EPUB 預處理器
+  ///
+  /// 用於處理 EPUB 文件，注入直書模式 CSS。
+  final EpubPreprocessor _epubPreprocessor = EpubPreprocessor();
 
   /// 系統原始亮度
   ///
@@ -366,16 +372,34 @@ class ReaderController extends GetxController {
   /// 初始化 EPUB 控制器
   ///
   /// 創建 EpubController 並加載 EPUB 文件。
+  /// 如果是直書模式，會先通過 EpubPreprocessor 注入 CSS。
   Future<void> _initEpubController() async {
     if (book.value == null || book.value!.localPath == null) {
       throw Exception('書籍路徑無效');
     }
 
-    // TODO: 實現 EPUB 控制器初始化 (Task 4.5.2)
-    // epubController = EpubController(
-    //   document: EpubDocument.openFile(book.value!.localPath!),
-    //   epubCfi: _getCurrentEpubCfi(),
-    // );
+    try {
+      String epubPath = book.value!.localPath!;
+
+      // 如果是直書模式，預處理 EPUB 以注入 CSS
+      if (readingDirection.value == ReadingDirection.vertical) {
+        epubPath = await _epubPreprocessor.processForVerticalText(
+          epubPath: epubPath,
+          bookId: book.value!.id,
+        );
+      }
+
+      // 創建 EPUB 控制器
+      epubController = EpubController(
+        document: EpubDocument.openFile(File(epubPath)),
+        // TODO: 支持從上次位置繼續閱讀 (使用 epubCfi)
+      );
+
+      // 監聽 EPUB 加載完成事件
+      // TODO: 在 EPUB 加載完成後計算總頁數
+    } catch (e) {
+      throw Exception('EPUB 控制器初始化失敗：$e');
+    }
   }
 
   /// 應用所有閱讀設置
@@ -473,28 +497,60 @@ class ReaderController extends GetxController {
 
   /// 切換閱讀方向
   ///
-  /// 在直書和橫書之間切換，並保存設置。
-  void toggleReadingDirection() {
+  /// 在直書和橫書之間切換，並重新加載 EPUB（如果需要）。
+  /// 切換到直書模式時會注入 CSS，切換到橫書時使用原始文件。
+  Future<void> toggleReadingDirection() async {
+    final oldDirection = readingDirection.value;
     readingDirection.value = readingDirection.value.toggle();
-    _saveSettings();
 
-    Get.snackbar(
-      '閱讀方向已切換',
-      '當前模式：${readingDirection.value.displayName}',
-      snackPosition: SnackPosition.BOTTOM,
-      duration: const Duration(seconds: 1),
-    );
+    // 重新初始化 EPUB 控制器以應用新的閱讀方向
+    try {
+      isLoading.value = true;
+      await _initEpubController();
+      isLoading.value = false;
+
+      Get.snackbar(
+        '閱讀方向已切換',
+        '當前模式：${readingDirection.value.displayName}',
+        snackPosition: SnackPosition.BOTTOM,
+        duration: const Duration(seconds: 2),
+      );
+
+      _saveSettings();
+    } catch (e) {
+      // 如果失敗，恢復原來的方向
+      readingDirection.value = oldDirection;
+      isLoading.value = false;
+
+      Get.snackbar(
+        '切換失敗',
+        '無法切換閱讀方向：$e',
+        snackPosition: SnackPosition.BOTTOM,
+        duration: const Duration(seconds: 3),
+      );
+    }
   }
 
   /// 設置閱讀方向
   ///
   /// **參數**：
   /// - [direction]: 新的閱讀方向
-  void setReadingDirection(ReadingDirection direction) {
+  Future<void> setReadingDirection(ReadingDirection direction) async {
     if (readingDirection.value == direction) return;
 
+    final oldDirection = readingDirection.value;
     readingDirection.value = direction;
-    _saveSettings();
+
+    try {
+      isLoading.value = true;
+      await _initEpubController();
+      isLoading.value = false;
+      _saveSettings();
+    } catch (e) {
+      readingDirection.value = oldDirection;
+      isLoading.value = false;
+      rethrow;
+    }
   }
 
   // ==================== 字體大小控制 ====================
