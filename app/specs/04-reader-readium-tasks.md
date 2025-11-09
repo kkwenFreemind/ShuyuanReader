@@ -217,7 +217,7 @@ class ReadiumApiTest {
 - ✅ 可以開始實現 Platform Channel (Task 4.1.4)
 - ✅ 可以開始實現 ReadiumBridge (Task 4.2.1)
 
----
+--- 
 
 ### ⬜ Task 4.1.4: 搭建基礎 Platform Channel
 - **優先級**: P0
