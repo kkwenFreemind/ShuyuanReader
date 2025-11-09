@@ -12,12 +12,12 @@
 
 | Phase | 任務數 | 預計時間 | 完成數 | 進度 | 狀態 |
 |-------|-------|---------|-------|------|------|
-| Phase 4.1: 環境準備 | 4 | 1週 | 3 | 75% | 🔄 進行中 |
+| Phase 4.1: 環境準備 | 4 | 1週 | 4 | 100% | ✅ 已完成 |
 | Phase 4.2: 核心整合 | 3 | 2週 | 0 | 0% | ⬜ 待開始 |
 | Phase 4.3: Flutter 層 | 2 | 1週 | 0 | 0% | ⬜ 待開始 |
 | Phase 4.4: 功能完善 | 4 | 1週 | 0 | 0% | ⬜ 待開始 |
 | Phase 4.5: 測試優化 | 4 | 1週 | 0 | 0% | ⬜ 待開始 |
-| **總計** | **17** | **6週** | **3** | **18%** | **🔄 進行中** |
+| **總計** | **17** | **6週** | **4** | **24%** | **🔄 進行中** |
 
 ---
 
@@ -219,45 +219,95 @@ class ReadiumApiTest {
 
 --- 
 
-### ⬜ Task 4.1.4: 搭建基礎 Platform Channel
+### ✅ Task 4.1.4: 搭建基礎 Platform Channel
 - **優先級**: P0
 - **預計時間**: 2 小時
-- **狀態**: ⬜ 待執行
+- **實際時間**: 2 小時
+- **狀態**: ✅ 已完成
+- **完成日期**: 2025-11-09
 - **依賴**: Task 4.1.3
 
-**任務內容**:
+**完成內容**:
 
-#### 4.1.4.1 創建 Flutter Platform Channel
-**文件**: `lib/platform/epub_reader_channel.dart`
+#### ✅ 4.1.4.1 創建 Flutter Platform Channel
+**文件**: `lib/platform/epub_reader_channel.dart` ✅ 已創建
 
-```dart
-import 'package:flutter/services.dart';
+✅ 實現 12 個 API 方法:
+- `openBook(String filePath, bool isVertical)` - 打開書籍
+- `closeBook()` - 關閉書籍
+- `nextPage()` - 下一頁
+- `previousPage()` - 上一頁
+- `getCurrentLocation()` - 獲取當前位置
+- `setFontSize(double size)` - 設置字體大小
+- `setLineHeight(double lineHeight)` - 設置行高
+- `setReadingDirection(String direction)` - 設置閱讀方向
+- `setTheme(String theme)` - 設置主題
+- `toggleBookmark()` - 切換書簽
+- `goToLocation(Map<String, dynamic> locator)` - 跳轉位置
+- `searchText(String query)` - 搜索文字
 
-class EpubReaderChannel {
-  static const MethodChannel _channel =
-      MethodChannel('com.shuyuan.reader/epub');
+✅ 錯誤處理:
+- PlatformException 捕獲
+- 統一錯誤消息格式
+- 類型安全的 Map 轉換
 
-  static Future<void> openBook(String filePath, bool isVertical) async {
-    try {
-      await _channel.invokeMethod('openBook', {
-        'filePath': filePath,
-        'isVertical': isVertical,
-      });
-    } on PlatformException catch (e) {
-      throw Exception('Failed to open book: ${e.message}');
-    }
-  }
+#### ✅ 4.1.4.2 創建 Kotlin 封裝類
+**文件**: `android/.../ReadiumBridge.kt` ✅ 已創建
 
-  static Future<void> closeBook() async {
-    await _channel.invokeMethod('closeBook');
-  }
+✅ 12 個方法骨架:
+- 所有方法都有 Log.d 輸出
+- TODO 標記清晰（指向 Task 4.2.1, 4.2.3, 4.4.1, 4.4.2, 4.4.3）
+- 完整的實現計劃註釋
+- 2 個輔助方法佔位符（locatorToMap, mapToLocator）
 
-  static Future<void> nextPage() async {
-    await _channel.invokeMethod('nextPage');
-  }
+#### ✅ 4.1.4.3 修改 MainActivity
+**文件**: `android/.../MainActivity.kt` ✅ 已修改
 
-  static Future<void> previousPage() async {
-    await _channel.invokeMethod('previousPage');
+✅ 配置完成:
+- Override configureFlutterEngine
+- 實例化 ReadiumBridge
+- 註冊 MethodChannel: "com.shuyuan.reader/epub"
+- 處理 12 個方法調用
+- 參數驗證和錯誤處理
+- Coroutine 支持（searchText 異步調用）
+- 生命週期管理（onDestroy 清理資源）
+
+**架構完成**:
+```
+Flutter (Dart)
+  ↓ MethodChannel
+EpubReaderChannel.dart ✅
+  ↓ invokeMethod
+MainActivity.kt ✅
+  ↓ setMethodCallHandler
+ReadiumBridge.kt ✅
+  ↓ (待實現)
+Readium Kotlin Toolkit
+```
+
+**驗收結果**:
+- ✅ Flutter 編譯通過
+- ✅ Android 編譯通過 (APK 生成成功)
+- ✅ Platform Channel 正確註冊
+- ✅ 12 個方法處理完整
+- ✅ 錯誤處理機制完善
+- ✅ 日誌輸出完整
+
+**交付物**:
+- ✅ `lib/platform/epub_reader_channel.dart` (~150 行)
+- ✅ `android/.../ReadiumBridge.kt` (~200 行)
+- ✅ `android/.../MainActivity.kt` (已修改)
+- ✅ Git commit: 5466fb5
+- ✅ 分支推送成功
+
+**下一步**:
+- Task 4.2.1: 實現 ReadiumBridge 基礎功能（openBook, closeBook）
+
+---
+
+## Phase 4.2: 核心整合 (2週)
+
+### ⬜ Task 4.2.1: 實現 ReadiumBridge 基礎功能
   }
 
   static Future<Map<String, dynamic>> getCurrentLocation() async {
