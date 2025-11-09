@@ -2083,21 +2083,29 @@ Obx(() {
 
 ### Phase 4.18: 書籤恢復功能 (0.5 小時)
 
-#### ⬜ Task 4.18.1: 實現書籤狀態恢復
-- **文件**: `lib/presentation/controllers/reader_controller.dart`
+#### ✅ Task 4.18.1: 實現書籤狀態恢復
+- **文件**: `lib/presentation/controllers/reader/reader_controller.dart`
 - **優先級**: P0
 - **預計時間**: 30 分鐘
-- **狀態**: ⬜ 未開始
+- **狀態**: ✅ 已完成
+- **完成時間**: 2025-01-06
+- **實際用時**: 包含在 Task 4.17.1 中
 
-**具體步驟**:
-1. 打開書籍時恢復書籤狀態
-2. 實現 `_loadBookmarks()` 方法
-3. 更新當前頁書籤按鈕狀態
+**實現細節**:
+1. `_loadReadingProgress()` 方法在 `_initialize()` 中調用
+   - 步驟 3: 加載閱讀進度（在加載書籍信息之後）
+2. 從 `GetReadingProgress` 用例獲取數據
+3. 恢復兩個狀態：
+   - `currentPage.value = progress.currentPage`
+   - `bookmarkedPages.value = progress.bookmarkedPages`
+4. UI 通過計算屬性響應式更新：
+   - `isCurrentPageBookmarked` 檢查當前頁是否在書籤列表中
+   - `Obx(() => AnimatedBookmarkButton(isBookmarked: controller.isCurrentPageBookmarked))`
 
 **驗收標準**:
-- [ ] 從 Hive 讀取書籤數據
-- [ ] 更新 bookmarkedPages 列表
-- [ ] 更新當前頁書籤按鈕狀態
+- [x] 從 Hive 讀取書籤數據（通過 GetReadingProgress 用例）
+- [x] 更新 bookmarkedPages 列表（bookmarkedPages.value = progress.bookmarkedPages）
+- [x] 更新當前頁書籤按鈕狀態（isCurrentPageBookmarked 計算屬性 + Obx）
 
 ---
 
