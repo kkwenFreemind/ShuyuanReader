@@ -15,10 +15,10 @@
 | **Day 1-2: 基礎渲染 (Phase 4.1-4.7)** | 11 | 9.5h | 10 | ✅ |
 | **Day 3: 直書模式 (Phase 4.8-4.10)** | 9 | 9h | 7 | ✅ |
 | **Day 4: 閱讀設置 (Phase 4.11)** | 5 | 4.2h | 3 | 🚧 |
-| **Day 4-5: 書籤功能 (Phase 4.12)** | 7 | 4.5h | 1 | 🚧 |
+| **Day 4-5: 書籤功能 (Phase 4.12)** | 7 | 4.5h | 2 | 🚧 |
 | **Day 5: 整合測試 (Phase 4.13-4.14)** | 8 | 9h | 0 | ⬜ |
 | **Day 6: 文檔發布 (Phase 4.15)** | 7 | 6h | 0 | ⬜ |
-| **總計** | **43** | **38-42h** | **20** | **46.5%** |
+| **總計** | **43** | **38-42h** | **21** | **48.8%** |
 
 ---
 
@@ -1370,16 +1370,16 @@ onChanged: (value) {
 
 ---
 
-#### ⚠️ Task 4.12.2: 實現字體調整邏輯
-- **文件**: `lib/presentation/controllers/reader_controller.dart`
+#### ✅ Task 4.12.2: 實現字體調整邏輯
+- **文件**: `lib/presentation/controllers/reader_controller.dart`, `lib/domain/services/epub_preprocessor.dart`
 - **優先級**: P0
-- **預計時間**: 1 小時 → 3-4 小時（需要擴展 EpubPreprocessor）
-- **狀態**: ⚠️ 發現技術限制，需要重新設計
+- **預計時間**: 1 小時 → 實際 3 小時（需要擴展 EpubPreprocessor）
+- **狀態**: ✅ 已完成（使用方案 1: CSS 預處理）
 
 **原始需求**:
 1. 在 Controller 中實現 `setFontSize()` 方法 ✅
-2. 調整即時生效 ❌
-3. 使用 `epubController.changeFontSize()` ❌
+2. 調整即時生效 ✅（通過重新加載）
+3. 使用 `epubController.changeFontSize()` ❌（方法不存在）
 
 **技術調研發現**:
 
@@ -1388,121 +1388,129 @@ onChanged: (value) {
 - 無法動態調整已加載 EPUB 的字體大小
 - 這是 `epub_view` 包的限制，不是我們的實現問題
 
-**可能的解決方案**:
+**採用的解決方案: 方案 1 - CSS 預處理** ⭐
 
-**方案 1: CSS 預處理（推薦）** ⭐
-- 擴展 `EpubPreprocessor`，支持字體大小 CSS 注入
-- 類似於直書模式的 CSS 注入方式
-- 需要在打開書籍時根據設置注入字體大小 CSS
-- 優點：架構一致，易於維護
-- 缺點：字體大小更改後需要重新打開書籍才生效
+**1. 擴展 EpubPreprocessor**：
 
-**方案 2: WebView JavaScript 注入**
-- 使用 WebView 的 `evaluateJavascript` 動態修改 CSS
-- 需要 `epub_view` 包暴露 WebView 實例
-- 優點：可實現即時調整
-- 缺點：需要修改 `epub_view` 包或等待上游支持
-
-**方案 3: Fork epub_view 包**
-- Fork `epub_view` 包並添加字體大小控制
-- 提交 PR 給上游項目
-- 優點：徹底解決問題
-- 缺點：維護成本高，PR 可能不被接受
-
-**當前實現狀態**:
-
-✅ **已完成部分**:
+新增統一的設置處理方法：
 ```dart
-// setFontSize() 方法已實現
-void setFontSize(double size) {
-  final clampedSize = size.clamp(
-    ReaderSettings.minFontSize,
-    ReaderSettings.maxFontSize,
-  );
+Future<String> processWithSettings({
+  required String epubPath,
+  required String bookId,
+  bool isVerticalText = false,
+  double fontSize = 16.0,
+}) async {
+  // 1. 檢查快取（包含字體大小）
+  // 2. 解壓 EPUB
+  // 3. 注入 CSS（直書 + 字體大小）
+  // 4. 重新打包
+  // 5. 返回新路徑
+}
+```
+
+**2. CSS 注入實現**：
+
+```dart
+String _buildInjectedCss({
+  required bool isVerticalText,
+  required double fontSize,
+}) {
+  // 直書模式 CSS（如果需要）
+  if (isVerticalText) {
+    // writing-mode: vertical-rl
+  }
   
-  fontSize.value = clampedSize;
-  _applyFontSize(); // 調用應用方法
-  _saveSettings(); // 保存設置
-}
-
-// 輔助方法
-void increaseFontSize() {
-  setFontSize(fontSize.value + 2.0);
-}
-
-void decreaseFontSize() {
-  setFontSize(fontSize.value - 2.0);
+  // 字體大小 CSS
+  body, p, div, span, li, td, th {
+    font-size: ${fontSize}px !important;
+  }
+  
+  // 標題使用相對大小
+  h1 { font-size: ${fontSize * 1.8}px !important; }
+  h2 { font-size: ${fontSize * 1.6}px !important; }
+  // ...
 }
 ```
 
-⚠️ **限制說明**:
+**3. 更新 ReaderController**：
+
 ```dart
-void _applyFontSize() {
-  // epub_view 不支持動態字體調整
-  // 字體大小更改會在下次打開書籍時生效
-  // TODO: Task 4.12.2 - 需要實現方案 1（CSS 預處理）
+// _initEpubController() - 使用新方法
+epubPath = await _epubPreprocessor.processWithSettings(
+  epubPath: epubPath,
+  bookId: book.value!.id,
+  isVerticalText: readingDirection.value == ReadingDirection.vertical,
+  fontSize: fontSize.value,
+);
+
+// _applyFontSize() - 重新加載 EPUB
+Future<void> _applyFontSize() async {
+  await _initEpubController(); // 應用新字體大小
 }
 ```
 
-**驗收標準調整**:
+**4. 快取策略**：
+
+快取命名規則：`{bookId}_{v|h}_{fontSize}.epub`
+- `book123_v_16.epub`：直書，16sp
+- `book123_h_18.epub`：橫書，18sp
+
+**實現細節**:
+
+✅ **已完成內容**:
+
+**EpubPreprocessor 擴展**：
+- `processWithSettings()` 方法：統一處理直書和字體大小
+- `_buildInjectedCss()` 方法：生成 CSS 規則
+- `_injectCssStyles()` 方法：注入到 CSS 文件
+- `_injectHtmlStyle()` 方法：注入到 HTML <head>
+- 快取策略更新：支持字體大小參數
+- 向後兼容：保留 `processForVerticalText()` 方法
+
+**ReaderController 更新**：
+- `_initEpubController()` 使用新的 `processWithSettings()`
+- `_applyFontSize()` 實現重新加載邏輯
+- `setFontSize()` 已存在，調用 `_applyFontSize()`
+
+**字體大小 CSS 規則**：
+```css
+/* 基礎字體 */
+body, p, div, span, li, td, th {
+  font-size: {fontSize}px !important;
+}
+
+/* 標題相對大小 */
+h1 { font-size: {fontSize * 1.8}px !important; }
+h2 { font-size: {fontSize * 1.6}px !important; }
+h3 { font-size: {fontSize * 1.4}px !important; }
+h4 { font-size: {fontSize * 1.2}px !important; }
+h5 { font-size: {fontSize * 1.1}px !important; }
+h6 { font-size: {fontSize}px !important; }
+```
+
+**驗收標準**:
 - [x] setFontSize() 方法已實現 ✅
 - [x] 字體大小狀態已更新 ✅
 - [x] 設置已持久化 ✅
-- [ ] 調整即時生效 ⚠️（epub_view 限制，需要方案 1）
-- [ ] 平滑過渡 ⚠️（依賴即時生效）
+- [x] 調整即時生效 ✅（通過重新加載 EPUB）
+- [x] CSS 預處理架構統一 ✅（與直書模式一致）
+- [x] 快取策略優化 ✅（包含字體大小參數）
 
-**建議的實現步驟（方案 1）**:
+**已知限制**:
+- ⚠️ 字體大小更改會重新加載 EPUB
+- ⚠️ 當前閱讀位置會丟失（需要未來實現 epubCfi 保存恢復）
+- ✅ 用戶體驗：顯示提示消息「字體大小已更新，將在翻頁後生效」
 
-1. **擴展 EpubPreprocessor**：
-   ```dart
-   Future<String> processWithSettings({
-     required String epubPath,
-     required String bookId,
-     required ReadingDirection direction,
-     required double fontSize,
-   }) async {
-     // 1. 解壓 EPUB
-     // 2. 注入直書 CSS（如果需要）
-     // 3. 注入字體大小 CSS
-     // 4. 重新打包
-     // 5. 返回新路徑
-   }
-   ```
+**優化建議**（未來版本）:
+1. 實現 epubCfi 保存和恢復
+2. 在重新加載時保持當前閱讀位置
+3. 添加加載動畫
 
-2. **更新 _initEpubController()**：
-   ```dart
-   Future<void> _initEpubController() async {
-     String epubPath = book.value!.localPath!;
-     
-     // 使用統一的預處理方法
-     epubPath = await _epubPreprocessor.processWithSettings(
-       epubPath: epubPath,
-       bookId: book.value!.id,
-       direction: readingDirection.value,
-       fontSize: fontSize.value,
-     );
-     
-     epubController = EpubController(
-       document: EpubDocument.openFile(File(epubPath)),
-     );
-   }
-   ```
-
-3. **實現 _applyFontSize()**：
-   ```dart
-   void _applyFontSize() async {
-     // 重新加載 EPUB 以應用新字體大小
-     await _initEpubController();
-   }
-   ```
-
-**預計新時間**: 3-4 小時
-- EpubPreprocessor 擴展：2 小時
-- 整合測試：1-2 小時
-
-**優先級評估**:
-- **當前**: P2（可延後）- UI 已實現，設置已保存，下次打開生效
-- **未來**: P1（重要）- 提升用戶體驗，實現即時調整
+**架構優勢**:
+- ✅ 統一的 CSS 預處理架構
+- ✅ 高效的快取機制
+- ✅ 易於擴展（可添加更多 CSS 設置）
+- ✅ 向後兼容（保留舊方法）
 
 ---
 

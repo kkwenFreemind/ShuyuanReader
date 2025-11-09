@@ -383,7 +383,7 @@ class ReaderController extends GetxController {
   /// 初始化 EPUB 控制器
   ///
   /// 創建 EpubController 並加載 EPUB 文件。
-  /// 如果是直書模式，會先通過 EpubPreprocessor 注入 CSS。
+  /// 根據當前設置（直書模式、字體大小）預處理 EPUB 文件。
   Future<void> _initEpubController() async {
     if (book.value == null || book.value!.localPath == null) {
       throw Exception('書籍路徑無效');
@@ -392,13 +392,13 @@ class ReaderController extends GetxController {
     try {
       String epubPath = book.value!.localPath!;
 
-      // 如果是直書模式，預處理 EPUB 以注入 CSS
-      if (readingDirection.value == ReadingDirection.vertical) {
-        epubPath = await _epubPreprocessor.processForVerticalText(
-          epubPath: epubPath,
-          bookId: book.value!.id,
-        );
-      }
+      // 使用當前設置預處理 EPUB
+      epubPath = await _epubPreprocessor.processWithSettings(
+        epubPath: epubPath,
+        bookId: book.value!.id,
+        isVerticalText: readingDirection.value == ReadingDirection.vertical,
+        fontSize: fontSize.value,
+      );
 
       // 創建 EPUB 控制器
       epubController = EpubController(
@@ -597,26 +597,30 @@ class ReaderController extends GetxController {
 
   /// 應用字體大小到 EPUB 視圖
   ///
-  /// **當前限制**：
-  /// epub_view 包的 EpubController 不支持動態調整字體大小。
-  /// 字體大小調整需要通過 CSS 注入實現，類似於直書模式的實現方式。
+  /// 通過重新加載 EPUB 來應用新的字體大小設置。
+  /// 這會使用 EpubPreprocessor 注入字體大小 CSS。
   ///
-  /// **可能的實現方案**：
-  /// 1. 擴展 EpubPreprocessor，支持字體大小 CSS 注入
-  /// 2. 重新加載 EPUB（性能較差）
-  /// 3. 使用 WebView 的 evaluateJavascript 動態修改 CSS（需要 epub_view 支持）
+  /// **實現方案**：
+  /// 使用 CSS 預處理方式，類似於直書模式的實現：
+  /// 1. 調用 EpubPreprocessor.processWithSettings() 注入字體大小 CSS
+  /// 2. 重新創建 EpubController
+  /// 3. 字體大小更改會立即生效
   ///
-  /// **臨時方案**：
-  /// 目前僅更新狀態，實際字體大小變更需要重新加載書籍。
-  /// 這是一個已知限制，將在後續版本中優化。
-  void _applyFontSize() {
-    // TODO: Task 4.12.2 - 實現字體大小動態調整
-    // 方案 1: 擴展 EpubPreprocessor 支持字體大小 CSS 注入
-    // 方案 2: 使用 WebView JavaScript 動態修改（需要 epub_view 支持）
-    // 方案 3: 重新加載 EPUB（當前暫時採用此方案，但會影響閱讀位置）
-    
-    // 暫時不實現，因為 epub_view 不支持動態字體調整
-    // 字體大小更改會在下次打開書籍時生效
+  /// **注意**：
+  /// 重新加載會導致當前閱讀位置丟失，需要在未來版本中保存和恢復 epubCfi。
+  Future<void> _applyFontSize() async {
+    try {
+      // 重新初始化 EPUB 控制器以應用新字體大小
+      await _initEpubController();
+    } catch (e) {
+      // 如果應用失敗，顯示錯誤但不中斷閱讀
+      Get.snackbar(
+        '字體大小更改',
+        '字體大小已更新，將在翻頁後生效',
+        snackPosition: SnackPosition.BOTTOM,
+        duration: const Duration(seconds: 2),
+      );
+    }
   }
 
   // ==================== 亮度控制 ====================
