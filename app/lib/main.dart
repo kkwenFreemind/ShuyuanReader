@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'routes/app_pages.dart';
+import 'data/datasources/reader/reading_local_data_source.dart';
 
 /// 應用程序入口
 /// 
@@ -8,6 +10,16 @@ import 'routes/app_pages.dart';
 void main() async {
   // 確保 Flutter 框架初始化完成
   WidgetsFlutterBinding.ensureInitialized();
+  
+  // 初始化 SharedPreferences
+  final prefs = await SharedPreferences.getInstance();
+  
+  // 注冊全局依賴
+  Get.put<SharedPreferences>(prefs, permanent: true);
+  Get.put<ReadingLocalDataSource>(
+    ReadingLocalDataSource(prefs),
+    permanent: true,
+  );
   
   // 運行應用
   runApp(const MyApp());
