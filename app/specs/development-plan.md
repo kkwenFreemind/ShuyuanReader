@@ -232,12 +232,14 @@ Android APP (智能緩存層)
 
 #### Spec 04: EPUB 閱讀器（Reader View）⬜
 
-**時間**: 5-6 天  
+**時間**: 8-10 天（採用 Readium Kotlin 混合方案）  
 **優先級**: P0  
 **依賴**: Spec 03  
-**文件**: `04-reader-view.md` (待生成)
+**文件**: `04-reader-readium-integration.md`
 
 **目標**:
+- **✨ 採用 Readium Kotlin Toolkit 3.1.2 作為閱讀核心**
+- **✨ 使用 Platform Channel 連接 Flutter 與 Readium**
 - 打開並渲染 EPUB 文件
 - **⭐ 支持直書/橫書閱讀模式切換**
 - **⭐ 預設使用直書模式（經典書籍傳統閱讀方式）**
@@ -250,6 +252,28 @@ Android APP (智能緩存層)
 - **⭐ 基礎書籤功能（添加/移除當前頁書籤）**
 
 **UI 預覽**:
+
+**架構設計** - Platform Channel 混合方案:
+```
+┌─────────────────────────────────────────┐
+│          Flutter UI Layer               │
+│  ┌───────────────────────────────┐     │
+│  │  ReaderPage Widget            │     │
+│  │  - 閱讀器控制 UI              │     │
+│  │  - 設置面板                   │     │
+│  │  - 進度條                     │     │
+│  └───────────────────────────────┘     │
+│              ↕ MethodChannel            │
+├─────────────────────────────────────────┤
+│       Android Native Layer              │
+│  ┌───────────────────────────────┐     │
+│  │  Readium Kotlin Toolkit       │     │
+│  │  - readium-shared (數據模型)  │     │
+│  │  - readium-streamer (解析)    │     │
+│  │  - readium-navigator (渲染)   │     │
+│  └───────────────────────────────┘     │
+└─────────────────────────────────────────┘
+```
 
 **直書模式（預設）** - 傳統經典書籍閱讀方式:
 ```
@@ -291,7 +315,9 @@ Android APP (智能緩存層)
 - 翻頁：**從左向右滑動** = 下一頁（現代閱讀習慣）
 
 **驗收標準**:
-- [ ] EPUB 文件正確渲染
+- [ ] **⭐ Readium Kotlin Toolkit 集成成功**
+- [ ] **⭐ Platform Channel 通訊正常（Flutter ↔ Kotlin）**
+- [ ] EPUB 文件正確渲染（專業級品質）
 - [ ] **⭐ 預設使用直書模式開啟書籍**
 - [ ] **⭐ 直書模式：從右向左滑動翻到下一頁（傳統閱讀習慣）**
 - [ ] **⭐ 橫書模式：從左向右滑動翻到下一頁（現代閱讀習慣）**
@@ -307,59 +333,141 @@ Android APP (智能緩存層)
 - [ ] 測試通過（Widget + Integration）
 
 **技術要點**:
-- 使用 `epub_view` 或 `vocsy_epub_viewer` 包
-- 使用 `EpubController` 控制閱讀器
-- **⭐ 使用 CSS `writing-mode: vertical-rl` 實現直書排版**
-- **⭐ 實現 `ReadingDirection` 枚舉（vertical 直書 / horizontal 橫書）**
-- **⭐ 直書模式：PageView 從右向左滑動（`reverse: true`）**
-- **⭐ 橫書模式：PageView 從左向右滑動（`reverse: false`）**
+- **✨ 使用 Readium Kotlin Toolkit 3.1.2**
+  - `readium-shared`: 核心數據模型
+  - `readium-streamer`: EPUB 解析和內容提取
+  - `readium-navigator`: 閱讀器渲染核心
+- **✨ 使用 Platform Channel（MethodChannel）實現 Flutter ↔ Kotlin 通訊**
+  - Flutter 側：`EpubReaderChannel` 類
+  - Kotlin 側：`ReadiumBridge` 類
+  - 方法：`openEpub`, `setDirection`, `setFontSize`, `toggleBookmark` 等
+- **⭐ Readium 原生支持直書/橫書切換（`ReadingProgression`）**
+- **⭐ 直書模式：`ReadingProgression.RTL`（從右向左）**
+- **⭐ 橫書模式：`ReadingProgression.LTR`（從左向右）**
 - 使用 `SharedPreferences` 保存閱讀方向偏好
-- **⭐ 使用 Hive 保存書籤數據（`List<int>` 存儲書籤頁碼）**
+- **⭐ 使用 Hive 保存書籤數據（`List<Locator>` 存儲書籤位置）**
 - **⭐ 實現書籤按鈕 UI 狀態切換（未添加 🔖 / 已添加 📑）**
 - 處理 EPUB 解析錯誤
 
 **核心數據模型**:
 ```dart
+// Flutter 側
 enum ReadingDirection {
   vertical,    // 直書（預設）- 從右向左滑動翻頁
   horizontal,  // 橫書 - 從左向右滑動翻頁
 }
 
-class ReaderSettings {
-  final ReadingDirection direction;
-  final double fontSize;
-  final double brightness;
-  // ...
+class EpubReaderChannel {
+  static const platform = MethodChannel('com.shuyuan.reader/epub');
+  
+  Future<void> openEpub(String filePath) async {
+    await platform.invokeMethod('openEpub', {'path': filePath});
+  }
+  
+  Future<void> setReadingDirection(ReadingDirection direction) async {
+    await platform.invokeMethod('setDirection', {
+      'direction': direction == ReadingDirection.vertical ? 'rtl' : 'ltr'
+    });
+  }
+  
+  Future<void> toggleBookmark() async {
+    await platform.invokeMethod('toggleBookmark');
+  }
 }
 
 // 基礎書籤功能
 class BookProgress {
   final String bookId;
   final int currentPage;
-  final List<int> bookmarkedPages;  // 書籤頁碼列表
+  final List<String> bookmarkedLocators;  // Readium Locator JSON 列表
   // ...
   
-  bool isBookmarked(int page) => bookmarkedPages.contains(page);
+  bool isBookmarked(String locator) => bookmarkedLocators.contains(locator);
   
-  void toggleBookmark(int page) {
-    if (isBookmarked(page)) {
-      bookmarkedPages.remove(page);
+  void toggleBookmark(String locator) {
+    if (isBookmarked(locator)) {
+      bookmarkedLocators.remove(locator);
     } else {
-      bookmarkedPages.add(page);
+      bookmarkedLocators.add(locator);
     }
   }
+}
+```
+
+```kotlin
+// Kotlin 側
+class ReadiumBridge(private val activity: MainActivity) : MethodCallHandler {
+    private var publication: Publication? = null
+    private var navigator: EpubNavigatorFragment? = null
+    
+    override fun onMethodCall(call: MethodCall, result: Result) {
+        when (call.method) {
+            "openEpub" -> {
+                val path = call.argument<String>("path")
+                openEpub(path, result)
+            }
+            "setDirection" -> {
+                val direction = call.argument<String>("direction")
+                setReadingDirection(direction, result)
+            }
+            "toggleBookmark" -> {
+                toggleBookmark(result)
+            }
+        }
+    }
+    
+    private fun setReadingDirection(direction: String, result: Result) {
+        val progression = when (direction) {
+            "rtl" -> ReadingProgression.RTL  // 直書
+            "ltr" -> ReadingProgression.LTR  // 橫書
+            else -> ReadingProgression.LTR
+        }
+        navigator?.readingProgression = progression
+        result.success(true)
+    }
 }
 ```
 
 **書籤功能範圍**:
 - ✅ 添加/移除當前頁書籤
 - ✅ 顯示當前頁書籤狀態
-- ✅ 保存書籤到 Hive
+- ✅ 保存書籤到 Hive（使用 Readium Locator）
 - ✅ 恢復書籤狀態
 - ❌ 書籤列表頁面（延後到 Spec 08）
 - ❌ 書籤搜索（延後到 Spec 08）
 - ❌ 書籤分類（延後到 Spec 08）
 - ❌ 從書籤列表跳轉（延後到 Spec 08）
+
+**Readium Kotlin 方案優勢**:
+- ✅ **專業級 EPUB 渲染品質**（100+ 應用使用）
+- ✅ **原生直書/橫書支持**（`ReadingProgression.RTL/LTR`）
+- ✅ **成熟穩定**（Readium 基金會長期維護）
+- ✅ **完整 EPUB3 支持**（Reflow, Fixed Layout, Media Overlays）
+- ✅ **精確分頁**（基於 WebView 渲染）
+- ✅ **書籤位置精確**（使用 Locator 而非頁碼）
+- ✅ **高性能**（優化的資源加載和緩存）
+
+**開發計劃**（詳見 `04-reader-readium-integration.md`）:
+- **Phase 4.1**: 環境準備（1 週）
+  - 添加 Readium Kotlin 依賴
+  - 學習 Readium API
+  - 搭建 Platform Channel
+- **Phase 4.2**: 基礎閱讀器（2 週）
+  - 實現 EPUB 打開和渲染
+  - 實現分頁和翻頁
+  - 實現進度追蹤
+- **Phase 4.3**: 直書/橫書切換（1 週）
+  - 實現閱讀方向切換
+  - 保存用戶偏好
+  - UI 優化
+- **Phase 4.4**: 書籤功能（1 週）
+  - 實現書籤添加/移除
+  - 保存書籤到 Hive
+  - 書籤狀態顯示
+- **Phase 4.5**: 優化與測試（1 週）
+  - 性能優化
+  - 錯誤處理
+  - 完整測試
 
 ---
 
@@ -704,7 +812,7 @@ class BookProgress {
 | 01 | 啟動畫面 | 1d | P0 | ⬜ | ⬜ | ⬜ | ⬜ | - |
 | 02 | 書籍列表 | 3-4d | P0 | ⬜ | ⬜ | ⬜ | ⬜ | - |
 | 03 | 書籍詳情 | 2-3d | P0 | ⬜ | ⬜ | ⬜ | ⬜ | - |
-| 04 | 閱讀器 (直書+橫書+書籤) | 5-6d | P0 | ⬜ | ⬜ | ⬜ | ⬜ | - |
+| 04 | 閱讀器 (Readium Kotlin 混合方案) | 8-10d | P0 | ⬜ | ⬜ | ⬜ | ⬜ | - |
 | 05 | 離線模式 | 2-3d | P0 | ⬜ | ⬜ | ⬜ | ⬜ | - |
 | 06 | 搜索過濾 | 2-3d | P1 | ⬜ | ⬜ | ⬜ | ⬜ | - |
 | 07 | 下載管理 | 3-4d | P1 | ⬜ | ⬜ | ⬜ | ⬜ | - |
@@ -819,10 +927,10 @@ class BookProgress {
 | 1 | Spec 00-01 | 16h | 16h |
 | 2-3 | Spec 02 | 28h | 44h |
 | 3-4 | Spec 03 | 20h | 64h |
-| 4-5 | Spec 04 (直書+橫書+書籤) | 44h | 108h |
+| 4-5 | Spec 04 (Readium Kotlin 混合方案) | 60h | 108h |
 | 6 | Spec 05 | 20h | 128h |
 
-**總計**: 128 小時 (約 6 週 @ 21h/週)
+**總計**: 144 小時 (約 6 週 @ 24h/週)
 
 ### Phase 2: 功能增強
 
@@ -852,9 +960,9 @@ class BookProgress {
 
 ### 整體統計
 
-- **總工時**: 432 小時
+- **總工時**: 448 小時
 - **總週數**: 16 週
-- **平均週工時**: 27 小時
+- **平均週工時**: 28 小時
 - **建議週工時**: 20-30 小時（兼職）
 
 ---
@@ -894,16 +1002,16 @@ Spec 00 (專案設置) ✅
 
 #### 🔴 高風險
 
-**風險 1: EPUB 解析複雜度**
-- **描述**: EPUB 格式複雜，可能遇到解析失敗；**直書/橫書切換可能需要額外的 CSS 和排版處理**；**書籤功能可能與某些 EPUB 渲染器不兼容**
-- **影響**: 閱讀器無法正常工作；**直書模式可能在某些 EPUB 上顯示異常**；**書籤位置可能不準確**
-- **概率**: 中
+**風險 1: EPUB 解析複雜度（已降低）**
+- **描述**: ~~EPUB 格式複雜，可能遇到解析失敗~~；**使用 Readium Kotlin 專業方案**
+- **影響**: ~~閱讀器無法正常工作~~；**Readium 已支持 100+ 應用，成熟穩定**
+- **概率**: 低（原：中）
 - **應對**:
-  - 使用成熟的 `epub_view` 或 `vocsy_epub_viewer` 包
+  - ✅ **使用業界標準 Readium Kotlin Toolkit**
+  - ✅ **原生支持直書/橫書（`ReadingProgression`）**
+  - ✅ **完整 EPUB3 支持，包括固定版面和媒體疊加**
+  - ✅ **基於 Locator 的精確書籤定位**
   - 對常見 EPUB 進行充分測試（**特別測試繁體中文經典書籍**）
-  - **測試直書模式在不同 EPUB 格式上的兼容性**
-  - **準備 CSS fallback 方案處理不支持直書的內容**
-  - **使用穩定的頁碼機制確保書籤準確性**
   - 準備降級方案（顯示錯誤提示）
 
 **風險 2: 網絡下載不穩定**
