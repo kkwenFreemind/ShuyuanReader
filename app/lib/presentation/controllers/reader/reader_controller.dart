@@ -347,21 +347,32 @@ class ReaderController extends GetxController {
   /// 加載閱讀器設置
   ///
   /// 從 SharedPreferences 加載用戶的閱讀偏好設置。
+  /// 
+  /// **預設行為**（Task 4.10.3）：
+  /// - 首次打開書籍：使用直書模式（vertical）
+  /// - 後續打開：使用上次保存的設置
   Future<void> _loadReaderSettings() async {
     try {
       // TODO: 實現從 SharedPreferences 加載設置 (Task 4.14.1)
-      // 暫時使用預設值
+      // 目前使用預設值
+      // 
+      // 未來實現時的邏輯：
+      // 1. 從 SharedPreferences 讀取設置（key: 'reader_settings_${book.id}'）
+      // 2. 如果存在保存的設置，使用保存的設置
+      // 3. 如果不存在保存的設置（首次打開），使用預設設置
+      
       final settings = ReaderSettings.defaultSettings();
 
-      readingDirection.value = settings.direction;
+      // 應用設置到響應式變數
+      readingDirection.value = settings.direction; // 預設：vertical（直書）
       fontSize.value = settings.fontSize;
       brightness.value = settings.brightness;
       isNightMode.value = settings.isNightMode;
       autoHideToolbar.value = settings.autoHideToolbar;
     } catch (e) {
-      // 使用預設設置
+      // 加載失敗時使用預設設置
       final defaultSettings = ReaderSettings.defaultSettings();
-      readingDirection.value = defaultSettings.direction;
+      readingDirection.value = defaultSettings.direction; // 預設：vertical（直書）
       fontSize.value = defaultSettings.fontSize;
       brightness.value = defaultSettings.brightness;
       isNightMode.value = defaultSettings.isNightMode;
