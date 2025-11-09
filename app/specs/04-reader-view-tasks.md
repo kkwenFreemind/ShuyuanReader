@@ -15,10 +15,10 @@
 | **Day 1-2: 基礎渲染 (Phase 4.1-4.7)** | 11 | 9.5h | 10 | ✅ |
 | **Day 3: 直書模式 (Phase 4.8-4.10)** | 9 | 9h | 7 | ✅ |
 | **Day 4: 閱讀設置 (Phase 4.11-4.14)** | 6 | 5.2h | 6 | ✅ |
-| **Day 4-5: 書籤功能 (Phase 4.15)** | 7 | 4.5h | 3 | 🚧 |
+| **Day 4-5: 書籤功能 (Phase 4.15)** | 7 | 4.5h | 4 | 🚧 |
 | **Day 5: 整合測試 (Phase 4.16-4.17)** | 7 | 9h | 0 | ⬜ |
 | **Day 6: 文檔發布 (Phase 4.18)** | 7 | 6h | 0 | ⬜ |
-| **總計** | **43** | **38-42h** | **25** | **58.1%** |
+| **總計** | **43** | **38-42h** | **26** | **60.5%** |
 
 ---
 
@@ -1822,20 +1822,98 @@ print('共有 ${progress.bookmarkCount} 個書籤');
 
 ---
 
-#### ⬜ Task 4.15.2: 創建 Hive Adapter
-- **文件**: `lib/data/models/reading_progress_adapter.dart`
+#### ✅ Task 4.15.2: 創建 Hive Adapter
+- **文件**: `lib/data/models/reader/reading_progress_model.dart`
 - **優先級**: P0
 - **預計時間**: 30 分鐘
-- **狀態**: ⬜ 未開始
+- **狀態**: ✅ 已完成
+- **完成時間**: 2024-11-09
+- **實際用時**: 30 分鐘
 
 **具體步驟**:
-1. 為 ReadingProgress 創建 Hive TypeAdapter
-2. 添加 @HiveType 和 @HiveField 註解
+1. ✅ 為 ReadingProgress 創建 Hive TypeAdapter
+2. ✅ 添加 @HiveType 和 @HiveField 註解
 
 **驗收標準**:
-- [ ] @HiveType 註解正確
-- [ ] @HiveField 完整
-- [ ] 能正確序列化/反序列化
+- [x] @HiveType 註解正確（typeId: 3）
+- [x] @HiveField 完整（6 個欄位）
+- [x] 能正確序列化/反序列化
+
+**實現細節**:
+
+**1. 數據模型類 (ReadingProgressModel)**：
+```dart
+@HiveType(typeId: 3)
+class ReadingProgressModel extends HiveObject {
+  @HiveField(0) final String bookId;
+  @HiveField(1) final int currentPage;
+  @HiveField(2) final List<int> bookmarkedPages;
+  @HiveField(3) final int lastReadTimeMillis;  // 使用毫秒時間戳
+  @HiveField(4) final String? epubCfi;
+  @HiveField(5) final int? totalPages;
+}
+```
+
+**2. Type ID 分配**：
+- Type 1: BookModel（已使用）
+- Type 2: DownloadStatus（已使用）
+- **Type 3: ReadingProgressModel**（新增）
+
+**3. 轉換方法**：
+- `fromEntity(ReadingProgress)` - 從領域實體轉換為數據模型
+- `toEntity()` - 轉換為領域實體
+- `fromJson(Map)` - 從 JSON 創建（調試用）
+- `toJson()` - 轉換為 JSON（調試用）
+
+**4. 時間戳處理**：
+- Hive 存儲：使用 `int` 類型存儲毫秒時間戳
+- 領域層：使用 `DateTime` 類型
+- 轉換：`DateTime.millisecondsSinceEpoch` ↔ `DateTime.fromMillisecondsSinceEpoch()`
+
+**5. 書籤列表處理**：
+- 使用 `List<int>` 存儲書籤頁碼
+- 在轉換時創建新列表避免引用問題
+- 保持列表順序（由領域層維護）
+
+**6. 生成的 Adapter 功能**：
+```dart
+class ReadingProgressModelAdapter extends TypeAdapter<ReadingProgressModel> {
+  @override final int typeId = 3;
+  
+  @override
+  ReadingProgressModel read(BinaryReader reader) { ... }
+  
+  @override
+  void write(BinaryWriter writer, ReadingProgressModel obj) { ... }
+}
+```
+
+**7. 使用方式**：
+```dart
+// 註冊 Adapter
+Hive.registerAdapter(ReadingProgressModelAdapter());
+
+// 保存進度
+final model = ReadingProgressModel.fromEntity(progress);
+final box = await Hive.openBox<ReadingProgressModel>('reading_progress');
+await box.put(progress.bookId, model);
+
+// 讀取進度
+final model = box.get(bookId);
+final progress = model?.toEntity();
+```
+
+**8. 特性**：
+- ✅ 高效的二進制序列化
+- ✅ 自動類型安全
+- ✅ 支持可空欄位
+- ✅ 支持列表類型
+- ✅ 完整的雙向轉換
+
+**9. 構建命令**：
+```bash
+dart run build_runner build --delete-conflicting-outputs
+```
 
 ---
 
