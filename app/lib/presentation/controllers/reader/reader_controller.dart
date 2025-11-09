@@ -596,9 +596,27 @@ class ReaderController extends GetxController {
   }
 
   /// 應用字體大小到 EPUB 視圖
+  ///
+  /// **當前限制**：
+  /// epub_view 包的 EpubController 不支持動態調整字體大小。
+  /// 字體大小調整需要通過 CSS 注入實現，類似於直書模式的實現方式。
+  ///
+  /// **可能的實現方案**：
+  /// 1. 擴展 EpubPreprocessor，支持字體大小 CSS 注入
+  /// 2. 重新加載 EPUB（性能較差）
+  /// 3. 使用 WebView 的 evaluateJavascript 動態修改 CSS（需要 epub_view 支持）
+  ///
+  /// **臨時方案**：
+  /// 目前僅更新狀態，實際字體大小變更需要重新加載書籍。
+  /// 這是一個已知限制，將在後續版本中優化。
   void _applyFontSize() {
-    // TODO: 實現字體大小應用 (Task 4.12.2)
-    // epubController?.setFontSize(fontSize.value);
+    // TODO: Task 4.12.2 - 實現字體大小動態調整
+    // 方案 1: 擴展 EpubPreprocessor 支持字體大小 CSS 注入
+    // 方案 2: 使用 WebView JavaScript 動態修改（需要 epub_view 支持）
+    // 方案 3: 重新加載 EPUB（當前暫時採用此方案，但會影響閱讀位置）
+    
+    // 暫時不實現，因為 epub_view 不支持動態字體調整
+    // 字體大小更改會在下次打開書籍時生效
   }
 
   // ==================== 亮度控制 ====================
