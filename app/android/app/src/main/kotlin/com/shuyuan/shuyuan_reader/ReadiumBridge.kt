@@ -2,54 +2,164 @@ package com.shuyuan.shuyuan_reader
 
 import android.content.Context
 import android.util.Log
+import androidx.fragment.app.FragmentActivity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.readium.r2.shared.publication.Publication
+import org.readium.r2.shared.util.asset.AssetRetriever
+import org.readium.r2.streamer.Streamer
+import java.io.File
 
 /**
  * Readium Bridge
  * 
  * Flutter 和 Readium Kotlin 之間的橋樑
  * 封裝所有 Readium 相關的功能
- * 這是 Task 4.1.4 的骨架實現
+ * 
+ * Task 4.1.4: 骨架實現
+ * Task 4.2.1: 基礎功能實現（openBook, closeBook）
  * 
  * @since 2025-11-09
+ * @updated 2025-11-10
  */
 class ReadiumBridge(private val context: Context) {
     
     private val TAG = "ReadiumBridge"
     
+    // Readium 核心組件
+    private val streamer: Streamer by lazy {
+        Streamer(context)
+    }
+    
+    private val assetRetriever: AssetRetriever by lazy {
+        AssetRetriever(context.contentResolver)
+    }
+    
+    // 當前打開的書籍
+    private var currentPublication: Publication? = null
+    private var currentFilePath: String? = null
+    
+    // Coroutine scope for async operations
+    private val scope = CoroutineScope(Dispatchers.Main)
+    
     /**
      * 打開書籍
      * 
-     * @param filePath EPUB 文件路徑
-     * @param isVertical 是否為直書模式
+     * Task 4.2.1: 完整實現
      * 
-     * TODO: Task 4.2.1 實現
-     * - 使用 Streamer 解析 EPUB
-     * - 創建 Publication
-     * - 初始化 Navigator
+     * @param filePath EPUB 文件路徑
+     * @param isVertical 是否為直書模式（目前僅記錄，Task 4.2.3 會使用）
      */
     fun openBook(filePath: String, isVertical: Boolean) {
         Log.d(TAG, "openBook called: filePath=$filePath, isVertical=$isVertical")
-        // TODO: 在 Task 4.2.1 實現
-        // 1. 使用 AssetRetriever 加載文件
-        // 2. 使用 Streamer.open() 創建 Publication
-        // 3. 根據 isVertical 配置 ReadingProgression
-        // 4. 創建並顯示 EpubNavigator
+        
+        // 在後台線程執行 EPUB 解析
+        scope.launch {
+            try {
+                // 1. 檢查文件是否存在
+                val file = File(filePath)
+                if (!file.exists()) {
+                    Log.e(TAG, "File not found: $filePath")
+                    throw Exception("File not found: $filePath")
+                }
+                
+                Log.d(TAG, "File exists, size: ${file.length()} bytes")
+                
+                // 2. 關閉當前書籍（如果有）
+                closeBookInternal()
+                
+                // 3. 使用 AssetRetriever 加載文件
+                Log.d(TAG, "Retrieving asset...")
+                val asset = withContext(Dispatchers.IO) {
+                    assetRetriever.retrieve(file)
+                        .getOrElse { error ->
+                            Log.e(TAG, "Failed to retrieve asset: ${error.message}")
+                            throw error
+                        }
+                }
+                
+                Log.d(TAG, "Asset retrieved successfully")
+                
+                // 4. 使用 Streamer 打開 Publication
+                Log.d(TAG, "Opening publication...")
+                val publication = withContext(Dispatchers.IO) {
+                    streamer.open(asset, allowUserInteraction = false)
+                        .getOrElse { error ->
+                            Log.e(TAG, "Failed to open publication: ${error.message}")
+                            throw error
+                        }
+                }
+                
+                Log.d(TAG, "Publication opened successfully")
+                
+                // 5. 保存當前 Publication
+                currentPublication = publication
+                currentFilePath = filePath
+                
+                // 6. 輸出書籍基本信息
+                logPublicationInfo(publication)
+                
+                // TODO: Task 4.2.3 - 創建並顯示 EpubNavigator
+                Log.d(TAG, "Book opened successfully (Navigator will be created in Task 4.2.3)")
+                
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to open book", e)
+                currentPublication = null
+                currentFilePath = null
+                throw e
+            }
+        }
     }
     
     /**
      * 關閉當前書籍
      * 
-     * TODO: Task 4.2.1 實現
-     * - 釋放 Publication 資源
-     * - 銷毀 Navigator
-     * - 清理內存
+     * Task 4.2.1: 完整實現
      */
     fun closeBook() {
         Log.d(TAG, "closeBook called")
-        // TODO: 在 Task 4.2.1 實現
-        // 1. 保存當前閱讀位置
-        // 2. 關閉 Navigator
-        // 3. 釋放 Publication
+        closeBookInternal()
+    }
+    
+    /**
+     * 內部方法：關閉書籍並釋放資源
+     */
+    private fun closeBookInternal() {
+        currentPublication?.let { publication ->
+            Log.d(TAG, "Closing publication: ${publication.metadata.title}")
+            
+            // TODO: Task 4.2.3 - 銷毀 Navigator
+            // navigator?.destroy()
+            
+            // 關閉 Publication
+            try {
+                publication.close()
+                Log.d(TAG, "Publication closed successfully")
+            } catch (e: Exception) {
+                Log.e(TAG, "Error closing publication", e)
+            }
+        }
+        
+        currentPublication = null
+        currentFilePath = null
+        Log.d(TAG, "Book closed and resources released")
+    }
+    
+    /**
+     * 輸出 Publication 信息（用於調試）
+     */
+    private fun logPublicationInfo(publication: Publication) {
+        val metadata = publication.metadata
+        Log.d(TAG, "=== Publication Info ===")
+        Log.d(TAG, "Title: ${metadata.title}")
+        Log.d(TAG, "Authors: ${metadata.authors.joinToString { it.name }}")
+        Log.d(TAG, "Language: ${metadata.languages.firstOrNull() ?: "Unknown"}")
+        Log.d(TAG, "Reading Progression: ${metadata.readingProgression}")
+        Log.d(TAG, "Chapters: ${publication.readingOrder.size}")
+        Log.d(TAG, "Resources: ${publication.resources.size}")
+        Log.d(TAG, "========================")
     }
     
     /**
